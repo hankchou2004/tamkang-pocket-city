@@ -9,3 +9,7 @@ work/*-district.svg
 
 __pycache__/
 _site/
+
+# local only: the phone app shell and the development page (python tools/build.py --app)
+app/
+dev/
