@@ -56,7 +56,9 @@ const mkH = t => { const h = document.createElement('h3'); h.className = 'key-su
 const how = document.createElement('p'); how.className = 'key-text';
 const src = document.createElement('div'); src.className = 'key-src';
 src.innerHTML = '範圍 ' + SIZE + ' × ' + SIZE + ' m<br>' + link('© OpenStreetMap contributors', 'https://www.openstreetmap.org/copyright') + (CITY.credits ? ' · ' + CITY.credits.map(c => link(c.label, c.url)).join(' · ') : '') + ' · ' + link('three.js', 'https://threejs.org/');
-keyBody.append(mkH('視角'), views, mkH('操作'), how, mkH('資料來源'), src);
+const zoneKey = document.createElement('div'); zoneKey.className = 'key-text';
+zoneKey.innerHTML = (typeof ZONES !== 'undefined' ? ZONES : []).map(z => '<span style="display:inline-flex;align-items:center;gap:5px;margin-right:10px"><i style="width:14px;height:10px;border-radius:3px;background:' + esc(z.colour) + ';border:1.5px solid ' + esc(z.edge) + '"></i>' + esc(z.name) + '</span>').join('');
+keyBody.append(mkH('視角'), views, mkH('區域'), zoneKey, mkH('操作'), how, mkH('資料來源'), src);
 const howText = () => phone ? '單指旋轉 · 雙指移動與縮放 · 按右上角 ✥ 改成單指移動' : '拖曳旋轉 · 右鍵或 Shift 拖曳移動 · 滾輪縮放 · 也可按右上角 ✥ 改成直接拖曳移動';
 how.textContent = howText();
 const stage = $('stage'), canvas = $('fig');
@@ -221,6 +223,11 @@ function buildGround() {
   // the plate's edge: a slab under the square, like the printed diorama
   loft(atZ(C, -SLAB), atZ(C, 0), PAL.slab || '#d6c8ab'); shape(atZ(C, -SLAB), mix(PAL.slab || '#d6c8ab', '#705f81', .3), 0);
   inkLoop(atZ(C, 0), lineOf(PAL.slab || '#d6c8ab')); inkLoop(atZ(C, -SLAB), lineOf(PAL.slab || '#d6c8ab'));
+  // area tints (work/zones.json): open ground inside each zone takes its colour; lawns, roads and paths keep theirs
+  for (const z of (typeof ZONES !== 'undefined' ? ZONES : [])) {
+    const r = z.ring[0][0] === z.ring[z.ring.length - 1][0] && z.ring[0][1] === z.ring[z.ring.length - 1][1] ? z.ring.slice(0, -1) : z.ring;
+    groundPoly([ccw(r)], .02, z.colour); inkLoop(atZ(r, .3), z.edge); inkLoop(atZ(r, .32), z.edge);
+  }
   for (const l of SCENE.lawns || []) for (const p of ringsOf(l.r)) groundPoly(p, .04, l.kind === 'grass' || !l.kind ? (PAL.grass || '#abcb87') : (PAL.grass || '#abcb87'));
   for (const p of ringsOf(SCENE.quay || [])) groundPoly(p, .05, PAL.paving || '#c9bfae');
   for (const p of ringsOf(SCENE.water || [])) groundPoly(p, .02, PAL.water || '#94c0c2');
