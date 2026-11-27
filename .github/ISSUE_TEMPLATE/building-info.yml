@@ -1,0 +1,56 @@
+name: 建築資料回報
+description: 提供某棟建築的照片或資料，或指出畫錯的地方
+title: "[建築] "
+labels: ["建築資料"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        謝謝幫忙！最缺資料的建築列在 [docs/buildings.md](https://github.com/hankchou2004/tamkang-pocket-city/blob/main/docs/buildings.md)。
+        照片請直接拖進下面的欄位上傳，或貼上 Wikimedia Commons 的連結。
+  - type: input
+    id: building
+    attributes:
+      label: 哪一棟
+      description: 建築名稱。不確定時，描述位置或附地圖連結。
+      placeholder: 例如：松濤1館
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 這次提供的是
+      multiple: true
+      options:
+        - 照片
+        - 文字資料（年份、樓層、描述等）
+        - 畫錯的地方
+    validations:
+      required: true
+  - type: textarea
+    id: photos
+    attributes:
+      label: 照片
+      description: 最好是斜角全景，一張同時看到正面和側面。其他面、入口或特殊構件的近照也很有幫助。
+  - type: input
+    id: year
+    attributes:
+      label: 拍攝年份
+      description: 建築可能重新粉刷或增建過，年份可以幫忙判斷。
+      placeholder: 例如：2025
+  - type: textarea
+    id: observations
+    attributes:
+      label: 觀察到的特徵或錯誤
+      description: 例如顏色、樓層數、屋頂形式、窗戶樣式，或畫面上哪裡跟實際不同。
+  - type: textarea
+    id: sources
+    attributes:
+      label: 文字來源
+      description: 淡江時報期數、校史、志書或網頁連結。
+  - type: checkboxes
+    id: licence
+    attributes:
+      label: 授權
+      options:
+        - label: 我上傳的照片是我自己拍的，同意以 CC BY-SA 4.0 授權在本專案使用（附連結的照片依其原授權）

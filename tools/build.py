@@ -5,12 +5,12 @@
   python tools/build.py --views avenue,library --seasons summer,lanterns60   # render named views from city.json
 
 Landmark files in landmarks/ are joined in name order (00-common.js first) into build/landmarks.js.
-The Pocket City skill's scripts are found at $POCKET_CITY_SKILL, else ~/.claude/skills/pocket-city.
+The Pocket City engine is vendored in vendor/pocket-city ($POCKET_CITY_SKILL points elsewhere, e.g. a newer skill).
 Chrome for rendering: set $CHROME if it is not found on its own."""
 import argparse, glob, json, os, subprocess, sys
 sys.stdout.reconfigure(encoding='utf-8')
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKILL = os.environ.get('POCKET_CITY_SKILL') or os.path.join(os.path.expanduser('~'), '.claude', 'skills', 'pocket-city')
+SKILL = os.environ.get('POCKET_CITY_SKILL') or os.path.join(ROOT, 'vendor', 'pocket-city')
 SCRIPTS = os.path.join(SKILL, 'scripts')
 OUT = 'pocket-city-tamkang-campus.html'
 
@@ -29,6 +29,7 @@ def join_landmarks():
 
 def build(city, out):
     lm, n = join_landmarks()
+    os.makedirs(os.path.dirname(os.path.join(ROOT, out)) or ROOT, exist_ok=True)
     run([sys.executable, os.path.join(SCRIPTS, 'build.py'), '--scene', 'work/scene.json', '--city', city, '--landmarks', lm, '--out', out])
     print(f'joined {n} landmark files')
 
@@ -41,9 +42,10 @@ def main():
     ap.add_argument('--zoom', type=float, default=2.4, help='zoom for --check (1 ≈ 186 m across)')
     ap.add_argument('--views', help='comma list of view ids from work/city.json to render')
     ap.add_argument('--seasons', default='summer')
+    ap.add_argument('--out', default=OUT, help='page to write (default: %(default)s)')
     a = ap.parse_args()
-    build('work/city.json', OUT)
-    if a.views: render(OUT, a.views, a.seasons)
+    build('work/city.json', a.out)
+    if a.views: render(a.out, a.views, a.seasons)
     if a.check:
         x, y = (float(v) for v in a.check.split(','))
         city = json.load(open(os.path.join(ROOT, 'work', 'city.json'), encoding='utf-8'))

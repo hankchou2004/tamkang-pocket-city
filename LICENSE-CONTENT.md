@@ -10,4 +10,4 @@ https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant
 
 - 地圖資料（`work/osm.json`、`work/scene.json` 等）© OpenStreetMap contributors，依 ODbL 1.0 授權：https://www.openstreetmap.org/copyright
 - 頁面引用的照片版權屬於原作者，授權依各檔案頁面（多為 CC BY-SA 4.0）。
-- Pocket City 引擎與工具組 © April Zhu，MIT 授權。
+- Pocket City 引擎與工具組（`vendor/pocket-city/`）© 2026 April Zhu，依 PolyForm Noncommercial 1.0.0 授權，只限非商業使用；由它產生的頁面與圖片也受此限制。

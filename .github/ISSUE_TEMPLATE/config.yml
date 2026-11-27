@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 協作指南
+    url: https://github.com/hankchou2004/tamkang-pocket-city/blob/main/CONTRIBUTING.md
+    about: 來源規則、風格守則與修改流程

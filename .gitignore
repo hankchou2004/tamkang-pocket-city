@@ -8,3 +8,4 @@ work/*-district.png
 work/*-district.svg
 
 __pycache__/
+_site/

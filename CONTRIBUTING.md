@@ -2,11 +2,11 @@
 
 歡迎一起擴充這個校園模型。最有用的貢獻通常不是程式，而是**照片和資料**。不會寫程式也能參與。
 
-送出的程式碼以 MIT 授權，文字內容以 CC BY-SA 4.0 授權，與本專案相同（見 [LICENSE](LICENSE) 和 [LICENSE-CONTENT.md](LICENSE-CONTENT.md)）。
+送出的程式碼以 MIT 授權，文字內容以 CC BY-SA 4.0 授權，與本專案相同（見 [LICENSE](LICENSE) 和 [LICENSE-CONTENT.md](LICENSE-CONTENT.md)）。`vendor/pocket-city/` 是 April Zhu 的引擎，只限非商業使用，請勿修改其中的檔案。
 
 ## 一、提供照片或資料（不需要寫程式）
 
-開一個 Issue，或直接傳給維護者，附上：
+到 GitHub 的 [Issues](https://github.com/hankchou2004/tamkang-pocket-city/issues/new/choose) 選「建築資料回報」填表，或直接傳給維護者，附上：
 
 1. **哪一棟**：建築名稱，不確定時附地圖位置。
 2. **照片**：最好是斜角全景，一張同時看到正面與側面。其他面、入口、特殊構件的近照也很有幫助。
