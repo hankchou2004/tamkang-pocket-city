@@ -26,6 +26,13 @@ PATCHES = [
     ('cache key, second half of the same fix',
      'NIGHTC.set(c,o)',
      'NIGHTC.set(KEY,o)'),
+    ('drawing threads paint on the CPU (willReadFrequently): on the GPU the thousands of shapes in the whole-campus view '
+     'filled the graphics card, and the screen itself could update only 3-4 times a second (tools/measure.mjs)',
+     "frameCanvas.getContext('2d')",
+     "frameCanvas.getContext('2d',{willReadFrequently:true})"),
+    ('the same for the cached layer surfaces',
+     "raster.getContext('2d')",
+     "raster.getContext('2d',{willReadFrequently:true})"),
 ]
 
 def run(cmd):
@@ -67,7 +74,7 @@ def build(city, out):
     # add the live weather/time-of-day script and the layout/controls script after the engine's page script
     page = os.path.join(ROOT, out); html = open(page, encoding='utf-8').read()
     cfg = {k: live[k] for k in ('place', 'months', 'weathers', 'levels', 'wmo', 'fallback', 'note')}
-    js = 'const LIVE_CFG = ' + json.dumps(cfg, ensure_ascii=False) + ';' + chr(10) + open(os.path.join(ROOT, 'web', 'live.js'), encoding='utf-8').read() + chr(10) + open(os.path.join(ROOT, 'web', 'ui.js'), encoding='utf-8').read()
+    js = 'const LIVE_CFG = ' + json.dumps(cfg, ensure_ascii=False) + ';' + chr(10) + open(os.path.join(ROOT, 'web', 'live.js'), encoding='utf-8').read() + chr(10) + open(os.path.join(ROOT, 'web', 'ui.js'), encoding='utf-8').read() + chr(10) + open(os.path.join(ROOT, 'web', 'smooth.js'), encoding='utf-8').read()
     js = js.replace('</script', '<' + chr(92) + '/script')
     # engine patches, applied to the built page so vendor/ stays unchanged (see PATCHES)
     for why, old, new in PATCHES:
