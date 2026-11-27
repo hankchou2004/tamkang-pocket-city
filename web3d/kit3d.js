@@ -18,6 +18,9 @@ const tone = (n, m) => baseOf(m);            // shading happens in the shader
 const toneI = tone;
 const lineOf = (c, plant) => mix(c, '#51465a', plant ? .38 : .53);
 // colours that are light sources: they are not darkened at night or in shade (same set as the 2D kit)
+// colours that light up only after dark: the paper of the 宮燈 lanterns
+const NIGHT_GLOW_SET = new Set(['#f6efdc']);
+const litFlag = c => { const k = String(c).toLowerCase(); return LIT_SET.has(k) ? 1 : NIGHT_GLOW_SET.has(k) ? 2 : 0; };
 const LIT_SET = new Set(['#ffe6ec', '#fbd3dd', '#ffd98a', '#ffe7a8', '#fff3c4', '#fbefc8', '#f6c445', '#ffb85c', '#fff8e0', '#f2c94c', '#fde9b0', '#ffcf7a', '#ff8a3d', '#f26a2e', '#ffc069']);
 
 /* ---------- small geometry helpers (same names as the 2D kit) ---------- */
@@ -51,7 +54,7 @@ function geoReset() { for (const k in GEO) for (const a in GEO[k]) GEO[k][a] = [
 function pushTri(a, b, c, colour, nrm) {
   const rgba = hex2rgb(colour);
   if (rgba[3] < 0.99) { const G = GEO.glass; for (const p of [a, b, c]) { G.p.push(p[0], p[1], p[2] || 0); G.c.push(...rgba); } return; }
-  const G = GEO.flat, lit = LIT_SET.has(String(colour).toLowerCase()) ? 1 : 0;
+  const G = GEO.flat, lit = litFlag(colour);
   for (const p of [a, b, c]) { G.p.push(p[0], p[1], p[2] || 0); G.n.push(...nrm); G.c.push(rgba[0], rgba[1], rgba[2]); G.lit.push(lit); }
 }
 // a flat polygon in 3D (convex or not): triangulated in its own plane
@@ -115,7 +118,7 @@ function ball(c, r, m, w = .9) {
   const col = baseOf(m);
   for (const tri of SPHERE) { const P = tri.map(q => [c[0] + q[0] * r, c[1] + q[1] * r, c[2] + q[2] * r]);
     const rgba = hex2rgb(col); if (rgba[3] < .99) { pushTri(...P, col, [0, 0, 1]); continue; }
-    const G = GEO.flat, lit = LIT_SET.has(String(col).toLowerCase()) ? 1 : 0;
+    const G = GEO.flat, lit = litFlag(col);
     for (const q of tri) { G.p.push(c[0] + q[0] * r, c[1] + q[1] * r, c[2] + q[2] * r); G.n.push(...norm3(q)); G.c.push(rgba[0], rgba[1], rgba[2]); G.lit.push(lit); } }
   return '';
 }

@@ -5,7 +5,7 @@
    gym; 海豚雕塑.jpg — a bronze dolphin pair on a dark post in a round box hedge, the 海豚吉祥物里程碑).
    Line markings, goals and nets are simplified; the sculptures' proportions are read by eye. */
 const SPORTS = {"tracks": [{"outer": [[-312.95, -93.67], [-309.77, -99.46], [-304.74, -96.7], [-306.12, -103.35], [-305.68, -110.23], [-303.46, -116.76], [-299.63, -122.46], [-294.46, -126.95], [-288.3, -129.94], [-281.58, -131.19], [-274.78, -130.65], [-268.37, -128.33], [-233.53, -109.05], [-228.72, -105.43], [-224.88, -100.77], [-222.25, -95.35], [-220.87, -88.38], [-221.43, -81.3], [-223.91, -74.63], [-227.94, -69.05], [-233.28, -64.73], [-239.57, -61.97], [-241.12, -61.75], [-233.71, -57.68], [-236.91, -51.88]], "inner": [[[-254.48, -69.21], [-248.38, -67.75], [-242.13, -68.34], [-237.21, -70.41], [-233.03, -73.73], [-229.92, -78.07], [-228.28, -82.29], [-227.67, -86.76], [-228.11, -91.24], [-229.71, -95.78], [-232.39, -99.77], [-235.98, -102.97], [-273.48, -123.57], [-278.06, -124.69], [-282.81, -124.66], [-287.4, -123.46], [-293.11, -119.95], [-297.3, -114.7], [-299.45, -108.34], [-299.3, -101.63], [-297.83, -97.16], [-295.32, -93.18], [-291.92, -89.93]]]}, {"outer": [[-305.61, 371.12], [-309.85, 366.15], [-316.07, 366.46], [-322.48, 365.87], [-328.27, 364.08], [-333.5, 362.03], [-338.98, 359.23], [-343.94, 356.08], [-349.44, 351.38], [-353.87, 346.54], [-358.08, 341.01], [-361.42, 335.0], [-363.27, 329.52], [-364.47, 323.92], [-365.17, 318.28], [-364.95, 312.42], [-363.73, 307.24], [-361.83, 302.09], [-355.56, 293.23], [-273.88, 223.83], [-268.57, 221.61], [-262.82, 220.02], [-256.29, 219.6], [-249.6, 219.93], [-243.88, 221.3], [-237.77, 223.39], [-231.87, 225.99], [-226.52, 229.59], [-222.01, 233.91], [-217.95, 238.87], [-214.85, 244.5], [-212.42, 250.08], [-210.28, 255.39], [-208.67, 261.25], [-208.03, 266.43], [-208.43, 271.8], [-200.69, 280.87], [-300.16, 366.44]], "inner": [[[-222.88, 284.31], [-305.62, 355.6], [-311.24, 357.25], [-316.91, 358.0], [-322.91, 357.19], [-328.47, 355.5], [-333.77, 352.74], [-338.39, 349.24], [-342.43, 345.82], [-346.32, 342.01], [-349.73, 337.9], [-352.71, 332.91], [-354.7, 327.42], [-355.93, 321.9], [-356.86, 316.93], [-356.75, 311.44], [-355.13, 305.96], [-352.66, 300.52], [-270.23, 229.87], [-264.52, 228.64], [-259.03, 228.19], [-253.73, 228.71], [-248.28, 230.18], [-243.1, 232.7], [-238.3, 235.81], [-233.54, 239.48], [-229.67, 243.46], [-226.18, 247.27], [-223.3, 252.16], [-221.23, 258.06], [-219.88, 263.83], [-219.14, 268.68], [-218.96, 274.13], [-220.37, 279.2]]]}], "pitches": [{"sport": "tennis", "r": [[56.72, 52.87], [33.62, 24.97], [45.5, 16.22], [68.72, 44.19]]}, {"sport": "volleyball", "r": [[285.91, -284.54], [272.41, -295.54], [277.72, -302.83], [291.48, -291.5]]}, {"sport": "tennis", "r": [[309.82, -311.88], [295.82, -323.99], [319.06, -351.98], [332.56, -339.04]]}, {"sport": "basketball", "r": [[-192.18, 240.74], [-205.62, 252.27], [-227.74, 226.94], [-213.87, 215.47]]}, {"sport": "basketball", "r": [[359.09, -258.08], [341.57, -262.02], [347.18, -285.33], [364.4, -281.19]]}, {"sport": "basketball", "r": [[-205.95, -64.97], [-221.23, -69.48], [-213.61, -95.03], [-198.33, -90.53]]}, {"sport": "roller_skating", "r": [[3.19, 265.62], [5.39, 262.61], [10.68, 253.36], [10.3, 250.81], [-20.34, 237.29], [-25.26, 245.08], [-28.05, 252.69]]}, {"sport": "tennis", "r": [[82.84, 33.41], [59.74, 5.51], [71.63, -3.24], [94.85, 24.73]]}, {"sport": "tennis", "r": [[69.75, 42.93], [46.65, 15.03], [58.54, 6.28], [81.76, 34.24]]}, {"sport": "basketball", "r": [[-227.95, 226.7], [-250.07, 201.37], [-236.21, 189.9], [-214.52, 215.17]]}, {"sport": "volleyball", "r": [[301.38, -303.52], [287.9, -314.53], [293.21, -321.81], [306.97, -310.47]]}, {"sport": "volleyball", "r": [[293.51, -294.5], [280.02, -305.5], [285.33, -312.78], [299.1, -301.45]]}, {"sport": "basketball", "r": [[355.07, -359.39], [330.29, -342.51], [320.51, -354.44], [345.82, -371.12]]}, {"sport": "basketball", "r": [[372.67, -330.09], [360.09, -321.37], [343.08, -344.03], [355.97, -352.82]]}, {"sport": "basketball", "r": [[365.05, -284.27], [347.52, -288.21], [354.61, -316.73], [371.14, -312.7]]}, {"sport": "volleyball", "r": [[310.96, -286.11], [303.24, -291.51], [312.69, -306.39], [320.31, -301.64]]}, {"sport": "volleyball", "r": [[307.67, -270.34], [293.46, -279.81], [298.21, -287.19], [312.36, -277.65]]}], "sculpt": {"tigers": [122.45, 157.94], "dolphin": [16.24, 21.79]}};
-const COURT = { tennis: ['#c8694a', '#5f9a68'], basketball: ['#b9a88f', '#8fa6b8'], volleyball: ['#c8694a', '#d9a35a'], roller_skating: ['#b9b3ad', '#c7c1ba'], '': ['#b9a88f', '#a9b8a0'] };
+const COURT = { tennis: ['#c8694a', '#5f9a68'], basketball: ['#b86a55', '#6f9a8f'], volleyball: ['#c8694a', '#d9a35a'], roller_skating: ['#b9b3ad', '#c7c1ba'], '': ['#b9a88f', '#a9b8a0'] };
 
 function sportsGrounds() {
   const out = [];
@@ -46,8 +46,67 @@ function dolphins() {
   });
 }
 
+// 司令臺 (OSM w294286928, a photo the user supplied): stepped white concrete stands along the track, a louvred white
+// front wall, a back wall, a cantilevered white roof over the middle with the announcer's box under it, red stair walls
+// at the ends; floodlight masts at the corners and a green fence round the football pitch
+const STAND = 'w294286928';
+function grandstand() {
+  const b = findBuilding(STAND); if (!b) return null;
+  const { c, ax, L, W } = b.obb, nx = [-ax[1], ax[0]];
+  const t0 = SPORTS.tracks.reduce((m, t) => t.outer.length > m.outer.length ? t : m, SPORTS.tracks[0]), tc = avg(t0.outer);
+  const sg = (tc[0] - c[0]) * nx[0] + (tc[1] - c[1]) * nx[1] > 0 ? 1 : -1;              // +t faces the field
+  const P = (s, t) => [c[0] + ax[0] * s + nx[0] * t * sg, c[1] + ax[1] * s + nx[1] * t * sg];
+  const box = (s0, s1, t0_, t1_) => ccw([P(s0, t0_), P(s1, t0_), P(s1, t1_), P(s0, t1_)]);
+  const WH = '#ecebe6', WT = '#dcdbd5', hl = L / 2, hw = W / 2;
+  return obj(box(-hl - 3, hl + 3, -hw - 2, hw + 2), 14, () => {
+    let s = solid(box(-hl, hl, hw - 1.2, hw), 0, 1.3, WH, WT);                               // louvred front wall
+    for (let u = -hl + .6; u < hl; u += .9) { const a = P(u, hw + .02), q = P(u + .5, hw + .02); s += edge([a[0], a[1], .2], [q[0], q[1], 1.1], '#bdbcb6', .05); }
+    const rows = 9, depth = (W - 3.2) / rows;
+    for (let k = 0; k < rows; k++) { const ta = hw - 1.2 - k * depth, tb = ta - depth; s += solid(box(-hl + 1, hl - 1, tb, ta), 0, 1.3 + (k + 1) * .5, '#e4e3dd', '#d2d1cb'); }
+    s += solid(box(-hl, hl, -hw, -hw + 1.2), 0, 7.2, WH, WT);                                   // back wall
+    for (const e of [-1, 1]) {                                                                   // white end walls with a red stair wall
+      s += solid(box(e * hl - (e > 0 ? 1.2 : 0), e * hl + (e > 0 ? 0 : 1.2), -hw, hw - 1.2), 0, 6.6, WH, WT);
+      s += solid(box(e * (hl + .05) - (e > 0 ? .05 : 0), e * (hl + .05) + (e > 0 ? 0 : .05), hw - 6.5, hw - 2.5), 0, 3.4, '#b4473c', '#c45a4c'); }
+    const rw = Math.min(26, L * .3);                                                             // the covered middle
+    s += solid(box(-rw / 2 + 3, rw / 2 - 3, -hw + 1.2, -hw + 4.5), 6.0, 9.2, WH, WT);           // announcer's box
+    for (const u of [-rw / 2 + 1, -rw / 6, rw / 6, rw / 2 - 1]) { const q = P(u, -hw + .6); s += stick([q[0], q[1], 7.2], [q[0], q[1], 11.6], .35, WH); }
+    s += solid(box(-rw / 2, rw / 2, -hw - .5, hw - 3), 11.6, 12.3, '#f2f1ec', '#e6e5df');      // cantilevered roof
+    for (const r of [[-hl + 2, hw - 1.2, 2, 1.3, 2.4], [-hl + 2, -hw, -hw - 1.8, 7.2, 8.2]]) { const a = P(r[0], r[1]), q = P(-r[0], r[1]); s += rail(a, q, r[3], r[4], '#5a5d5f'); }
+    return s;
+  });
+}
+function floodlights() {
+  const t = SPORTS.tracks.reduce((m, q) => q.outer.length > m.outer.length ? q : m, SPORTS.tracks[0]); if (!t) return null;
+  const c = avg(t.outer), far = t.outer.slice().sort((a, b) => Math.hypot(b[0] - c[0], b[1] - c[1]) - Math.hypot(a[0] - c[0], a[1] - c[1]));
+  const picks = []; for (const p of far) if (picks.every(q => Math.hypot(q[0] - p[0], q[1] - p[1]) > 40)) { picks.push(p); if (picks.length === 4) break; }
+  return obj(t.outer, 24, () => {
+    let s = '';
+    for (const p of picks) { const q = [c[0] + (p[0] - c[0]) * 1.06, c[1] + (p[1] - c[1]) * 1.06];
+      s += stick([q[0], q[1], 0], [q[0], q[1], 22], .22, '#9aa0a3'); s += solid(ccw(rect(q[0], q[1], 2.2, .5)), 22, 23.4, '#e8e6df', '#f1efe8'); }
+    for (const i of t.inner) for (let k = 0; k < i.length; k++) s += rail(i[k], i[(k + 1) % i.length], 0, 3, '#3f6f4f');   // fence round the pitch
+    return s;
+  });
+}
+// basketball hoops at both ends of each court
+function hoops() {
+  const out = [];
+  for (const p of SPORTS.pitches) if (p.sport === 'basketball') out.push(obj(p.r, 4, () => {
+    const r = ccw(p.r), c = avg(r); let best = 0, ax = [1, 0];
+    for (let i = 0; i < r.length; i++) { const a = r[i], b = r[(i + 1) % r.length], l = Math.hypot(b[0] - a[0], b[1] - a[1]); if (l > best) { best = l; ax = [(b[0] - a[0]) / l, (b[1] - a[1]) / l]; } }
+    let s = '';
+    for (const e of [-1, 1]) { const q = [c[0] + ax[0] * e * (best / 2 - 1.2), c[1] + ax[1] * e * (best / 2 - 1.2)], n = [-ax[1], ax[0]];
+      s += stick([q[0], q[1], 0], [q[0], q[1], 3.3], .08, '#3f7f62');
+      s += solid(ccw([[q[0] - n[0] * .9, q[1] - n[1] * .9], [q[0] + n[0] * .9, q[1] + n[1] * .9], [q[0] + n[0] * .9 - ax[0] * e * .06, q[1] + n[1] * .9 - ax[1] * e * .06], [q[0] - n[0] * .9 - ax[0] * e * .06, q[1] - n[1] * .9 - ax[1] * e * .06]]), 2.9, 3.9, '#f4f3ef', '#f4f3ef'); }
+    return s;
+  }));
+  return out;
+}
+
 LANDMARKS.push(
   { name: '操場與球場', ids: [], build: sportsGrounds },
   { name: '五虎碑', ids: [], build: fiveTigers },
   { name: '海豚吉祥物里程碑', ids: [], build: dolphins },
+  { name: '司令臺', ids: [STAND], build: grandstand },
+  { name: '操場燈柱與圍網', ids: [], build: floodlights },
+  { name: '籃球架', ids: [], build: hoops },
 );

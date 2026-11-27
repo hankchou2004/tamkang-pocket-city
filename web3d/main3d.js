@@ -143,9 +143,11 @@ void main() {
     vec2 auv = (vec2(col, row) + vec2(.06) + f * .88) / uAtlasN;
     vec4 t = texture2D(uAtlas, auv);
     base = t.rgb;
+    if (t.a < .4 && uNight > .05) { gl_FragColor = vec4(mix(nightCol(t.rgb, uNight), vec3(1., .851, .541), clamp(uNight * 2.5, 0., 1.)), 1.); return; }   // 宮燈教室: every window lit after dark
     if (t.a < .75 && uNight > .05 && hash2(cell + vec2(vTile * 7.13, vTile)) < uLitShare) { gl_FragColor = vec4(hash2(cell * 1.7) > .5 ? vec3(1., .851, .541) : vec3(1., .906, .659), 1.); return; }
   }
-  if (lit) { gl_FragColor = vec4(base, 1.); return; }
+  if (vLit > 1.5 && uNight > .05) { gl_FragColor = vec4(mix(nightCol(base, uNight), vec3(1., .953, .769), clamp(uNight * 2.5, 0., 1.)), 1.); return; }   // lanterns glow after dark
+  if (vLit > .5 && vLit < 1.5) { gl_FragColor = vec4(base, 1.); return; }
   vec3 n = normalize(vWN); if (dot(n, uView) < 0.) n = -n;
   float d = dot(n, uTone);
   float sh = uShadowOn > .5 ? getShadowMask() : 1.;
@@ -253,8 +255,17 @@ function styleFor(b) {
   for (const rule of STYLES.rules || []) if (matches(rule.if, b)) { s = { ...s, ...rule.set }; if (!rule.more) break; }
   return { ...s, ...((CITY.buildings || {})[b.id] || {}) };
 }
+const inPoly = (p, r) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const a = r[i], b = r[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; };
+const onCampus = b => typeof CAMPUS === 'undefined' || inPoly(b.obb.c, CAMPUS);
+const PALE = '#f2ede2';
 function genericBuilding(b) {
-  const st = styleFor(b), ring = ccw(b.ring), body = pickOf(st.wall, b.id);
+  let st = styleFor(b), body = pickOf(st.wall, b.id);
+  if (!onCampus(b)) {   // outside the campus: paler walls, roofs and glass, so the campus buildings stand out
+    body = mix(body, PALE, .55);
+    st = { ...st, wall: body, flatRoof: mix(pickOf(st.flatRoof || st.roofColour, b.id), PALE, .55), roofColour: mix(pickOf(st.roofColour, b.id), PALE, .45),
+      glass: (st.glass || ['#a9bcc1']).map(g => mix(g, body, .6)), frame: mix(st.frame || '#7d7f80', body, .6), trim: st.trim ? mix(st.trim, body, .6) : st.trim };
+  }
+  const ring = ccw(b.ring);
   const pitched = (st.roof === 'gabled' || st.roof === 'hipped') && b.obb && b.obb.fill >= (st.rectFill ?? .78) && b.obb.W <= (st.maxSpan ?? 22);
   let wall = b.h ? b.h : b.lv ? b.lv * st.floor + (pitched ? 0 : .6) : (st.levels || 3) * st.floor + (pitched ? 0 : .6);
   if (st.height) wall = st.height;
@@ -283,12 +294,13 @@ function drawAtlas() {
       case 'apartment': win(14, 16, T - 28, 30); if (t.balcony) { g.fillStyle = mix(t.wall, '#51465a', .25); g.fillRect(x0 + 6, y0 + 44, T - 12, 4); } break;
       case 'civic': win(18, 10, T - 36, 42); if (t.trim) { g.fillStyle = t.trim; g.fillRect(x0, y0 + T - 4, T, 4); } break;
       case 'stucco': win(22, 16, T - 44, 32); if (t.shutters) { g.fillStyle = t.shutters; g.fillRect(x0 + 14, y0 + 16, 7, 32); g.fillRect(x0 + T - 21, y0 + 16, 7, 32); } if (t.trim) { g.fillStyle = t.trim; g.fillRect(x0, y0 + T - 4, T, 4); } break;
-      case 'temple': g.fillStyle = mix(t.wall, '#51465a', .35); for (let k = 0; k < 6; k++) g.fillRect(x0 + 8 + k * 8, y0 + 14, 2, 40); g.fillRect(x0 + 6, y0 + 14, T - 12, 2); g.fillRect(x0 + 6, y0 + 52, T - 12, 2); break;
+      case 'temple': g.fillStyle = t.glass; g.fillRect(x0 + 10, y0 + 16, T - 20, 34); g.fillStyle = mix(t.wall, '#51465a', .35); for (let k = 0; k < 6; k++) g.fillRect(x0 + 8 + k * 8, y0 + 14, 2, 40); g.fillRect(x0 + 6, y0 + 14, T - 12, 2); g.fillRect(x0 + 6, y0 + 52, T - 12, 2); g.fillRect(x0 + 6, y0 + 32, T - 12, 2); break;
       default: win(22, 20, T - 44, 26);
     }
     // alpha marks glass so lit windows can be drawn at night
     const img = g.getImageData(x0, y0, T, T), gl = hex2rgb(t.glass).map(v => Math.round(v * 255));
-    for (let p = 0; p < img.data.length; p += 4) if (Math.abs(img.data[p] - gl[0]) < 3 && Math.abs(img.data[p + 1] - gl[1]) < 3 && Math.abs(img.data[p + 2] - gl[2]) < 3) img.data[p + 3] = 128;
+    const glassA = t.facade === 'temple' ? 64 : 128;   // 64: always lit after dark (palace classrooms), 128: some lit
+    for (let p = 0; p < img.data.length; p += 4) if (Math.abs(img.data[p] - gl[0]) < 3 && Math.abs(img.data[p + 1] - gl[1]) < 3 && Math.abs(img.data[p + 2] - gl[2]) < 3) img.data[p + 3] = glassA;
     g.putImageData(img, x0, y0);
   });
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.NoColorSpace; tex.flipY = false; tex.generateMipmaps = false; tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter;
@@ -489,15 +501,73 @@ function build() {
   geoReset();
   const replaced = new Set(); for (const lm of LANDMARKS) for (const id of lm.ids || []) replaced.add(id);
   for (const lm of LANDMARKS) {
-    try { const r = lm.build(); for (const o of [].concat(r || [])) if (o && typeof o.draw === 'function') o.draw(); }
+    try { const r = lm.build(), parts = [].concat(r || []).filter(o => o && typeof o.draw === 'function'); for (const o of parts) o.draw(); collectLabel(lm.name, parts); }
     catch (e) { console.warn('landmark', lm.name, e); }
   }
   for (const b of SCENE.buildings) if (!replaced.has(b.id) && !replaced.has(b.of)) { try { genericBuilding(b); } catch (e) { console.warn('building', b.id, e); } }
   buildFurniture();
+  if (typeof LANTERN_AT === 'function') for (const [x, y] of LANTERN_AT()) lightPool(x, y, 3.6, '#ffe7a8', .5);
   drawAtlas();
   for (const m of [meshFromGEO('flat'), meshFromGEO('wall'), inkFromGEO(), glassFromGEO()]) if (m) scene.add(m);
   buildGlows();
-  buildMovers(); buildRain();
+  buildMovers(); buildRain(); buildLabels();
+}
+
+/* ====================== landmark names ====================== */
+const LABEL_SKIP = /^(亭|宮燈大道 beds|操場燈柱與圍網|籃球架|大忠管制站|勤務監控管制站)/;
+const LABEL_RENAME = { '宮燈大道 lanterns': '宮燈大道', '操場與球場': '操場', '松濤2館 · 文錙藝術中心': '松濤2館 · 文錙' };
+const LABELS = new Map();
+const areaOfFp = r => Math.abs(r.reduce((s, p, i) => { const q = r[(i + 1) % r.length]; return s + p[0] * q[1] - q[0] * p[1]; }, 0) / 2);
+function collectLabel(name, parts) {
+  if (!parts.length || LABEL_SKIP.test(name)) return;
+  const base = name.replace(/ w\d+$/, ''), key = LABEL_RENAME[name] || LABEL_RENAME[base] || base;
+  // a landmark spread over many parts (the track and courts) is labelled at its largest part
+  let use = parts; if (key === '操場') use = [parts.reduce((m, p) => areaOfFp(p.fp) > areaOfFp(m.fp) ? p : m, parts[0])];
+  const L = LABELS.get(key) || { name: key, pts: [], h: 0, area: 0 };
+  for (const p of use) { L.pts.push(...p.fp); L.h = Math.max(L.h, p.h || 0); L.area += areaOfFp(p.fp); }
+  LABELS.set(key, L);
+}
+const labelLayer = document.createElement('div');
+labelLayer.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden';
+const lcss = document.createElement('style');
+lcss.textContent = `.lmk{position:absolute;transform:translate(-50%,-100%);pointer-events:auto;cursor:pointer;white-space:nowrap;font:600 11px/1 var(--sans,sans-serif);color:#24433a;background:#fffcf2ee;border:1px solid #9fb3a6;border-radius:999px;padding:4px 8px;box-shadow:0 2px 0 #7b80661a}
+.lmk::after{content:'';position:absolute;left:50%;top:100%;width:1px;height:9px;background:#7f948a}
+.lmk:hover{background:#2f4f43;color:#fff;border-color:#2f4f43}
+.lmk.night{background:#24332ee6;color:#f4efe2;border-color:#5e7a6e}
+#showLabels{margin-right:6px;vertical-align:-2px}`;
+document.head.appendChild(lcss);
+let labelEls = [], labelsOn = true;
+try { labelsOn = localStorage.getItem('tku-labels') !== 'off'; } catch (_) {}
+function buildLabels() {
+  stage.insertBefore(labelLayer, canvas.nextSibling);
+  labelEls = [...LABELS.values()].map(L => {
+    const xs = L.pts.map(p => p[0]), ys = L.pts.map(p => p[1]);
+    const x = (Math.min(...xs) + Math.max(...xs)) / 2, y = (Math.min(...ys) + Math.max(...ys)) / 2;
+    const el = document.createElement('div'); el.className = 'lmk'; el.textContent = L.name; el.title = '飛到 ' + L.name;
+    el.onclick = () => { freeView(); goal = { ...goal, x, y, z: Math.min(L.h, 20) / 2, zoom: Math.max(goal.zoom, iso.zoom * 6) }; dirty = true; };
+    labelLayer.appendChild(el);
+    return { el, pos: new THREE.Vector3(x, y, L.h + 2), area: L.area, w: 0 };
+  }).sort((a, b) => b.area - a.area);   // bigger landmarks win when names overlap
+  const sw = document.createElement('label'); sw.className = 'key-text'; sw.style.display = 'block';
+  sw.innerHTML = '<input type="checkbox" id="showLabels">顯示地標名稱（點名稱可飛過去）';
+  how.after(sw); const cb = sw.querySelector('input'); cb.checked = labelsOn;
+  cb.onchange = () => { labelsOn = cb.checked; labelLayer.hidden = !labelsOn; try { localStorage.setItem('tku-labels', labelsOn ? 'on' : 'off'); } catch (_) {} };
+  labelLayer.hidden = !labelsOn;
+}
+const V3 = new THREE.Vector3();
+function placeLabels() {
+  if (!labelsOn || !labelEls.length) return;
+  const placed = [], night = U.uNight.value > .45;
+  for (const L of labelEls) {
+    V3.copy(L.pos).project(cam);
+    const x = (V3.x + 1) / 2 * W, y = (1 - V3.y) / 2 * H;
+    if (!L.w) L.w = L.el.offsetWidth || 60;
+    const box = [x - L.w / 2 - 3, y - 34, x + L.w / 2 + 3, y + 2];
+    const off = x < -40 || x > W + 40 || y < 10 || y > H + 20, hit = placed.some(b => b[0] < box[2] && box[0] < b[2] && b[1] < box[3] && box[1] < b[3]);
+    const show = !off && !hit;
+    L.el.style.display = show ? '' : 'none';
+    if (show) { placed.push(box); L.el.style.left = x.toFixed(1) + 'px'; L.el.style.top = (y - 9).toFixed(1) + 'px'; L.el.classList.toggle('night', night); }
+  }
 }
 
 /* ====================== controls ====================== */
@@ -569,6 +639,7 @@ function tick(nowMs) {
   moveMovers(dt); moveRain(simT);
   applyCamera(camera);
   renderer.render(scene, cam);
+  placeLabels();
   if (!$('loading').hidden) $('loading').hidden = true;
 }
 

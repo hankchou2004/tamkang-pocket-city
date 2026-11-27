@@ -98,13 +98,22 @@ def build3d(out, city='work/city.json'):
     data = json.load(open(os.path.join(ROOT, city), encoding='utf-8'))
     live = json.load(open(os.path.join(ROOT, 'work', 'live.json'), encoding='utf-8'))
     cfg = {k: live[k] for k in ('place', 'bases', 'months', 'weathers', 'levels', 'wmo', 'fallback', 'note')}
+    plot = json.load(open(os.path.join(ROOT, 'work', 'plot.json'), encoding='utf-8'))
+    import math
+    kx, ky = 111320 * math.cos(math.radians(plot['lat'])), 110574
+    cr, sr = math.cos(math.radians(-plot['rotation'])), math.sin(math.radians(-plot['rotation']))
+    def P(lat, lon):
+        x, y = (lon - plot['lon']) * kx, (lat - plot['lat']) * ky
+        return [round(x * cr - y * sr, 2), round(x * sr + y * cr, 2)]
+    campus = [P(p['lat'], p['lon']) for p in json.load(open(os.path.join(ROOT, 'work', 'campus-boundary.json'), encoding='utf-8'))]
     three = read('vendor', 'three', 'three.min.js')
     three = '0,' + three[three.index('/**'):] if three.startswith('console.warn') else three   # drop the r150+ deprecation notice (the build is one expression)
     js = lambda s: '<script>' + chr(10) + s.replace('</script', '<' + chr(92) + '/script') + chr(10) + '</script>' + chr(10)
     blocks = (js(three) +
               js('const SCENE=' + json.dumps(scene, ensure_ascii=False, separators=(',', ':')) + ';' + chr(10) +
                  'const CITY=' + json.dumps(data, ensure_ascii=False, separators=(',', ':')) + ';' + chr(10) +
-                 'const LIVE_CFG=' + json.dumps(cfg, ensure_ascii=False) + ';') +
+                 'const LIVE_CFG=' + json.dumps(cfg, ensure_ascii=False) + ';' + chr(10) +
+                 'const CAMPUS=' + json.dumps(campus) + ';') +
               js(read('web3d', 'kit3d.js')) + js(open(lm, encoding='utf-8').read()) + js(read('web3d', 'main3d.js')))
     tpl = read('vendor', 'pocket-city', 'assets', 'template.html')
     html = tpl.replace('<!--POCKET-CITY-BLOCKS-->', blocks + '</body></html>' + chr(10))

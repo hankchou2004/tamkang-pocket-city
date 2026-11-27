@@ -49,7 +49,7 @@ js = '''/* ====================== District 7: sports grounds and campus sculptur
    gym; 海豚雕塑.jpg — a bronze dolphin pair on a dark post in a round box hedge, the 海豚吉祥物里程碑).
    Line markings, goals and nets are simplified; the sculptures' proportions are read by eye. */
 const SPORTS = ''' + json.dumps({'tracks': tracks, 'pitches': pitches, 'sculpt': sculpt}, ensure_ascii=False) + ''';
-const COURT = { tennis: ['#c8694a', '#5f9a68'], basketball: ['#b9a88f', '#8fa6b8'], volleyball: ['#c8694a', '#d9a35a'], roller_skating: ['#b9b3ad', '#c7c1ba'], '': ['#b9a88f', '#a9b8a0'] };
+const COURT = { tennis: ['#c8694a', '#5f9a68'], basketball: ['#b86a55', '#6f9a8f'], volleyball: ['#c8694a', '#d9a35a'], roller_skating: ['#b9b3ad', '#c7c1ba'], '': ['#b9a88f', '#a9b8a0'] };
 
 function sportsGrounds() {
   const out = [];
@@ -90,10 +90,69 @@ function dolphins() {
   });
 }
 
+// 司令臺 (OSM w294286928, a photo the user supplied): stepped white concrete stands along the track, a louvred white
+// front wall, a back wall, a cantilevered white roof over the middle with the announcer's box under it, red stair walls
+// at the ends; floodlight masts at the corners and a green fence round the football pitch
+const STAND = 'w294286928';
+function grandstand() {
+  const b = findBuilding(STAND); if (!b) return null;
+  const { c, ax, L, W } = b.obb, nx = [-ax[1], ax[0]];
+  const t0 = SPORTS.tracks.reduce((m, t) => t.outer.length > m.outer.length ? t : m, SPORTS.tracks[0]), tc = avg(t0.outer);
+  const sg = (tc[0] - c[0]) * nx[0] + (tc[1] - c[1]) * nx[1] > 0 ? 1 : -1;              // +t faces the field
+  const P = (s, t) => [c[0] + ax[0] * s + nx[0] * t * sg, c[1] + ax[1] * s + nx[1] * t * sg];
+  const box = (s0, s1, t0_, t1_) => ccw([P(s0, t0_), P(s1, t0_), P(s1, t1_), P(s0, t1_)]);
+  const WH = '#ecebe6', WT = '#dcdbd5', hl = L / 2, hw = W / 2;
+  return obj(box(-hl - 3, hl + 3, -hw - 2, hw + 2), 14, () => {
+    let s = solid(box(-hl, hl, hw - 1.2, hw), 0, 1.3, WH, WT);                               // louvred front wall
+    for (let u = -hl + .6; u < hl; u += .9) { const a = P(u, hw + .02), q = P(u + .5, hw + .02); s += edge([a[0], a[1], .2], [q[0], q[1], 1.1], '#bdbcb6', .05); }
+    const rows = 9, depth = (W - 3.2) / rows;
+    for (let k = 0; k < rows; k++) { const ta = hw - 1.2 - k * depth, tb = ta - depth; s += solid(box(-hl + 1, hl - 1, tb, ta), 0, 1.3 + (k + 1) * .5, '#e4e3dd', '#d2d1cb'); }
+    s += solid(box(-hl, hl, -hw, -hw + 1.2), 0, 7.2, WH, WT);                                   // back wall
+    for (const e of [-1, 1]) {                                                                   // white end walls with a red stair wall
+      s += solid(box(e * hl - (e > 0 ? 1.2 : 0), e * hl + (e > 0 ? 0 : 1.2), -hw, hw - 1.2), 0, 6.6, WH, WT);
+      s += solid(box(e * (hl + .05) - (e > 0 ? .05 : 0), e * (hl + .05) + (e > 0 ? 0 : .05), hw - 6.5, hw - 2.5), 0, 3.4, '#b4473c', '#c45a4c'); }
+    const rw = Math.min(26, L * .3);                                                             // the covered middle
+    s += solid(box(-rw / 2 + 3, rw / 2 - 3, -hw + 1.2, -hw + 4.5), 6.0, 9.2, WH, WT);           // announcer's box
+    for (const u of [-rw / 2 + 1, -rw / 6, rw / 6, rw / 2 - 1]) { const q = P(u, -hw + .6); s += stick([q[0], q[1], 7.2], [q[0], q[1], 11.6], .35, WH); }
+    s += solid(box(-rw / 2, rw / 2, -hw - .5, hw - 3), 11.6, 12.3, '#f2f1ec', '#e6e5df');      // cantilevered roof
+    for (const r of [[-hl + 2, hw - 1.2, 2, 1.3, 2.4], [-hl + 2, -hw, -hw - 1.8, 7.2, 8.2]]) { const a = P(r[0], r[1]), q = P(-r[0], r[1]); s += rail(a, q, r[3], r[4], '#5a5d5f'); }
+    return s;
+  });
+}
+function floodlights() {
+  const t = SPORTS.tracks.reduce((m, q) => q.outer.length > m.outer.length ? q : m, SPORTS.tracks[0]); if (!t) return null;
+  const c = avg(t.outer), far = t.outer.slice().sort((a, b) => Math.hypot(b[0] - c[0], b[1] - c[1]) - Math.hypot(a[0] - c[0], a[1] - c[1]));
+  const picks = []; for (const p of far) if (picks.every(q => Math.hypot(q[0] - p[0], q[1] - p[1]) > 40)) { picks.push(p); if (picks.length === 4) break; }
+  return obj(t.outer, 24, () => {
+    let s = '';
+    for (const p of picks) { const q = [c[0] + (p[0] - c[0]) * 1.06, c[1] + (p[1] - c[1]) * 1.06];
+      s += stick([q[0], q[1], 0], [q[0], q[1], 22], .22, '#9aa0a3'); s += solid(ccw(rect(q[0], q[1], 2.2, .5)), 22, 23.4, '#e8e6df', '#f1efe8'); }
+    for (const i of t.inner) for (let k = 0; k < i.length; k++) s += rail(i[k], i[(k + 1) % i.length], 0, 3, '#3f6f4f');   // fence round the pitch
+    return s;
+  });
+}
+// basketball hoops at both ends of each court
+function hoops() {
+  const out = [];
+  for (const p of SPORTS.pitches) if (p.sport === 'basketball') out.push(obj(p.r, 4, () => {
+    const r = ccw(p.r), c = avg(r); let best = 0, ax = [1, 0];
+    for (let i = 0; i < r.length; i++) { const a = r[i], b = r[(i + 1) % r.length], l = Math.hypot(b[0] - a[0], b[1] - a[1]); if (l > best) { best = l; ax = [(b[0] - a[0]) / l, (b[1] - a[1]) / l]; } }
+    let s = '';
+    for (const e of [-1, 1]) { const q = [c[0] + ax[0] * e * (best / 2 - 1.2), c[1] + ax[1] * e * (best / 2 - 1.2)], n = [-ax[1], ax[0]];
+      s += stick([q[0], q[1], 0], [q[0], q[1], 3.3], .08, '#3f7f62');
+      s += solid(ccw([[q[0] - n[0] * .9, q[1] - n[1] * .9], [q[0] + n[0] * .9, q[1] + n[1] * .9], [q[0] + n[0] * .9 - ax[0] * e * .06, q[1] + n[1] * .9 - ax[1] * e * .06], [q[0] - n[0] * .9 - ax[0] * e * .06, q[1] - n[1] * .9 - ax[1] * e * .06]]), 2.9, 3.9, '#f4f3ef', '#f4f3ef'); }
+    return s;
+  }));
+  return out;
+}
+
 LANDMARKS.push(
   { name: '操場與球場', ids: [], build: sportsGrounds },
   { name: '五虎碑', ids: [], build: fiveTigers },
   { name: '海豚吉祥物里程碑', ids: [], build: dolphins },
+  { name: '司令臺', ids: [STAND], build: grandstand },
+  { name: '操場燈柱與圍網', ids: [], build: floodlights },
+  { name: '籃球架', ids: [], build: hoops },
 );
 '''
 open('landmarks/07-sports.js', 'w', encoding='utf-8', newline='\n').write(js)
