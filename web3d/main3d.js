@@ -10,6 +10,9 @@ const link = (label, url) => url ? '<a href="' + esc(url) + '" target="_blank" r
 const phoneProfile = () => innerWidth <= 760 || (matchMedia('(pointer:coarse)').matches && Math.min(screen.width, screen.height) <= 760);
 let phone = phoneProfile();
 const params = new URLSearchParams(location.search);
+// APP_MODE (tools/build.py --app): the phone app, a full-screen portrait map. Map-app gestures (one finger moves, two fingers
+// zoom and turn), a tap on a building flies to it, no side panels. Everything is sized from SCENE.meta, so a bigger plot needs no change here.
+const APP = typeof APP_MODE !== 'undefined' && !!APP_MODE;
 
 /* ====================== page text (place, notes, credits) ====================== */
 const fmt = (v, p, n) => Math.abs(v).toFixed(5) + '° ' + (v >= 0 ? p : n);
@@ -59,7 +62,7 @@ src.innerHTML = '範圍 ' + SIZE + ' × ' + SIZE + ' m<br>' + link('© OpenStree
 const zoneKey = document.createElement('div'); zoneKey.className = 'key-text';
 zoneKey.innerHTML = (typeof ZONES !== 'undefined' ? ZONES : []).map(z => '<span style="display:inline-flex;align-items:center;gap:5px;margin-right:10px"><i style="width:14px;height:10px;border-radius:3px;background:' + esc(z.colour) + ';border:1.5px solid ' + esc(z.edge) + '"></i>' + esc(z.name) + '</span>').join('');
 keyBody.append(mkH('視角'), views, mkH('區域'), zoneKey, mkH('操作'), how, mkH('資料來源'), src);
-const howText = () => phone ? '單指旋轉 · 雙指移動與縮放 · 按右上角 ✥ 改成單指移動' : '拖曳旋轉 · 右鍵或 Shift 拖曳移動 · 滾輪縮放 · 也可按右上角 ✥ 改成直接拖曳移動';
+const howText = () => APP ? '單指移動 · 雙指縮放與旋轉 · 點建築拉近' : phone ? '單指旋轉 · 雙指移動與縮放 · 按右上角 ✥ 改成單指移動' : '拖曳旋轉 · 右鍵或 Shift 拖曳移動 · 滾輪縮放 · 也可按右上角 ✥ 改成直接拖曳移動';
 how.textContent = howText();
 const stage = $('stage'), canvas = $('fig');
 const osmA = document.createElement('a'); osmA.className = 'osm-credit'; osmA.href = 'https://www.openstreetmap.org/copyright'; osmA.target = '_blank'; osmA.textContent = '© OpenStreetMap'; stage.appendChild(osmA);
@@ -70,6 +73,35 @@ const panBtn = document.createElement('button'); panBtn.className = 'tool'; panB
 panBtn.title = '移動畫面（開啟後拖曳即可移動）'; panBtn.setAttribute('aria-label', '移動畫面'); panBtn.setAttribute('aria-pressed', 'false');
 panBtn.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M12 3l-3 3m3-3 3 3M12 21l-3-3m3 3 3-3M3 12l3-3m-3 3 3 3M21 12l-3-3m3 3-3 3"/></svg>';
 $('play').after(panBtn);
+
+/* ====================== the phone app: full-screen map, a small title bar, a button back to the whole campus ====================== */
+let appWx = null;
+if (APP) {
+  document.title = CITY.app_name || '淡江校園';
+  const a = document.createElement('style');
+  a.textContent = `
+.top,.rail,.control-area,.foot,.tools,.mark,#viewName,.scale{display:none!important}
+html,body{background:var(--paper,#f6f3e9)}
+.workspace{position:fixed!important;inset:0!important;height:auto!important}
+.stage{position:fixed!important;inset:0!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.compass{top:calc(env(safe-area-inset-top) + 12px)!important;right:12px!important;bottom:auto!important;width:40px!important;height:44px!important}
+.osm-credit{bottom:calc(env(safe-area-inset-bottom) + 6px)!important;left:10px;right:auto!important}
+.app-bar{position:absolute;z-index:4;left:12px;right:64px;top:calc(env(safe-area-inset-top) + 12px);pointer-events:none}
+.app-bar>div{display:inline-block;max-width:100%;padding:8px 12px 7px;border:1px solid #c9cdbf;border-radius:12px;background:#fffcf2ee;box-shadow:0 3px 0 #7b80661a}
+.app-bar b{display:block;font:700 17px/1.15 var(--serif,serif);letter-spacing:-.3px;color:var(--ink,#263c35)}
+.app-bar small{display:block;margin-top:2px;font:11px/1.3 var(--sans,sans-serif);color:#5e6a5c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-home{position:absolute;z-index:4;right:12px;bottom:calc(env(safe-area-inset-bottom) + 16px);width:48px;height:48px;border-radius:50%;border:1px solid #c1c7b8;background:#fffcf2;box-shadow:0 3px 0 #7b80661a,0 3px 10px #4d543624;display:grid;place-items:center;color:var(--ink,#263c35)}
+.app-home svg{width:22px;height:22px}
+.app-home:active{transform:translateY(1px)}
+.lmk{font-size:12px;padding:5px 9px}`;
+  document.head.appendChild(a);
+  const bar = document.createElement('div'); bar.className = 'app-bar';
+  bar.innerHTML = '<div><b></b><small></small></div>'; bar.querySelector('b').textContent = CITY.app_name || CITY.name;
+  appWx = bar.querySelector('small'); stage.appendChild(bar);
+  const home = document.createElement('button'); home.type = 'button'; home.className = 'app-home'; home.title = '回到全校'; home.setAttribute('aria-label', '回到全校');
+  home.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><circle cx="12" cy="12" r="2.2"/></svg>';
+  home.onclick = () => setView('iso'); stage.appendChild(home);
+}
 
 /* ====================== renderer, cameras ====================== */
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -82,6 +114,7 @@ let W = 1, H = 1;
 const K = Math.sqrt(1.5);
 const autoZoom = +(302 / (SIZE * 1.62)).toFixed(3);
 const iso = { yaw: -35, pitch: 33, zoom: autoZoom, x: 0, y: 0, z: 4, ...((CITY.cameras || {}).iso || {}) };
+if (APP) { iso.zoom *= 2.1; iso.pitch += 7; }   // a portrait screen: the zoom is set by its width, so the square would sit small in the middle; look down a little more to fill the height
 const maxZoom = iso.zoom * 16, minZoom = iso.zoom * .55;
 const cameras = { iso, bird: { yaw: iso.yaw - 5, pitch: 72, zoom: iso.zoom * .95, x: 0, y: 0, z: 4 } };
 const viewList = [['cine', '自動環繞']];
@@ -484,6 +517,7 @@ function applyState() {
   if (temp != null && !fixedWx) parts.push(`${Math.round(temp)}°C`);
   const a = document.createElement('a'); a.href = CFG.note.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open-Meteo ↗';
   $('note').replaceChildren(document.createTextNode(parts.join(' · ') + (failed && !fixedWx ? '（暫時取不到即時天氣，顯示這個月份的典型天氣）' : '') + ' 天氣資料：'), a);
+  if (appWx) appWx.textContent = '淡水 ' + parts.join(' · ');
   dirty = true;
 }
 async function fetchWeather() {
@@ -508,14 +542,14 @@ function build() {
   geoReset();
   const replaced = new Set(); for (const lm of LANDMARKS) for (const id of lm.ids || []) replaced.add(id);
   for (const lm of LANDMARKS) {
-    try { const r = lm.build(), parts = [].concat(r || []).filter(o => o && typeof o.draw === 'function'); for (const o of parts) o.draw(); collectLabel(lm.name, parts); }
+    try { const r = lm.build(), parts = [].concat(r || []).filter(o => o && typeof o.draw === 'function'); for (const o of parts) o.draw(); collectLabel(lm.name, parts); collectPick(lm.name, parts); }
     catch (e) { console.warn('landmark', lm.name, e); }
   }
-  for (const b of SCENE.buildings) if (!replaced.has(b.id) && !replaced.has(b.of)) { try { genericBuilding(b); } catch (e) { console.warn('building', b.id, e); } }
+  for (const b of SCENE.buildings) if (!replaced.has(b.id) && !replaced.has(b.of)) { try { genericBuilding(b); PICKS.push({ name: b.n || '', fps: [b.ring], h: b.h ?? (b.lv ? b.lv * LEVEL : 10) }); } catch (e) { console.warn('building', b.id, e); } }
   buildFurniture();
   if (typeof LANTERN_AT === 'function') for (const [x, y] of LANTERN_AT()) lightPool(x, y, 3.6, '#ffe7a8', .5);
   drawAtlas();
-  for (const m of [meshFromGEO('flat'), meshFromGEO('wall'), inkFromGEO(), glassFromGEO()]) if (m) scene.add(m);
+  for (const m of [meshFromGEO('flat'), meshFromGEO('wall'), inkFromGEO(), glassFromGEO()]) if (m) { scene.add(m); if (m.isMesh && !m.material.transparent) PICKABLE.push(m); }
   buildGlows();
   buildMovers(); buildRain(); buildLabels();
 }
@@ -551,7 +585,7 @@ function buildLabels() {
     const xs = L.pts.map(p => p[0]), ys = L.pts.map(p => p[1]);
     const x = (Math.min(...xs) + Math.max(...xs)) / 2, y = (Math.min(...ys) + Math.max(...ys)) / 2;
     const el = document.createElement('div'); el.className = 'lmk'; el.textContent = L.name; el.title = '飛到 ' + L.name;
-    el.onclick = () => { freeView(); goal = { ...goal, x, y, z: Math.min(L.h, 20) / 2, zoom: Math.max(goal.zoom, iso.zoom * 6) }; dirty = true; };
+    el.onclick = () => { const pg = pickGroups.get(L.name); if (APP && pg) return flyTo(pg); freeView(); goal = { ...goal, x, y, z: Math.min(L.h, 20) / 2, zoom: Math.max(goal.zoom, iso.zoom * 6) }; dirty = true; };
     labelLayer.appendChild(el);
     return { el, pos: new THREE.Vector3(x, y, L.h + 2), area: L.area, w: 0 };
   }).sort((a, b) => b.area - a.area);   // bigger landmarks win when names overlap
@@ -625,6 +659,74 @@ canvas.onkeydown = e => {
   else if (e.key === 'Home') setView('cine'); else if (['+', '='].includes(e.key)) zoomBy(1.25); else if (e.key === '-') zoomBy(.8);
 };
 
+/* ====================== picking: which building is under a tap, and flying to it ====================== */
+const PICKS = [], PICKABLE = [], pickGroups = new Map();
+const PICK_ALIAS = { '操場燈柱與圍網': '操場', '籃球架': '操場', '宮燈大道 beds': '宮燈大道' };   // small parts count as the landmark they belong to
+function collectPick(name, parts) {
+  const base = name.replace(/ w\d+$/, ''), key0 = LABEL_RENAME[name] || LABEL_RENAME[base] || base, key = PICK_ALIAS[key0] || key0;
+  let g = pickGroups.get(key); if (!g) { g = { name: key, fps: [], h: 0 }; pickGroups.set(key, g); PICKS.unshift(g); }   // landmarks before generic outlines
+  for (const p of parts) if (p.fp && p.fp.length > 2) { g.fps.push(p.fp); g.h = Math.max(g.h, p.h || p.z1 || 0); }
+}
+// fly so the whole building fills about 60% of the shorter side of the screen
+function flyTo(g) {
+  const pts = g.fps.flat(), xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  const x = (Math.min(...xs) + Math.max(...xs)) / 2, y = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const span = Math.max(12, Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys), (g.h || 0) * 1.2);
+  const zoom = Math.min(W, H) * .6 / span / (Math.min(W / 302, H / 202) * K);
+  freeView(); goal = { ...goal, x, y, z: Math.min(g.h || 8, 24) / 2, zoom: Math.max(iso.zoom * 2.5, Math.min(maxZoom, zoom)) }; dirty = true;
+}
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), HIT = new THREE.Vector3();
+function buildingAt(x, y) { return PICKS.find(g => g.fps.some(fp => inPoly([x, y], fp))); }
+function pickAt(cx, cy) {
+  const r = canvas.getBoundingClientRect(); ndc.set((cx - r.left) / r.width * 2 - 1, -(cy - r.top) / r.height * 2 + 1);
+  ray.setFromCamera(ndc, cam);
+  for (const h of ray.intersectObjects(PICKABLE, false).slice(0, 8)) {
+    HIT.copy(h.point).addScaledVector(ray.ray.direction, .6);   // a little way in, so a hit on a wall falls inside the outline
+    const g = buildingAt(HIT.x, HIT.y); if (g) { flyTo(g); return g; }
+  }
+  // flat landmarks (the track, the plazas) are drawn on the ground: try where the tap meets the ground
+  const r0 = ray.ray, t = r0.direction.z ? -r0.origin.z / r0.direction.z : -1;
+  if (t > 0) { const g = buildingAt(r0.origin.x + r0.direction.x * t, r0.origin.y + r0.direction.y * t); if (g) { flyTo(g); return g; } }
+  return null;
+}
+
+/* the app's gestures: one finger (or the left mouse button) moves the map, two fingers zoom, move and turn it,
+   the right mouse button or Shift turns it, a tap flies to the building under it */
+let appHeld = 0;
+if (APP) {
+  const pts = new Map(); let g0 = null, tap = null;
+  const snap = () => { const p = [...pts.values()]; g0 = !p.length ? null : { from: { x: goal.x, y: goal.y }, yaw: goal.yaw, pitch: goal.pitch, zoom: goal.zoom,
+    c: p[1] ? { x: (p[0].x + p[1].x) / 2, y: (p[0].y + p[1].y) / 2 } : { x: p[0].x, y: p[0].y },
+    d: p[1] ? Math.max(1, Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y)) : 0, a: p[1] ? Math.atan2(p[1].y - p[0].y, p[1].x - p[0].x) : 0 }; };
+  canvas.onpointerdown = e => {
+    if (e.pointerType !== 'touch' && ![0, 2].includes(e.button)) return;
+    try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY, turn: e.pointerType !== 'touch' && (e.button === 2 || e.shiftKey) });
+    tap = pts.size === 1 ? { x: e.clientX, y: e.clientY, t: performance.now() } : null; appHeld = pts.size; snap();
+  };
+  canvas.onpointermove = e => {
+    const q = pts.get(e.pointerId); if (!q) return; q.x = e.clientX; q.y = e.clientY;
+    if (tap && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 8) tap = null;
+    const p = [...pts.values()], b = g0; if (!b) return;
+    if (p.length === 1 && p[0].turn) { freeView(); goal.yaw = b.yaw - (p[0].x - b.c.x) * .36; goal.pitch = Math.max(12, Math.min(80, b.pitch + (p[0].y - b.c.y) * .22)); }
+    else if (p.length === 1) moveBy(p[0].x - b.c.x, p[0].y - b.c.y, b.from);
+    else if (p.length === 2) {
+      freeView(); goal.zoom = Math.max(minZoom, Math.min(maxZoom, b.zoom * Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) / b.d));
+      goal.yaw = b.yaw + (Math.atan2(p[1].y - p[0].y, p[1].x - p[0].x) - b.a) * 180 / Math.PI;
+      moveBy((p[0].x + p[1].x) / 2 - b.c.x, (p[0].y + p[1].y) / 2 - b.c.y, b.from);
+    }
+    dirty = true;
+  };
+  canvas.onpointerup = canvas.onpointercancel = e => {
+    if (!pts.has(e.pointerId)) return;
+    const wasTap = tap && e.type === 'pointerup' && pts.size === 1 && performance.now() - tap.t < 450;
+    pts.delete(e.pointerId); tap = null; appHeld = pts.size; snap();
+    if (wasTap) pickAt(e.clientX, e.clientY);
+  };
+  canvas.onlostpointercapture = null;
+  canvas.ondblclick = null;
+}
+
 /* ====================== loop ====================== */
 let dirty = true, lastT = 0, simT = 0;
 function resize() {
@@ -640,7 +742,7 @@ function tick(nowMs) {
   if (document.hidden) return;
   simT += dt; U.uTime.value = simT;
   if (view === 'cine') { movie += dt; const k = (1 - Math.cos(movie * .095)) * .5; goal = { yaw: iso.yaw + 38 * k, pitch: iso.pitch - 9 * k, zoom: iso.zoom * (1 + .44 * k), x: iso.x, y: iso.y, z: iso.z }; }
-  const smooth = smallerMotion ? 1 : 1 - Math.exp(-dt * (touches.size || pan ? 19 : 6.5));
+  const smooth = smallerMotion ? 1 : 1 - Math.exp(-dt * (touches.size || pan || appHeld ? 19 : 6.5));
   for (const k of Object.keys(goal)) { let d = goal[k] - camera[k]; if (k === 'yaw') d = ((d + 180) % 360 + 360) % 360 - 180; camera[k] = Math.abs(d) < 1e-4 ? goal[k] : camera[k] + d * smooth; }
   $('zIn').disabled = goal.zoom >= maxZoom; $('zOut').disabled = goal.zoom <= minZoom;
   moveMovers(dt); moveRain(simT);
@@ -654,8 +756,8 @@ function tick(nowMs) {
 resize(); applyCamera(camera);
 $('loading').textContent = '正在搭建 3D 校園…';
 setTimeout(() => {
-  build(); setView('cine'); applyState(); fetchWeather(); setInterval(fetchWeather, 10 * 60 * 1000); setInterval(applyState, 60 * 1000);
+  build(); setView(APP ? 'iso' : 'cine'); applyState(); fetchWeather(); setInterval(fetchWeather, 10 * 60 * 1000); setInterval(applyState, 60 * 1000);
   requestAnimationFrame(tick);
-  window.__three = { scene, renderer, cam, U, STATE, setView, get camera() { return camera; }, get goal() { return goal; }, set goal(g) { goal = g; } };
+  window.__three = { scene, renderer, cam, U, STATE, setView, pickAt, PICKS, get camera() { return camera; }, get goal() { return goal; }, set goal(g) { goal = g; } };
 }, 30);
 })();

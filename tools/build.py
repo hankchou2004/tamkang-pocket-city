@@ -4,6 +4,8 @@
   python tools/build.py --check 168,-62       # also render six yaws, a top view and night around plot point x,y
   python tools/build.py --views avenue,library --at 2026-11-27T18:30 --wx rain   # render named views
   python tools/build.py --classic             # the earlier 2D page (Pocket City engine) as pocket-city-tamkang-campus-2d.html
+  python tools/build.py --app                 # the phone app (_site/app/, a PWA), the development page (_site/dev/), the MapLibre page
+  python tools/build.py --proto               # only the MapLibre page (_site/proto/maplibre.html): GitHub Pages publishes it with the 3D page
 
 The 3D page: vendor/three (three.js r159, MIT), web3d/kit3d.js (the drawing kit's vocabulary as 3D geometry, so the
 landmark files run unchanged), web3d/main3d.js (scene, toon shading, sun and weather, controls), the engine's page
@@ -90,14 +92,8 @@ def build(city, out):
     open(page, 'w', encoding='utf-8').write(html[:i] + '<script>' + chr(10) + js + chr(10) + '</script>' + chr(10) + html[i:])
     print(f'joined {n} landmark files, {len(data["seasons"])} weather and light states')
 
-def build3d(out, city='work/city.json'):
-    """The three.js page: the engine's template (layout and styles), three.js, the data, kit3d, the landmarks, main3d."""
-    lm, n = join_landmarks()
-    read = lambda *p: open(os.path.join(ROOT, *p), encoding='utf-8').read()
-    scene = json.load(open(os.path.join(ROOT, 'work', 'scene.json'), encoding='utf-8'))
-    data = json.load(open(os.path.join(ROOT, city), encoding='utf-8'))
-    live = json.load(open(os.path.join(ROOT, 'work', 'live.json'), encoding='utf-8'))
-    cfg = {k: live[k] for k in ('place', 'bases', 'months', 'weathers', 'levels', 'wmo', 'fallback', 'note')}
+def campus_zones():
+    """The campus outline and the area tints (work/campus-boundary.json, work/zones.json) in plot metres."""
     plot = json.load(open(os.path.join(ROOT, 'work', 'plot.json'), encoding='utf-8'))
     import math
     kx, ky = 111320 * math.cos(math.radians(plot['lat'])), 110574
@@ -110,11 +106,23 @@ def build3d(out, city='work/city.json'):
     for z in json.load(open(os.path.join(ROOT, 'work', 'zones.json'), encoding='utf-8'))['zones']:
         pts = json.load(open(os.path.join(ROOT, 'work', z['file']), encoding='utf-8')) if z.get('file') else [{'lat': a, 'lon': b} for a, b in z['ring']]
         zones.append({k: z[k] for k in ('id', 'name', 'colour', 'edge')} | {'ring': [P(p['lat'], p['lon']) for p in pts]})
+    return campus, zones
+
+def build3d(out, city='work/city.json', app=False):
+    """The three.js page: the engine's template (layout and styles), three.js, the data, kit3d, the landmarks, main3d.
+    app=True: the phone app (APP_MODE in main3d.js), with the PWA links from app/head.html."""
+    lm, n = join_landmarks()
+    read = lambda *p: open(os.path.join(ROOT, *p), encoding='utf-8').read()
+    scene = json.load(open(os.path.join(ROOT, 'work', 'scene.json'), encoding='utf-8'))
+    data = json.load(open(os.path.join(ROOT, city), encoding='utf-8'))
+    live = json.load(open(os.path.join(ROOT, 'work', 'live.json'), encoding='utf-8'))
+    cfg = {k: live[k] for k in ('place', 'bases', 'months', 'weathers', 'levels', 'wmo', 'fallback', 'note')}
+    campus, zones = campus_zones()
     three = read('vendor', 'three', 'three.min.js')
     three = '0,' + three[three.index('/**'):] if three.startswith('console.warn') else three   # drop the r150+ deprecation notice (the build is one expression)
     js = lambda s: '<script>' + chr(10) + s.replace('</script', '<' + chr(92) + '/script') + chr(10) + '</script>' + chr(10)
     blocks = (js(three) +
-              js('const SCENE=' + json.dumps(scene, ensure_ascii=False, separators=(',', ':')) + ';' + chr(10) +
+              js(('const APP_MODE=true;' + chr(10) if app else '') + 'const SCENE=' + json.dumps(scene, ensure_ascii=False, separators=(',', ':')) + ';' + chr(10) +
                  'const CITY=' + json.dumps(data, ensure_ascii=False, separators=(',', ':')) + ';' + chr(10) +
                  'const LIVE_CFG=' + json.dumps(cfg, ensure_ascii=False) + ';' + chr(10) +
                  'const CAMPUS=' + json.dumps(campus) + ';' + chr(10) +
@@ -122,9 +130,46 @@ def build3d(out, city='work/city.json'):
               js(read('web3d', 'kit3d.js')) + js(open(lm, encoding='utf-8').read()) + js(read('web3d', 'main3d.js')))
     tpl = read('vendor', 'pocket-city', 'assets', 'template.html')
     html = tpl.replace('<!--POCKET-CITY-BLOCKS-->', blocks + '</body></html>' + chr(10))
+    if app:
+        i = html.index('</head>'); html = html[:i] + read('app', 'head.html') + html[i:]
     path = os.path.join(ROOT, out); os.makedirs(os.path.dirname(path) or ROOT, exist_ok=True)
     open(path, 'w', encoding='utf-8').write(html)
     print(f'Built {out} (three.js, {len(html) // 1024} KB), {n} landmark files')
+
+def build_app(site='_site'):
+    """The phone app (site/app/: the map page in APP_MODE, manifest, service worker, icons) and the development page
+    (site/dev/: the app in a phone frame, panels on both sides)."""
+    import shutil
+    build3d(os.path.join(site, 'app', 'index.html'), app=True)
+    for f in ('manifest.webmanifest', 'sw.js', 'icon.svg', 'icon-180.png', 'icon-192.png', 'icon-512.png'):
+        shutil.copyfile(os.path.join(ROOT, 'app', f), os.path.join(ROOT, site, 'app', f))
+    os.makedirs(os.path.join(ROOT, site, 'dev'), exist_ok=True)
+    shutil.copyfile(os.path.join(ROOT, 'dev', 'index.html'), os.path.join(ROOT, site, 'dev', 'index.html'))
+    print(f'App in {site}/app/, development page in {site}/dev/ (serve with: python -m http.server 8000 -d {site})')
+
+def build_proto(site='_site'):
+    """Prototype: the campus on a MapLibre map (proto/maplibre.html, proto/maplibre.js). The base map is OpenFreeMap's
+    vector tiles; the hand-built landmarks are drawn by three.js in a MapLibre custom layer. Writes site/proto/maplibre.html."""
+    lm, n = join_landmarks()
+    read = lambda *p: open(os.path.join(ROOT, *p), encoding='utf-8').read()
+    three = read('vendor', 'three', 'three.min.js')
+    three = '0,' + three[three.index('/**'):] if three.startswith('console.warn') else three
+    js = lambda s: '<script>' + chr(10) + s.replace('</script', '<' + chr(92) + '/script') + chr(10) + '</script>' + chr(10)
+    scene = json.load(open(os.path.join(ROOT, 'work', 'scene.json'), encoding='utf-8'))
+    city = json.load(open(os.path.join(ROOT, 'work', 'city.json'), encoding='utf-8'))
+    campus, zones = campus_zones()
+    live = json.load(open(os.path.join(ROOT, 'work', 'live.json'), encoding='utf-8'))
+    cfg = {k: live[k] for k in ('place', 'bases', 'months', 'weathers', 'levels', 'wmo', 'fallback', 'note')}
+    blocks = (js(three) + js('const SCENE=' + json.dumps(scene, ensure_ascii=False, separators=(',', ':')) + ';' + chr(10) +
+                             'const CITY=' + json.dumps(city, ensure_ascii=False, separators=(',', ':')) + ';' + chr(10) +
+                             'const CAMPUS=' + json.dumps(campus) + ';' + chr(10) +
+                             'const ZONES=' + json.dumps(zones, ensure_ascii=False) + ';' + chr(10) +
+                             'const LIVE_CFG=' + json.dumps(cfg, ensure_ascii=False) + ';') +
+              js(read('web3d', 'kit3d.js')) + js(open(lm, encoding='utf-8').read()) + js(read('proto', 'maplibre.js')))
+    html = read('proto', 'maplibre.html').replace('<!--BLOCKS-->', blocks)
+    out = os.path.join(ROOT, site, 'proto', 'maplibre.html'); os.makedirs(os.path.dirname(out), exist_ok=True)
+    open(out, 'w', encoding='utf-8').write(html)
+    print(f'Built {site}/proto/maplibre.html ({len(html) // 1024} KB), {n} landmark files')
 
 def shots3d(page, views, at=None, wx=None, out='shots/3d', size='1200x800'):
     cmd = ['node', os.path.join(ROOT, 'tools', 'shot3d.mjs'), page, '--out', out, '--view', views, '--size', size]
@@ -143,9 +188,19 @@ def main():
     ap.add_argument('--seasons', default='summer-clear-0', help='states base-weather-level, e.g. summer-rain-3')
     ap.add_argument('--out', default=None, help='page to write')
     ap.add_argument('--classic', action='store_true', help='build the 2D page (Pocket City engine) instead')
+    ap.add_argument('--app', action='store_true', help='build the phone app, the development page and the MapLibre page into --site')
+    ap.add_argument('--proto', action='store_true', help='build only the MapLibre page into --site (what GitHub Pages publishes)')
+    ap.add_argument('--site', default='_site', help='folder for --app (default _site)')
     ap.add_argument('--at', help='3D renders: the moment, e.g. 2026-11-27T18:30 (Taiwan time)')
     ap.add_argument('--wx', help='3D renders: the weather, clear / drizzle / rain / fog')
     a = ap.parse_args()
+    if a.app:
+        build_app(a.site)
+        build_proto(a.site)
+        return
+    if a.proto:
+        build_proto(a.site)
+        return
     if not a.classic:
         out = a.out or OUT
         build3d(out)

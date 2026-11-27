@@ -1,6 +1,6 @@
 {
  "_about": "Areas tinted on the ground, for the food map to come. Each zone: id, name, colour (ground tint), edge (outline), and its outline as 'file' (a list of {lat, lon}) or 'ring' (a list of [lat, lon]). Add 金雞母, 大田寮, 大學城, 水源街 here when their outlines are known. Tints show on open ground; roads, paths and lawns keep their own colours.",
  "zones": [
-  { "id": "tku", "name": "淡江大學", "colour": "#d3e0ae", "edge": "#5f8048", "file": "campus-boundary.json" }
+  { "id": "tku", "name": "淡江大學", "colour": "#f2d3a0", "edge": "#c7783c", "file": "campus-boundary.json" }
  ]
 }

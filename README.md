@@ -17,6 +17,20 @@
 - 天氣與夜色沿用即時資料；雨、窗燈、路燈光暈、行人與車輛都有。
 - 原本的 2D 版仍可用 `python tools/build.py --classic` 產生（`pocket-city-tamkang-campus-2d.html`）。
 
+## 手機 app 與開發頁
+
+- **手機 app**（`_site/app/`）：直式、全螢幕的校園地圖，可以「加入主畫面」當 app 用（PWA，離線時用上次的版本）。單指移動、雙指縮放與旋轉，點建築或地標名稱會拉近到那棟建築，右下角按鈕回到全校。
+- **開發頁**（`_site/dev/`）：給電腦用。中間是手機 app 的實際畫面（可切換手機尺寸），左右兩側是開發面板，內容待定。網址參數 `?at=…&wx=…` 會傳給中間的 app。
+- **MapLibre 版**（`_site/proto/maplibre.html`）：地面用 MapLibre GL JS（BSD-3）加 OpenFreeMap 向量圖磚（可商用，需標示 © OpenMapTiles © OpenStreetMap），範圍沒有邊界；所有建築都用我們的畫法：方形範圍內和 3D 版相同（手工地標、`scene.json`、樹、路燈、行人車輛），範圍外從圖磚取輪廓與高度，用同一套一般建築程式邊載入邊畫。日夜、即時天氣、陰影（限方形範圍內）、點建築拉近、回到全校都和手機 app 一樣，`?at=`、`?wx=` 也能用。原始碼在 `proto/`，開發頁上方可以切換兩個版本比較。
+- 程式在 `web3d/main3d.js` 的 `APP_MODE` 段落；外殼檔案（manifest、service worker、圖示）在 `app/`，開發頁在 `dev/index.html`。地圖範圍都從場景資料推算，擴大地塊後不用改。
+
+```
+python tools/build.py --app                    # 產生 _site/app/、_site/dev/ 與 _site/proto/
+python -m http.server 8000 -d _site            # 開 http://localhost:8000/dev/ （直接開檔案也可以，只是不會註冊離線快取）
+```
+
+上線的只有 MapLibre 版：https://hankchou2004.github.io/tamkang-pocket-city/proto/maplibre.html （和原本的首頁）。手機 app 與開發頁只在本機建置。
+
 ## 檔案結構
 
 | 位置 | 內容 |
@@ -34,6 +48,8 @@
 | `vendor/pocket-city/` | 建置需要的 Pocket City 引擎檔案（原封不動，附原授權）；3D 版只用到它的頁面版型 |
 | `vendor/three/` | three.js r159（MIT） |
 | `web3d/` | 3D 版：`kit3d.js` 零件轉接層、`main3d.js` 場景、著色、太陽與天氣、操作 |
+| `app/` | 手機 app 外殼：manifest、service worker、圖示、加進頁面 `<head>` 的連結 |
+| `dev/` | 電腦用的開發頁 |
 | `docs/sources.md` | 每一區的來源清單 |
 | `docs/buildings.md` | 每棟地標的建模狀態，以及最缺資料的建築 |
 
