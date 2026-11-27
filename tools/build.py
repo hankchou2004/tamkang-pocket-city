@@ -1,8 +1,13 @@
 """Build the page, and optionally render check images.
 
-  python tools/build.py                       # build pocket-city-tamkang-campus.html
+  python tools/build.py                       # build pocket-city-tamkang-campus.html (three.js, 3D)
   python tools/build.py --check 168,-62       # also render six yaws, a top view and night around plot point x,y
-  python tools/build.py --views avenue,library --seasons summer-rain-0,monsoon-clear-3   # render named views
+  python tools/build.py --views avenue,library --at 2026-11-27T18:30 --wx rain   # render named views
+  python tools/build.py --classic             # the earlier 2D page (Pocket City engine) as pocket-city-tamkang-campus-2d.html
+
+The 3D page: vendor/three (three.js r159, MIT), web3d/kit3d.js (the drawing kit's vocabulary as 3D geometry, so the
+landmark files run unchanged), web3d/main3d.js (scene, toon shading, sun and weather, controls), the engine's page
+template for the layout. The 2D page:
 
 States are base-weather-level from work/live.json (bases spring/summer/monsoon, weather clear/drizzle/rain/fog,
 level 0 day .. 3 night). The page itself follows the live weather and the time (web/live.js).
@@ -16,6 +21,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKILL = os.environ.get('POCKET_CITY_SKILL') or os.path.join(ROOT, 'vendor', 'pocket-city')
 SCRIPTS = os.path.join(SKILL, 'scripts')
 OUT = 'pocket-city-tamkang-campus.html'
+OUT_2D = 'pocket-city-tamkang-campus-2d.html'
 
 # Small fixes to the vendored engine, applied to the built page (the licence allows non-commercial changes).
 # Each is (why, exact old text, new text); the build stops if the old text is not found exactly once.
@@ -84,6 +90,34 @@ def build(city, out):
     open(page, 'w', encoding='utf-8').write(html[:i] + '<script>' + chr(10) + js + chr(10) + '</script>' + chr(10) + html[i:])
     print(f'joined {n} landmark files, {len(data["seasons"])} weather and light states')
 
+def build3d(out, city='work/city.json'):
+    """The three.js page: the engine's template (layout and styles), three.js, the data, kit3d, the landmarks, main3d."""
+    lm, n = join_landmarks()
+    read = lambda *p: open(os.path.join(ROOT, *p), encoding='utf-8').read()
+    scene = json.load(open(os.path.join(ROOT, 'work', 'scene.json'), encoding='utf-8'))
+    data = json.load(open(os.path.join(ROOT, city), encoding='utf-8'))
+    live = json.load(open(os.path.join(ROOT, 'work', 'live.json'), encoding='utf-8'))
+    cfg = {k: live[k] for k in ('place', 'bases', 'months', 'weathers', 'levels', 'wmo', 'fallback', 'note')}
+    three = read('vendor', 'three', 'three.min.js')
+    three = '0,' + three[three.index('/**'):] if three.startswith('console.warn') else three   # drop the r150+ deprecation notice (the build is one expression)
+    js = lambda s: '<script>' + chr(10) + s.replace('</script', '<' + chr(92) + '/script') + chr(10) + '</script>' + chr(10)
+    blocks = (js(three) +
+              js('const SCENE=' + json.dumps(scene, ensure_ascii=False, separators=(',', ':')) + ';' + chr(10) +
+                 'const CITY=' + json.dumps(data, ensure_ascii=False, separators=(',', ':')) + ';' + chr(10) +
+                 'const LIVE_CFG=' + json.dumps(cfg, ensure_ascii=False) + ';') +
+              js(read('web3d', 'kit3d.js')) + js(open(lm, encoding='utf-8').read()) + js(read('web3d', 'main3d.js')))
+    tpl = read('vendor', 'pocket-city', 'assets', 'template.html')
+    html = tpl.replace('<!--POCKET-CITY-BLOCKS-->', blocks + '</body></html>' + chr(10))
+    path = os.path.join(ROOT, out); os.makedirs(os.path.dirname(path) or ROOT, exist_ok=True)
+    open(path, 'w', encoding='utf-8').write(html)
+    print(f'Built {out} (three.js, {len(html) // 1024} KB), {n} landmark files')
+
+def shots3d(page, views, at=None, wx=None, out='shots/3d', size='1200x800'):
+    cmd = ['node', os.path.join(ROOT, 'tools', 'shot3d.mjs'), page, '--out', out, '--view', views, '--size', size]
+    if at: cmd += ['--at', at]
+    if wx: cmd += ['--wx', wx]
+    run(cmd)
+
 def render(page, views, seasons, out='shots', size='900x600'):
     run(['node', os.path.join(SCRIPTS, 'render.mjs'), page, '--out', out, '--view', views, '--season', seasons, '--size', size])
 
@@ -93,8 +127,20 @@ def main():
     ap.add_argument('--zoom', type=float, default=2.4, help='zoom for --check (1 ≈ 186 m across)')
     ap.add_argument('--views', help='comma list of view ids from work/city.json to render')
     ap.add_argument('--seasons', default='summer-clear-0', help='states base-weather-level, e.g. summer-rain-3')
-    ap.add_argument('--out', default=OUT, help='page to write (default: %(default)s)')
+    ap.add_argument('--out', default=None, help='page to write')
+    ap.add_argument('--classic', action='store_true', help='build the 2D page (Pocket City engine) instead')
+    ap.add_argument('--at', help='3D renders: the moment, e.g. 2026-11-27T18:30 (Taiwan time)')
+    ap.add_argument('--wx', help='3D renders: the weather, clear / drizzle / rain / fog')
     a = ap.parse_args()
+    if not a.classic:
+        out = a.out or OUT
+        build3d(out)
+        if a.views: shots3d(out, a.views, a.at or '2026-11-27T12:00', a.wx or 'clear')
+        if a.check:
+            shots3d(out, 'check:' + a.check + ':' + str(a.zoom), a.at or '2026-11-27T12:00', a.wx or 'clear', out='shots/check3d')
+            shots3d(out, 'check:' + a.check + ':' + str(a.zoom), '2026-11-27T19:30', 'clear', out='shots/check3d-night')
+        return
+    a.out = a.out or OUT_2D
     build('work/city.json', a.out)
     if a.views: render(a.out, a.views, a.seasons)
     if a.check:

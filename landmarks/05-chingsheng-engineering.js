@@ -34,7 +34,7 @@ function chingSheng() {
     solid(toward(avg(JS_MID), ccw(JS_MID), .55), H - F, H - F + 2.4, JS_WHITE, JS_TOP));
   add(ccw(JS_END_L), H, () => block(ccw(JS_END_L), 0, H, endSt).draw());
   if (r) {
-    const rr = ccw(r.ring), circ = (k, z0, z1, col, top) => solid(polygon(dc[0], dc[1], dr + k, 36), z0, z1, col, top);
+    const rr = ccw(r.ring), circ = (k, z0, z1, col, top) => solid(polygon(dc[0], dc[1], dr + .15 + k, 36), z0, z1, col, top);
     add(rr, 4 * F + 1, () => {
     let s = block(rr, 0, 4 * F, { facade: 'office', wall: '#ccb79d', top: '#c2ad94', shop: 'none', floor: F, bay: 2.6, glass: ['#5d5a55'], frame: '#9b8a76' }).draw();
     s += circ(0, 0, 4 * F, '#f1efe9', '#e4e1d9') + circ(.45, 4 * F, 4 * F + .7, '#f6f5f1', '#e9e7e1');   // drum and its cornice

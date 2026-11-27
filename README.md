@@ -8,6 +8,15 @@
 
 **線上瀏覽：** https://hankchou2004.github.io/tamkang-pocket-city/ （每次 `main` 更新後由 GitHub Actions 自動重建）
 
+## 3D 版（three.js）
+
+網頁預設是 three.js 繪製的 3D 版，盡量保留原本 Pocket City 的畫風：平塗色塊分亮、中、暗三階，加上墨線、紙張底色。地標程式不用改，`web3d/kit3d.js` 把原本工具組的零件（`block`、`roofOver`、`loft`、`shape`、`stick`、`ball`…）改成產生立體模型。
+
+- 旋轉、移動、縮放都即時，全校總覽每秒約 56 張。
+- 陰影依淡水當下真實的太陽位置投射；牆面明暗沿用 2D 版的固定光線，看起來和原本一致。
+- 天氣與夜色沿用即時資料；雨、窗燈、路燈光暈、行人與車輛都有。
+- 原本的 2D 版仍可用 `python tools/build.py --classic` 產生（`pocket-city-tamkang-campus-2d.html`）。
+
 ## 檔案結構
 
 | 位置 | 內容 |
@@ -22,7 +31,9 @@
 | `work/scene.json` | 由 OpenStreetMap 轉出的場景（含疏伐樹木等手動調整） |
 | `work/osm.json`、`plot.json` | 原始地圖資料與正方形位置 |
 | `tools/` | 建置腳本與輔助工具 |
-| `vendor/pocket-city/` | 建置需要的 Pocket City 引擎檔案（原封不動，附原授權） |
+| `vendor/pocket-city/` | 建置需要的 Pocket City 引擎檔案（原封不動，附原授權）；3D 版只用到它的頁面版型 |
+| `vendor/three/` | three.js r159（MIT） |
+| `web3d/` | 3D 版：`kit3d.js` 零件轉接層、`main3d.js` 場景、著色、太陽與天氣、操作 |
 | `docs/sources.md` | 每一區的來源清單 |
 | `docs/buildings.md` | 每棟地標的建模狀態，以及最缺資料的建築 |
 
@@ -31,7 +42,9 @@
 建置頁面只需要 Python 3.9 以上，引擎已放在 `vendor/pocket-city/`。算檢查圖另外需要 Node 22 以上與 Google Chrome，Chrome 找不到時，設定 `CHROME` 指向 chrome.exe。
 
 ```
-python tools/build.py                          # 產生 pocket-city-tamkang-campus.html
+python tools/build.py                          # 產生 pocket-city-tamkang-campus.html（3D）
+python tools/build.py --views avenue --at 2026-11-27T18:30 --wx rain   # 3D 截圖（shots/3d/）
+python tools/build.py --classic                # 原本的 2D 版
 python tools/build.py --check 168,-62          # 另外在該點算六個角度、正上方與夜景的檢查圖（shots/check/）
 python tools/build.py --views avenue,library   # 算 city.json 裡指定鏡頭的圖
 ```
