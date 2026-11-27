@@ -64,10 +64,10 @@ def build(city, out):
     gen = os.path.join('build', 'city-live.json')
     json.dump(data, open(os.path.join(ROOT, gen), 'w', encoding='utf-8'), ensure_ascii=False)
     run([sys.executable, os.path.join(SCRIPTS, 'build.py'), '--scene', 'work/scene.json', '--city', gen, '--landmarks', lm, '--out', out])
-    # add the live weather and time-of-day script after the engine's page script
+    # add the live weather/time-of-day script and the layout/controls script after the engine's page script
     page = os.path.join(ROOT, out); html = open(page, encoding='utf-8').read()
     cfg = {k: live[k] for k in ('place', 'months', 'weathers', 'levels', 'wmo', 'fallback', 'note')}
-    js = 'const LIVE_CFG = ' + json.dumps(cfg, ensure_ascii=False) + ';' + chr(10) + open(os.path.join(ROOT, 'web', 'live.js'), encoding='utf-8').read()
+    js = 'const LIVE_CFG = ' + json.dumps(cfg, ensure_ascii=False) + ';' + chr(10) + open(os.path.join(ROOT, 'web', 'live.js'), encoding='utf-8').read() + chr(10) + open(os.path.join(ROOT, 'web', 'ui.js'), encoding='utf-8').read()
     js = js.replace('</script', '<' + chr(92) + '/script')
     # engine patches, applied to the built page so vendor/ stays unchanged (see PATCHES)
     for why, old, new in PATCHES:
