@@ -6,8 +6,9 @@
    concrete tower; solid end blocks with small punched windows, a lower middle bar of deep window bands with planted
    balconies, at the outer end a tall solid pier and a dark glazed slot; in front, a tan block and a drum with a cornice
    and two bands of white lattice; a white balustrade round a low podium and a balustraded canopy over the entrance. OSM parts: tower w235418157, round part w295324709, terrace w461340670.
-   工學大樓: 1070期 — the new 工學大樓 opened in 1993 (OSM: eight levels). 工學館 (OSM: five levels) and 建築館: no photo
-   or description found; drawn plainly (illustrative). */
+   工學大樓: 1070期 — the new 工學大樓 opened in 1993 (OSM: eight levels). 工學館 (OSM: five levels): 淡江大學校園素材庫 photos — tan panels between white pilasters
+   under a deep white cornice; 工學大樓 white tiles and recessed window bands (its mosaic stair tower is not drawn).
+   建築館: a street-level photo the user supplied (2025) — white walls, grey window bays, four storeys. */
 const JS_TOWER = 'w235418157', JS_ROUND = 'w295324709', JS_TERRACE = 'w461340670', ENG = 'w235418104', ENG_MAIN = 'w235418107', ARCH = 'w294126064';
 
 // the tower split along its axis (from the OSM outline, clipped in its own frame): the end block beside the drum, the
@@ -77,5 +78,5 @@ LANDMARKS.push(
   { name: '驚聲紀念大樓', ids: [JS_TOWER, JS_ROUND, JS_TERRACE], build: chingSheng },
   { name: '工學大樓', ids: [ENG_MAIN], build: plainHall(ENG_MAIN, 8, 3.6, { facade: 'office', wall: '#f1f0ec', top: '#d6d4ce', bay: 2.4, glass: ['#55616a', '#5f6b73'], frame: '#f6f5f2' }) },
   { name: '工學館', ids: [ENG], build: engHall },
-  { name: '建築館', ids: [ARCH], build: plainHall(ARCH, 4, 3.8, { facade: 'office', wall: '#e9e5dc', top: '#d3cfc5', bay: 3.4, glass: GLASS, frame: '#7d7b76' }) },
+  { name: '建築館', ids: [ARCH], build: plainHall(ARCH, 4, 3.8, { facade: 'office', wall: '#f2f1ec', top: '#d6d4ce', bay: 3, glass: ['#6a7378', '#737c80'], frame: '#f6f5f2', trim: '#e6e5e0' }) },
 );

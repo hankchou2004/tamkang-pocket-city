@@ -76,10 +76,6 @@
 - Commons (阿道, CC BY-SA 4.0): Sung-tao Hall / Third Sung-tao Hall / Fourth Sung-tao Hall 20250804; Wikidata Q141328234 links the first to 2nd Sung-tao Hall.
 - Commons (丘崈, CC0): 淡江大學文錙藝術中心 (2026) — coloured glass panels at the entrance.
 
-## District 7: 校外寺廟
-- 淡水區公所《宗教禮俗志》p.29 — 中台山普學禪寺: from 2002, 普學精舍 on 中山北路, now on 學府路 near 鄧公國小: https://www.tamsui.ntpc.gov.tw/userfiles/3120400/files/%E5%AE%97%E6%95%99%E7%A6%AE%E4%BF%97%E5%BF%97.pdf
-- 無極順天宮: only OSM (w294321324, religion=taoist). No photo of either temple found on Commons or the web.
-
 ## Revision: 驚聲紀念大樓 (after a user-supplied photo)
 - Photo supplied by the user (white tower, solid end blocks with punched windows, lower middle bar with planted balconies,
   dark glazed slot at the end, drum with cornice and two lattice bands, white balustrades at the podium and entrance canopy).

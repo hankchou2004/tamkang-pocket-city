@@ -8,8 +8,10 @@
    above it reads as a turning motor, granite round it (2025 landscape renewal); 59698 (林貴榮) — designed in 1986. The
    Commons photo "Tamkang University Campus, New Taipei City 2019-01-23" shows tall white curved sheets on a round base.
    鍾靈化學館: 淡江時報 1070期 — six storeys above ground and one below. 會文館: 825期 — finished November 民國59年 (1970).
-   文學館 (OSM: six levels) and 藍白小鎮 (Wikidata label "Sidi Bou Said"): no photo or description found; drawn plainly,
-   藍白小鎮 white with blue trim after its name (illustrative). */
+   淡江大學校園素材庫 photos: 鍾靈 white concrete with a deep slab edge at every floor; 會文館 white with balconies under a
+   low dark hipped roof; 文學館 (OSM: six levels) salmon-tan with white balcony bands.
+   藍白小鎮 (Wikidata label "Sidi Bou Said"): a photo the user supplied — a white single-storey café with brown timber
+   windows and doors, a timber deck and a timber pergola with a translucent roof; the pergola's side is read by eye. */
 const MUSEUM = 'w235418097', LIT_HALL = 'w285904595', CHEM = 'w235418085', HWEIWEN = 'w235418091', SIDI = 'w295946611';
 
 function maritimeMuseum() {
@@ -88,8 +90,17 @@ function hweiWen() {
 function sidiBouSaid() {
   const b = findBuilding(SIDI); if (!b) return null;
   const ring = ccw(b.ring), c = b.obb.c;
-  return obj(ring, 6, () => block(ring, 0, 4.6, { facade: 'stucco', wall: '#f6f4ef', top: '#ece9e1', shop: 'none', floor: 4.6, bay: 2.4, frame: '#3f6ea8', shutters: ['#3f6ea8'], trim: '#ffffff' }).draw() +
-    solid(toward(c, ring, 1.03), 4.6, 5.1, '#f6f4ef', '#ece9e1') + shape(atZ(toward(c, ring, .9), 5.12), '#5b86b8', .4));
+  const { ax, L, W } = b.obb, nx = [-ax[1], ax[0]], pg = [c[0] + nx[0] * (W / 2 + 3), c[1] + nx[1] * (W / 2 + 3)];
+  return obj(toward(c, ring, 1.6), 6, () => {
+    let s = solid(toward(c, ring, 1.35), 0, .18, '#b08a63', '#c29c72');                            // timber deck
+    s += block(ring, .18, 3.8, { facade: 'civic', wall: '#f6f4ef', top: '#ece9e1', shop: 'none', floor: 3.6, bay: 2.6, glass: ['#8a5a3a', '#9b6a45'], frame: '#7a4e2e' }).draw();
+    s += solid(toward(c, ring, 1.06), 3.8, 4.2, '#f6f4ef', '#ece9e1');                                // white eave
+    const P = (u, v) => [pg[0] + ax[0] * u + nx[0] * v, pg[1] + ax[1] * u + nx[1] * v];             // the pergola beside it
+    for (const u of [-L / 2 + .5, 0, L / 2 - .5]) for (const v of [-2.2, 2.2]) { const q = P(u, v); s += stick([q[0], q[1], .18], [q[0], q[1], 3.9], .1, '#8a6748'); }
+    for (const v of [-2.2, 2.2]) { const a = P(-L / 2, v), b2 = P(L / 2, v); s += stick([a[0], a[1], 3.95], [b2[0], b2[1], 3.95], .1, '#8a6748'); }
+    s += shape(atZ([P(-L / 2, -2.6), P(L / 2, -2.6), P(L / 2, 2.6), P(-L / 2, 2.6)], 4.05), 'rgba(232,236,236,.55)', 0);   // translucent roof
+    return s;
+  });
 }
 
 LANDMARKS.push(

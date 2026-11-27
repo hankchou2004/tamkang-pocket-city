@@ -6,8 +6,9 @@
    two-storey glass box with blue, red and yellow-green panels at its foot (the art centre's front, Commons
    "淡江大學文錙藝術中心", 2026). "Third Sung-tao Hall 20250804": a white frame with tan panels round each window, dark
    grey bands at the floor lines, a glazed ground floor, solar canopies on the roof. "Fourth Sung-tao Hall 20250804":
-   light blue walls with white vertical fins. 松濤1館 and 5館: no photo; 1館 is drawn like 3館 (both have the same
-   saw-tooth plan in OSM), 5館 plainly. 4館 and 5館 levels are not mapped: five storeys are assumed (illustrative).
+   light blue walls with white vertical fins. Photos the user supplied (松濤四五館): 4館 and 5館 are both four storeys,
+   bright turquoise with white window surrounds and white fins, and the 文錙 glass front is dark green-grey glass hung
+   with posters. 松濤1館: no photo; drawn like 3館 (both have the same saw-tooth plan in OSM).
    教育館 (OSM 教育大樓, ref ED): 848期 — the old 自強館 women's hall rebuilt for the College of Education by alumnus
    林洲民, keeping its boxy form; a translucent glass louvre skin over the walls and a green roof garden with a timber deck
    on the sixth floor; 854期 — opened with a ceremony. Photos in 淡江大學校園素材庫 (教育館): the skin is vertical glass
@@ -40,7 +41,7 @@ function songtao2() {
   const A = [171.9, -176.0], B = [187.0, -187.7], n = [.613, .79], D = 4;   // notch edge from OSM, box depth (interpreted)
   const hall = { svg: () => block(ring, 0, h, { facade: 'office', wall: ST_WHITE, top: '#dad7cf', shop: 'none', floor: F, bay: 3.2, glass: ['#4f5a5e', '#58646a'], frame: '#d9d6ce', trim: '#f6f5f1' }).draw() +
       solarArray([164, -186], [.613, .79], 12, 9, h) + solarArray([136, -192], [-.7316, -.6817], 12, 7, h) };
-  const PANELS = ['#3f5d8c', '#47525a', '#a5a64a', '#7c3236', '#3f5d8c', '#a5a64a'];
+  const PANELS = ['#4f615c', '#56685f', '#4a5a57', '#5a6c64', '#4f615c', '#56685f'];   // dark green-grey glass (photos 2022-2026)
   const box = { svg: () => {
     let s = '';
     for (let k = 0; k < PANELS.length; k++) {
@@ -58,13 +59,13 @@ function songtao2() {
 // 松濤4館: light blue walls with white vertical fins on both long faces
 function songtao4() {
   const b = findBuilding(ST4); if (!b) return null;
-  const ring = ccw(b.ring), { c, ax, L, W } = b.obb, F = 3.2, h = 5 * F, f = frame(c, ax, L, W);
+  const ring = ccw(b.ring), { c, ax, L, W } = b.obb, F = 3.2, h = 4 * F, f = frame(c, ax, L, W);
   const fins = [];
   for (const side of [-1, 1]) for (let sx = -L / 2 + 1.5; sx <= L / 2 - 1.4; sx += 3) {
     const q = f.P(sx, side * (W / 2 + .35)); fins.push({ side, fp: ccw(frame(q, ax, .3, .7).ring) });
   }
   return obj(ring, h + 1, () => {
-    const body = block(ring, 0, h, { facade: 'office', wall: '#8cc6d6', top: '#d9dcd8', shop: 'none', floor: F, bay: 3, glass: ['#5f7178', '#6a7c82'], frame: '#f2f2ee', trim: '#f4f4f0' }).draw();
+    const body = block(ring, 0, h, { facade: 'stucco', wall: '#45b6cb', top: '#d9dcd8', shop: 'none', floor: F, bay: 3, glass: ['#5f7178', '#6a7c82'], frame: '#f4f4f0', trim: '#f4f4f0', shutters: ['#f4f4f0'] }).draw();
     let back = '', front = '';
     for (const fn of fins) { const sv = solid(fn.fp, 0, h + .3, '#f4f3ef', '#ecebe6'); if (vis([f.nx[0] * fn.side, f.nx[1] * fn.side, 0])) front += sv; else back += sv; }
     return back + body + front;
@@ -100,6 +101,6 @@ LANDMARKS.push(
   { name: '松濤2館 · 文錙藝術中心', ids: [ST2], build: songtao2 },
   { name: '松濤3館', ids: [ST3], build: sawtoothHall(ST3, 6, [-24, -9, 7, 21]) },
   { name: '松濤4館', ids: [ST4], build: songtao4 },
-  { name: '松濤5館', ids: [ST5], build: plainHall(ST5, 5, 3.2, { facade: 'apartment', wall: '#efebe2', top: '#d8d4ca', balcony: 'some', frame: '#8e8a84' }) },
+  { name: '松濤5館', ids: [ST5], build: plainHall(ST5, 4, 3.2, { facade: 'stucco', wall: '#45b6cb', top: '#d9dcd8', bay: 3, glass: ['#5f7178', '#6a7c82'], frame: '#f4f4f0', trim: '#f4f4f0', shutters: ['#f4f4f0'] }) },
   { name: '教育館', ids: [EDU], build: education },
 );
