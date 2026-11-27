@@ -311,7 +311,8 @@ const onCampus = b => typeof CAMPUS === 'undefined' || inPoly(b.obb.c, CAMPUS);
 const PALE = '#f2ede2';
 function genericBuilding(b) {
   let st = styleFor(b), body = pickOf(st.wall, b.id);
-  if (!onCampus(b)) {   // outside the campus: paler walls, roofs and glass, so the campus buildings stand out
+  if (onCampus(b) && CITY.campus && CITY.campus.wall) { st = { ...st, wall: CITY.campus.wall }; body = pickOf(st.wall, b.id); }   // the campus's own walls
+  else if (!onCampus(b)) {   // outside the campus: paler walls, roofs and glass, so the campus buildings stand out
     body = mix(body, PALE, .55);
     st = { ...st, wall: body, flatRoof: mix(pickOf(st.flatRoof || st.roofColour, b.id), PALE, .55), roofColour: mix(pickOf(st.roofColour, b.id), PALE, .45),
       glass: (st.glass || ['#a9bcc1']).map(g => mix(g, body, .6)), frame: mix(st.frame || '#7d7f80', body, .6), trim: st.trim ? mix(st.trim, body, .6) : st.trim };
@@ -562,12 +563,18 @@ function build() {
   geoReset();
   const replaced = new Set(); for (const lm of LANDMARKS) for (const id of lm.ids || []) replaced.add(id);
   for (const lm of LANDMARKS) {
-    try { const r = lm.build(), parts = [].concat(r || []).filter(o => o && typeof o.draw === 'function'); for (const o of parts) o.draw(); collectLabel(lm.name, parts); collectPick(lm.name, parts); }
+    // its colour on the campus map: grey roofs, windows and glass
+    const col = campusColourOf(lm.name, (lm.ids || [])[0]), from = GEO.flat.p.length, fromGlass = GEO.glass.p.length; FACADE_TINT = col;
+    try { const r = lm.build(), parts = [].concat(r || []).filter(o => o && typeof o.draw === 'function'); for (const o of parts) o.draw(); collectLabel(lm.name, parts); collectPick(lm.name, parts);
+      if (col) { recolourRoofs(null, col, from); tintGlass(col, fromGlass); } }
     catch (e) { console.warn('landmark', lm.name, e); }
+    FACADE_TINT = null;
   }
-  for (const b of SCENE.buildings) if (!replaced.has(b.id) && !replaced.has(b.of)) { try { genericBuilding(b); PICKS.push({ name: b.n || '', fps: [b.ring], h: b.h ?? (b.lv ? b.lv * LEVEL : 10) }); } catch (e) { console.warn('building', b.id, e); } }
+  for (const b of SCENE.buildings) if (!replaced.has(b.id) && !replaced.has(b.of)) { try { const from = GEO.flat.p.length, col = onCampus(b) && campusColourOf(b.n, b.id); FACADE_TINT = col || null; genericBuilding(b); FACADE_TINT = null;
+    if (col) recolourRoofs(null, col, from); PICKS.push({ name: b.n || '', fps: [b.ring], h: b.h ?? (b.lv ? b.lv * LEVEL : 10) }); } catch (e) { FACADE_TINT = null; console.warn('building', b.id, e); } }
   buildFurniture();
   if (typeof LANTERN_AT === 'function') for (const [x, y] of LANTERN_AT()) lightPool(x, y, 3.6, '#ffe7a8', .5);
+  if (campusRoofFallback() && typeof CAMPUS !== 'undefined') recolourRoofs((x, y) => inPoly([x, y], CAMPUS), campusRoofFallback());
   drawAtlas();
   for (const m of [meshFromGEO('flat'), meshFromGEO('wall'), inkFromGEO(), glassFromGEO()]) if (m) { scene.add(m); if (m.isMesh && !m.material.transparent) PICKABLE.push(m); }
   buildGlows();

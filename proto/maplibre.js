@@ -44,7 +44,8 @@ function restyle(map) {
       else if (sl === 'transportation' && l.type === 'line') set(id, 'line-color', /casing|outline/.test(id) ? ROAD_EDGE : /rail/.test(id) ? '#b9aea3' : ROAD);
       else if (sl === 'building' && l.type === 'fill') set(id, 'fill-color', BLOCK);
       else if (/shield/.test(id)) map.setLayoutProperty(id, 'visibility', 'none');   // route number plates: white boxes at night, of little use on a campus map
-      else if (l.type === 'symbol') { map.setPaintProperty(id, 'text-color', INK); map.setPaintProperty(id, 'text-halo-color', '#fffcf2'); }
+      // labels and icons are what people look for: dark text with a thick light outline, so they stand clear of the buildings
+      else if (l.type === 'symbol') { map.setPaintProperty(id, 'text-color', INK); map.setPaintProperty(id, 'text-halo-color', '#fffcf2'); map.setPaintProperty(id, 'text-halo-width', 1.8); map.setPaintProperty(id, 'text-halo-blur', .3); }
     } catch (_) {}
   }
 }
@@ -103,7 +104,8 @@ const onCampus = b => inPoly(b.obb.c, CAMPUS), PALE = '#f2ede2';
 // returns the wall height, for flying to the building
 function genericBuilding(b) {
   let st = styleFor(b), body = pickOf(st.wall, b.id);
-  if (!onCampus(b)) {   // outside the campus: paler walls, roofs and glass, so the campus buildings stand out
+  if (onCampus(b) && CITY.campus && CITY.campus.wall) { st = { ...st, wall: CITY.campus.wall }; body = pickOf(st.wall, b.id); }   // the campus's own walls
+  else if (!onCampus(b)) {   // outside the campus: paler walls, roofs and glass, so the campus buildings stand out
     body = mix(body, PALE, .55);
     st = { ...st, wall: body, flatRoof: mix(pickOf(st.flatRoof || st.roofColour, b.id), PALE, .55), roofColour: mix(pickOf(st.roofColour, b.id), PALE, .45),
       glass: (st.glass || ['#a9bcc1']).map(g => mix(g, body, .6)), frame: mix(st.frame || '#7d7f80', body, .6), trim: st.trim ? mix(st.trim, body, .6) : st.trim };
@@ -374,21 +376,27 @@ function buildPlot() {
   for (const lm of LANDMARKS) {
     if (want !== 'all' && !lm.name.includes(want)) continue;
     try {
-      const r = lm.build(), parts = [].concat(r || []).filter(o => o && typeof o.draw === 'function'); for (const o of parts) o.draw();
+      // its colour on the campus map: grey roofs, windows and glass
+      const col = campusColourOf(lm.name, (lm.ids || [])[0]), from = GEO.flat.p.length, fromGlass = GEO.glass.p.length; FACADE_TINT = col;
+      const r = lm.build(), parts = [].concat(r || []).filter(o => o && typeof o.draw === 'function'); for (const o of parts) o.draw(); FACADE_TINT = null;
+      if (col) { recolourRoofs(null, col, from); tintGlass(col, fromGlass); }
       for (const id of lm.ids || []) replaced.add(id); LM_COUNT++;
       const key = lm.name.replace(/ w\d+$/, '').replace(/ (beds|lanterns)$/, '').replace(/^操場燈柱與圍網|^籃球架/, '操場與球場');
       const g = groups.get(key) || { fps: [], h: 0 }; groups.set(key, g);
       for (const p of parts) if (p.fp && p.fp.length > 2) { g.fps.push(p.fp); g.h = Math.max(g.h, p.h || p.z1 || 0); }
-    } catch (e) { console.warn('landmark', lm.name, e); }
+    } catch (e) { console.warn('landmark', lm.name, e); FACADE_TINT = null; }
   }
   PICKS.push(...groups.values());
   for (const b of SCENE.buildings) {
     const isLm = replaced.has(b.id) || replaced.has(b.of);
     if (b.cut && !isLm) continue;      // cut at the plot's edge: the tiles' whole copy is drawn instead
     for (const id of [b.id, b.of]) { const n = osmNum(id); if (n) plotIds.add(n); }
-    if (!isLm) try { const h = genericBuilding(b); PICKS.push({ fps: [b.ring], h }); } catch (e) { console.warn('building', b.id, e); }
+    if (!isLm) try { const from = GEO.flat.p.length, col = onCampus(b) && campusColourOf(b.n, b.id); FACADE_TINT = col || null;
+      const h = genericBuilding(b); FACADE_TINT = null; PICKS.push({ fps: [b.ring], h }); if (col) recolourRoofs(null, col, from); }
+    catch (e) { FACADE_TINT = null; console.warn('building', b.id, e); }
   }
   buildFurniture();
+  if (campusRoofFallback()) recolourRoofs((x, y) => inPoly([x, y], CAMPUS), campusRoofFallback());
   flush();
   buildGlows(); buildMovers(); buildRain();
 }
@@ -478,7 +486,28 @@ function applyState() {
   if (temp != null && !fixedWx) parts.push(`${Math.round(temp)}°C`);
   $('wx').textContent = '淡水 ' + parts.join(' · ') + (failed && !fixedWx ? '（典型天氣）' : '');
   document.body.classList.toggle('night', U.uNight.value > .45);
+  paintSky(alt, wx);
   map.triggerRepaint();
+}
+/* the sky above the horizon (seen when the map is tilted far): its colours follow the sun's height and the weather.
+   Keys by the sun's altitude in degrees: [sky (top), horizon, fog (where the far ground meets the horizon)] */
+const SKY_KEYS = [
+  [12, ['#8fc0e6', '#e3edf0', '#eef0ea']],    // day
+  [2, ['#93b4dc', '#f1dcc0', '#efe3d2']],     // late afternoon
+  [-1, ['#7d93c8', '#f2b48c', '#e8c7b0']],    // sunset: an orange horizon
+  [-6, ['#46548c', '#b88a98', '#a397b2']],    // dusk
+  [-12, ['#1c2348', '#3c3f6e', '#7f7daa']],   // night (the fog meets the night ground)
+];
+const WX_SKY = { drizzle: ['#b4bcc4', '#d6d8d6', .45], rain: ['#a3acb6', '#c9cdce', .7], fog: ['#dcd8cd', '#e7e2d6', .8] };   // grey toward these
+function paintSky(alt, wx) {
+  if (!styleReady || !map.setSky) return;
+  let i = SKY_KEYS.findIndex(k => alt >= k[0]); let c;
+  if (i === 0) c = SKY_KEYS[0][1]; else if (i < 0) c = SKY_KEYS[SKY_KEYS.length - 1][1];
+  else { const [a0, c0] = SKY_KEYS[i - 1], [a1, c1] = SKY_KEYS[i], t = (alt - a1) / (a0 - a1); c = c1.map((x, j) => mix(x, c0[j], t)); }
+  const w = WX_SKY[wx];
+  if (w) { const n = U.uNight.value; c = [mix(c[0], nightHex(w[0], n), w[2]), mix(c[1], nightHex(w[1], n), w[2]), mix(c[2], nightHex(w[1], n), w[2])]; }
+  try { map.setSky({ 'sky-color': c[0], 'horizon-color': c[1], 'fog-color': c[2], 'sky-horizon-blend': .55, 'horizon-fog-blend': .6,
+    'fog-ground-blend': wx === 'fog' ? .3 : .75, 'atmosphere-blend': 0 }); } catch (e) { console.warn('sky', e); }
 }
 async function fetchWeather() {
   if (!fixedWx) try {
@@ -505,7 +534,7 @@ addEventListener('message', e => {
 const LOOK_DEFAULT = {
   labels: { place: true, road: true, poi: true, transit: true, water: true },   // place names, road names, shops and places, transit, water names
   lang: 'zh',              // 'both' (English and Chinese), 'zh', 'en'
-  textScale: 1,            // text size, × the style's
+  textScale: 1.1,          // text size, × the style's (a little larger, so the labels lead)
   roadWidth: 1,            // road and path width, × the style's
   roadStyle: 'asphalt',    // 'paper' (white roads, tan edges), 'asphalt' (grey, white centre lines), 'plain' (no edges)
   paths: 'solid',          // footpaths: 'dashed', 'solid', 'hidden'
@@ -581,7 +610,8 @@ const ISO = { yaw: -35, pitch: 40, ...((CITY.cameras || {}).iso || {}) };
 const look = (() => { const t = ISO.yaw * Math.PI / 180, dx = -Math.cos(t), dy = -Math.sin(t);
   return Math.atan2(dx * Math.cos(ROT) - dy * Math.sin(ROT), dx * Math.sin(ROT) + dy * Math.cos(ROT)) * 180 / Math.PI; })();
 const HOME = { center: toLngLat([ISO.x || 0, ISO.y || 0]), zoom: 15.9, pitch: 90 - 40, bearing: 0 };   // north up (the 3D page's own turn would be `look`)
-const map = new maplibregl.Map({ container: 'map', style: 'https://tiles.openfreemap.org/styles/liberty', ...HOME, maxPitch: 70, antialias: true, attributionControl: { compact: true } });
+const map = new maplibregl.Map({ container: 'map', style: 'https://tiles.openfreemap.org/styles/liberty', ...HOME, maxPitch: 80, antialias: true,   // tilt past ~72° and the sky shows above the horizon
+  attributionControl: { compact: true } });
 window.__map = map;
 window.__world = { WORLD, STATE, U, get triangles() { return triangles; }, get queue() { return queue.length; }, get tileBuildings() { return tileBuildings; }, get landmarks() { return LM_COUNT; }, pickAt: (x, y) => pickAt(x, y), ray: () => ray, get camera() { return camera; }, SOLIDS, PICKS };
 // the style asks for a few icons its sprite does not have: an empty image each instead of a console warning

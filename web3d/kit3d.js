@@ -51,6 +51,41 @@ const pickOf = (v, key) => Array.isArray(v) ? v[hashStr(String(key)) % v.length]
 const GEO = { flat: { p: [], n: [], c: [], lit: [] }, wall: { p: [], n: [], uv: [], tile: [], c: [] }, glass: { p: [], c: [] }, ink: { p: [], c: [] } };
 function geoReset() { for (const k in GEO) for (const a in GEO[k]) GEO[k][a] = []; }
 
+// grey flat roofs take one colour: level faces above 2.5 m whose colour is a light grey (little colour, neither dark nor
+// white), not light sources. Tiled, green, glass and dark roofs keep theirs. Only the triangles from `from` on (an index
+// into GEO.flat.p, taken before a building was drawn), and only where inside(x, y) holds if it is given.
+function recolourRoofs(inside, colour, from = 0) {
+  const G = GEO.flat, rgb = hex2rgb(colour);
+  for (let t = from - from % 9; t < G.p.length; t += 9) {
+    const v = t / 3; if (G.n[t + 2] < .9 || G.lit[v]) continue;
+    const z = (G.p[t + 2] + G.p[t + 5] + G.p[t + 8]) / 3; if (z < 2.5) continue;
+    const r = G.c[t], g = G.c[t + 1], b = G.c[t + 2], hi = Math.max(r, g, b), lo = Math.min(r, g, b);
+    if (hi - lo > .09 || hi < .55 || lo > .95) continue;
+    if (inside && !inside((G.p[t] + G.p[t + 3] + G.p[t + 6]) / 3, (G.p[t + 1] + G.p[t + 4] + G.p[t + 7]) / 3)) continue;
+    for (let k = 0; k < 9; k += 3) { G.c[t + k] = rgb[0]; G.c[t + k + 1] = rgb[1]; G.c[t + k + 2] = rgb[2]; }
+  }
+}
+// a building's colour on the official campus map (CITY.campus.map), by its landmark or OpenStreetMap name, or its id
+// see-through glass (curtain walls) drawn from index `from` of GEO.glass.p on takes a colour, keeping its own transparency
+function tintGlass(colour, from = 0, k = campusWindowTint()) {
+  const G = GEO.glass, c = hex2rgb(colour); if (!k) return;
+  for (let v = from / 3; v < G.p.length / 3; v++) for (let j = 0; j < 3; j++) G.c[v * 4 + j] += (c[j] - G.c[v * 4 + j]) * k;
+}
+// the campus colours' mode (CITY.campus.mode, or ?campus=): 'soft' (the map's colours softened), 'vivid' (as on the map),
+// 'single' (one colour for every campus roof). Bright roofs are the largest coloured areas on the map and would draw the eye
+// away from the labels and icons, so the page itself uses 'soft'; 'vivid' is for checking which building is which.
+const CAMPUS_CFG = (typeof CITY !== 'undefined' && CITY.campus) || {};
+const CAMPUS_MODE = (() => { try { const m = new URLSearchParams(location.search).get('campus'); if (['vivid', 'soft', 'single'].includes(m)) return m; } catch (_) {}
+  return CAMPUS_CFG.mode || 'soft'; })();
+const campusWindowTint = () => CAMPUS_MODE === 'vivid' ? .6 : CAMPUS_MODE === 'soft' ? (CAMPUS_CFG.windowTint ?? .3) : 0;
+// the colour for the grey roofs the map leaves white (or all of them, in 'single')
+const campusRoofFallback = () => CAMPUS_MODE === 'single' ? (CAMPUS_CFG.single || CAMPUS_CFG.roof) : CAMPUS_CFG.roof;
+function campusColourOf(name, id) {
+  let col = null;
+  for (const e of CAMPUS_CFG.map || []) if ((e.ids || []).includes(id) || (e.match && name && new RegExp(e.match).test(name))) { col = e.colour; break; }
+  if (!col) return null;
+  return CAMPUS_MODE === 'single' ? (CAMPUS_CFG.single || col) : CAMPUS_MODE === 'soft' ? mix(col, '#f6f3e9', CAMPUS_CFG.soften ?? .48) : col;
+}
 function pushTri(a, b, c, colour, nrm) {
   const rgba = hex2rgb(colour);
   if (rgba[3] < 0.99) { const G = GEO.glass; for (const p of [a, b, c]) { G.p.push(p[0], p[1], p[2] || 0); G.c.push(...rgba); } return; }
@@ -142,10 +177,15 @@ function makeStyle(o = {}) { return { facade: 'plain', wall: ['#eee2ca'], roofCo
 
 // façade atlas: one tile per (façade, wall, glass, frame, trim, balcony); a tile is one bay wide and one storey tall
 const ATLAS = { size: 2048, tile: 64, list: [], index: new Map() };
+// FACADE_TINT: while a campus building is drawn, its colour on the campus map (see campusColourOf): its windows take it
+let FACADE_TINT = null;
 function facadeTile(st, wallCol) {
-  const glass = pickOf(st.glass || ['#a9bcc1'], wallCol), key = [st.facade, wallCol, glass, st.frame || '', st.trim || '', st.balcony || '', st.shutters ? pickOf(st.shutters, 1) : ''].join('|');
+  let glass = pickOf(st.glass || ['#a9bcc1'], wallCol), frame = st.frame || mix(wallCol, '#51465a', .45);
+  const k = campusWindowTint();
+  if (FACADE_TINT && k) { glass = mix(glass, FACADE_TINT, k); frame = mix(frame, FACADE_TINT, k * .4); }
+  const key = [st.facade, wallCol, glass, frame, st.trim || '', st.balcony || '', st.shutters ? pickOf(st.shutters, 1) : ''].join('|');
   if (ATLAS.index.has(key)) return ATLAS.index.get(key);
-  const i = ATLAS.list.length; ATLAS.list.push({ key, facade: st.facade, wall: wallCol, glass, frame: st.frame || mix(wallCol, '#51465a', .45), trim: st.trim || null, balcony: st.balcony || null, shutters: st.shutters ? pickOf(st.shutters, 1) : null });
+  const i = ATLAS.list.length; ATLAS.list.push({ key, facade: st.facade, wall: wallCol, glass, frame, trim: st.trim || null, balcony: st.balcony || null, shutters: st.shutters ? pickOf(st.shutters, 1) : null });
   ATLAS.index.set(key, i); return i;
 }
 // the walls of a ring from z0 to z1, painted with the style's façade
