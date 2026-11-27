@@ -85,3 +85,8 @@
   dark glazed slot at the end, drum with cornice and two lattice bands, white balustrades at the podium and entrance canopy).
 - Re-checked against Commons "Ching-sheng Memorial Hall 01 20250804": pale grey-white concrete, tall solid end pier with
   the building's name, dark glazed slot between pier and end block.
+
+## 淡江大學校園素材庫（照片重畫，2026-11-27）
+- https://photo.tku.edu.tw/ — 照片智慧財產權為淡江大學所有，限校內活動使用、不得商業使用。只作為繪製參考，照片本身沒有放進本專案。
+- 依各建築分類的照片重畫：紹謨紀念體育館（014006）、麗澤國際學舍（014007）、鍾靈化學館（014003）、會文館（014009）、
+  文學館（014008）、工學館（014012）、工學大樓（014013）、教育館（014004）。

@@ -62,6 +62,29 @@ function scrollPlaza() {
   });
 }
 
+// 鍾靈化學館 (素材庫 photos): white concrete, a deep slab edge at every floor over recessed dark windows, upper floors set back
+function chungLing() {
+  const b = findBuilding(CHEM); if (!b) return null;
+  const ring = ccw(b.ring), c = b.obb.c, F = 3.6;
+  return obj(ring, 6 * F + 1, () => {
+    let s = '';
+    for (let k = 0; k < 6; k++) {
+      const r = toward(c, ring, k < 4 ? 1 : .86 - (k - 4) * .06);
+      s += block(r, k * F, (k + 1) * F, { facade: 'office', wall: '#eeede8', top: '#dcdbd5', shop: 'none', floor: F, bay: 2.8, glass: ['#55616a', '#5d6a72'], frame: '#e4e3de' }).draw();
+      s += solid(toward(c, r, 1.035), (k + 1) * F - .45, (k + 1) * F, '#f3f2ee', '#e2e1dc');
+    }
+    return s;
+  });
+}
+
+// 會文館 (素材庫 photos): white concrete with balconies under a low dark-grey hipped roof with deep eaves
+function hweiWen() {
+  const b = findBuilding(HWEIWEN); if (!b) return null;
+  const ring = ccw(b.ring), F = 3.4, h = 4 * F;
+  return obj(ring, h + 5, () => block(ring, 0, h, { facade: 'apartment', wall: '#eae9e3', top: '#d4cec2', shop: 'none', floor: F, bay: 3.2, glass: GLASS, frame: '#8a857c', balcony: 'some' }).draw() +
+    roofOver(b.obb, h, { roof: 'hipped', pitch: 16, eaves: 1.3, roofColour: '#5f6468', roofTex: 'kawara' })());
+}
+
 function sidiBouSaid() {
   const b = findBuilding(SIDI); if (!b) return null;
   const ring = ccw(b.ring), c = b.obb.c;
@@ -72,8 +95,8 @@ function sidiBouSaid() {
 LANDMARKS.push(
   { name: '海事博物館', ids: [MUSEUM], build: maritimeMuseum },
   { name: '書卷廣場', ids: [], build: scrollPlaza },
-  { name: '文學館', ids: [LIT_HALL], build: plainHall(LIT_HALL, 6, 3.6, { facade: 'office', wall: '#ece7dc', top: '#d6d1c6', bay: 3.2, glass: GLASS, frame: '#8c8a84' }) },
-  { name: '鍾靈化學館', ids: [CHEM], build: plainHall(CHEM, 6, 3.6, { facade: 'office', wall: '#e7e3da', top: '#d3cec4', bay: 3, glass: GLASS, frame: '#7f7d78' }) },
-  { name: '會文館', ids: [HWEIWEN], build: plainHall(HWEIWEN, 4, 3.4, { facade: 'office', wall: '#e9e2d4', top: '#d4cec2', bay: 3.2, glass: GLASS, frame: '#8a857c' }) },
+  { name: '文學館', ids: [LIT_HALL], build: plainHall(LIT_HALL, 6, 3.6, { facade: 'apartment', wall: '#d8b296', top: '#d6d1c6', bay: 3.2, glass: GLASS, frame: '#f4f2ec', trim: '#f4f2ec', balcony: 'some' }) },
+  { name: '鍾靈化學館', ids: [CHEM], build: chungLing },
+  { name: '會文館', ids: [HWEIWEN], build: hweiWen },
   { name: '藍白小鎮', ids: [SIDI], build: sidiBouSaid },
 );

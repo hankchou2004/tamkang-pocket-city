@@ -10,8 +10,9 @@
    saw-tooth plan in OSM), 5館 plainly. 4館 and 5館 levels are not mapped: five storeys are assumed (illustrative).
    教育館 (OSM 教育大樓, ref ED): 848期 — the old 自強館 women's hall rebuilt for the College of Education by alumnus
    林洲民, keeping its boxy form; a translucent glass louvre skin over the walls and a green roof garden with a timber deck
-   on the sixth floor; 854期 — opened with a ceremony. No photo: the skin, the garden layout and colours are read from
-   the text (illustrative). */
+   on the sixth floor; 854期 — opened with a ceremony. Photos in 淡江大學校園素材庫 (教育館): the skin is vertical glass
+   fins in many greens and yellow-greens over the upper floors, a white band at the foot with large EDUCATION letters
+   (not drawn); the fin spacing and the roof garden layout are illustrative. */
 const ST1 = 'w235418156', ST2 = 'w454159667', ST3 = 'w454159657', ST4 = 'w235418161', ST5 = 'w235418162', EDU = 'w235418109';
 const ST_WHITE = '#f0eee8', ST_TAN = '#d6c29c';
 
@@ -75,8 +76,17 @@ function education() {
   const b = findBuilding(EDU); if (!b) return null;
   const ring = ccw(b.ring), { c, ax, W } = b.obb, F = 3.6, h = 5 * F;
   return obj(ring, h + 2, () => {
-    let s = block(ring, 0, h, { facade: 'office', wall: '#e4e6e1', top: '#d6d8d2', shop: 'none', floor: F, bay: 2.8, glass: ['#6f8187', '#7a8b90'], frame: '#c9ccc7' }).draw();
-    s += loft(atZ(toward(c, ring, 1.015), F), atZ(toward(c, ring, 1.015), h + .6), () => 'rgba(226,238,236,.45)');   // louvre skin
+    let s = block(ring, 0, h, { facade: 'office', wall: '#f1f0ea', top: '#d6d8d2', shop: 'none', floor: F, bay: 2.8, glass: ['#5d6d62', '#677868'], frame: '#e9ebe4' }).draw();
+    // the skin: vertical glass fins in several greens from the first floor up (素材庫 photos); the white band at the foot stays bare
+    const FINS = ['#7fb24a', '#a6c84f', '#5f9a44', '#c5d86a', '#8fbf5a'];
+    for (let i = 0; i < ring.length; i++) {
+      const p = ring[i], q = ring[(i + 1) % ring.length], len = Math.hypot(q[0] - p[0], q[1] - p[1]); if (len < 1) continue;
+      const u = [(q[0] - p[0]) / len, (q[1] - p[1]) / len], n = [u[1], -u[0]];
+      for (let t = .6, k = 0; t < len - .3; t += 1.1, k++) {
+        const x = p[0] + u[0] * t + n[0] * .45, y = p[1] + u[1] * t + n[1] * .45, col = FINS[(i * 7 + k * 3) % FINS.length];
+        s += solid(ccw(frame([x, y], u, .7, .12).ring), F, h + .4, col, col);
+      }
+    }
     s += shape(atZ(toward(c, ring, .93), h + .05), '#a8c58c', .4);                                            // roof garden
     s += solid(ccw(frame(c, ax, 16, W * .35).ring), h, h + .25, '#b58a5c', '#c89c6c');                       // timber deck
     for (const k of [-24, -16, 12, 20, 26]) { const q = [c[0] + ax[0] * k, c[1] + ax[1] * k]; s += ball([q[0], q[1], h + .9], 1, soft('#7aa266'), .3); }

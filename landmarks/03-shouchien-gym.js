@@ -18,12 +18,14 @@ function gymnasium() {
   const b = findBuilding(GYM), band = findBuilding(GYM_BAND); if (!b) return null;
   const ring = ccw(b.ring), F = 4.2, top = 8 * F;
   return obj(ring, top + 1, () => {
-    let main = block(ring, 0, F, { facade: 'glass', wall: '#e9e8e3', top: SILVER_TOP, shop: 'none', floor: F, glass: TEAL, frame: '#f2f1ec' }).draw();
-    main += block(ring, F, top, { facade: 'glass', wall: SILVER, top: SILVER_TOP, shop: 'none', floor: F, glass: TEAL, frame: '#dfe1df' }).draw();
+    // 素材庫 photos: a grey concrete base, white tiled walls and blue-tinted glass curtain bays above
+    const BLUE = ['#8fb0cf', '#9dbbd8', '#86a6c6'];
+    let main = block(ring, 0, F, { facade: 'plain', wall: '#c9c8c2', top: SILVER_TOP, shop: 'none', floor: F }).draw();
+    main += block(ring, F, top, { facade: 'glass', wall: '#ecece7', top: SILVER_TOP, shop: 'none', floor: F, glass: BLUE, frame: '#f4f4f0' }).draw();
     main += shape(atZ(toward(b.obb.c, ring, .97), top + .05), '#d7d9d6', .4);   // parapet line
     if (!band) return main;
     // the band wraps the main block's south-west and south-east sides, lower than it: in front only when seen from that side
-    const bandSvg = block(ccw(band.ring), 2 * F, 6 * F, { facade: 'glass', wall: SILVER, top: '#c8cbca', shop: 'none', floor: F, glass: TEAL, frame: '#f2f1ec' }).draw();
+    const bandSvg = block(ccw(band.ring), 2 * F, 6 * F, { facade: 'office', wall: '#ecece7', top: '#c8cbca', shop: 'none', floor: F, bay: 2.6, glass: BLUE, frame: '#f4f4f0' }).draw();
     const d = [band.obb.c[0] - b.obb.c[0], band.obb.c[1] - b.obb.c[1], 0];
     return vis(d) ? main + bandSvg : bandSvg + main;
   });
@@ -54,7 +56,8 @@ function shouChien() {
 function lizeHouse() {
   const b = findBuilding(LIZE); if (!b) return null;
   const ring = ccw(b.ring);
-  return obj(ring, 13.6, () => block(ring, 0, 13.2, { facade: 'apartment', wall: '#ece6da', top: '#d6d1c6', shop: 'none', floor: 3.3, balcony: 'some', frame: '#8e8a84' }).draw());
+  // 素材庫 photos: beige stone tiles, rounded balcony planters, dark window frames
+  return obj(ring, 13.6, () => block(ring, 0, 13.2, { facade: 'apartment', wall: '#d9c7a5', top: '#cdbf9f', shop: 'none', floor: 3.3, balcony: 'some', frame: '#5e5148' }).draw());
 }
 
 // a guardhouse: a small booth under a thin white canopy on slim columns

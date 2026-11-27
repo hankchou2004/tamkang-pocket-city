@@ -64,9 +64,18 @@ function chingSheng() {
   return obj(ccw(t.ring), H + 3, () => planOrder(parts.map(q => ({ fp: q.fp, z1: q.z1, svg: q.mk() }))));
 }
 
+
+// 工學館 (素材庫 photos): tan panels between white pilasters, white window frames, a deep white concrete cornice
+function engHall() {
+  const b = findBuilding(ENG); if (!b) return null;
+  const ring = ccw(b.ring), F = 3.6, h = 5 * F;
+  return obj(ring, h + 1.2, () => block(ring, 0, h, { facade: 'office', wall: '#c9b995', top: '#d1ccc2', shop: 'none', floor: F, bay: 3.2, glass: ['#5d676c'], frame: '#f2f1ec', trim: '#f2f1ec' }).draw() +
+    solid(toward(b.obb.c, ring, 1.05), h, h + .9, '#f3f2ee', '#e4e3de'));
+}
+
 LANDMARKS.push(
   { name: '驚聲紀念大樓', ids: [JS_TOWER, JS_ROUND, JS_TERRACE], build: chingSheng },
-  { name: '工學大樓', ids: [ENG_MAIN], build: plainHall(ENG_MAIN, 8, 3.6, { facade: 'office', wall: '#e3dfd6', top: '#cfcac0', bay: 3, glass: GLASS, frame: '#86847f' }) },
-  { name: '工學館', ids: [ENG], build: plainHall(ENG, 5, 3.6, { facade: 'office', wall: '#e6e1d6', top: '#d1ccc2', bay: 3.2, glass: GLASS, frame: '#86847f' }) },
+  { name: '工學大樓', ids: [ENG_MAIN], build: plainHall(ENG_MAIN, 8, 3.6, { facade: 'office', wall: '#f1f0ec', top: '#d6d4ce', bay: 2.4, glass: ['#55616a', '#5f6b73'], frame: '#f6f5f2' }) },
+  { name: '工學館', ids: [ENG], build: engHall },
   { name: '建築館', ids: [ARCH], build: plainHall(ARCH, 4, 3.8, { facade: 'office', wall: '#e9e5dc', top: '#d3cfc5', bay: 3.4, glass: GLASS, frame: '#7d7b76' }) },
 );
