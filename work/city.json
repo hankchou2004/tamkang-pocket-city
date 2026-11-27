@@ -1,0 +1,1217 @@
+{
+ "name": "淡江大學",
+ "title": "Tamkang University · 淡水校園",
+ "region": "淡水 · 新北市",
+ "place": "淡水校園 · 五虎崗",
+ "timezone": "Asia/Taipei",
+ "level": 3.3,
+ "styles": {
+  "default": {
+   "facade": "plain",
+   "wall": [
+    "#ece6da",
+    "#e6e0d3",
+    "#efe9de"
+   ],
+   "roof": "flat",
+   "flatRoof": "#cfcac0",
+   "levels": 2,
+   "floor": 3.3,
+   "shop": "none",
+   "parapet": 0.6,
+   "frame": "#7d7f80",
+   "glass": [
+    "#a9bcc1",
+    "#b5c6c8"
+   ]
+  },
+  "rules": [
+   {
+    "if": {
+     "type": "apartments"
+    },
+    "set": {
+     "facade": "apartment",
+     "levels": 6,
+     "floor": 3.0,
+     "wall": [
+      "#e7dccb",
+      "#ddd5c8",
+      "#ece4d6"
+     ],
+     "balcony": "some"
+    }
+   },
+   {
+    "if": {
+     "type": "house"
+    },
+    "set": {
+     "facade": "apartment",
+     "levels": 2,
+     "wall": [
+      "#f3f1ea"
+     ],
+     "balcony": "some"
+    }
+   },
+   {
+    "if": {
+     "type": "roof"
+    },
+    "set": {
+     "levels": 1,
+     "height": 3.0,
+     "facade": "plain"
+    }
+   },
+   {
+    "if": {
+     "maxArea": 120
+    },
+    "set": {
+     "levels": 1,
+     "height": 3.4
+    }
+   }
+  ]
+ },
+ "buildings": {
+  "w235418115": {
+   "facade": "civic",
+   "levels": 2,
+   "wall": "#f2efe7",
+   "trim": "#c44a35",
+   "floor": 3.6
+  },
+  "w294617265": {
+   "levels": 1,
+   "height": 3.6,
+   "facade": "plain",
+   "wall": "#e9e4d8"
+  },
+  "w971535311": {
+   "levels": 1,
+   "height": 3.2,
+   "facade": "plain",
+   "wall": "#f3f0e8",
+   "roof": "gabled",
+   "pitch": 28,
+   "roofColour": "#6d7870",
+   "roofTex": "kawara",
+   "eaves": 0.5,
+   "maxSpan": 30,
+   "rectFill": 0.4
+  },
+  "w971535313": {
+   "levels": 1,
+   "height": 3.2,
+   "facade": "plain",
+   "wall": "#f3f0e8",
+   "roof": "gabled",
+   "pitch": 28,
+   "roofColour": "#6d7870",
+   "roofTex": "kawara",
+   "eaves": 0.5
+  }
+ },
+ "palette": {
+  "ground": "#e9e1cd",
+  "road": "#b0a9ad",
+  "pavement": "#e2dacb",
+  "walk": "#ddd3c0",
+  "grass": "#abcb87",
+  "water": "#94c0c2",
+  "slab": "#d6c8ab",
+  "marking": "#f4efe2",
+  "kerb": "#d9d2c3",
+  "paving": "#c9bfae"
+ },
+ "paving": {
+  "style": "slabs",
+  "size": 0.6,
+  "colour": "#c4baa9",
+  "stone": "#ddd4c3"
+ },
+ "lamp": {
+  "colour": "#6c716e",
+  "height": 6,
+  "head": "#f1ecdc",
+  "auto": true
+ },
+ "shops": {
+  "signs": [
+   "早餐",
+   "咖啡",
+   "文具"
+  ],
+  "font": "'Noto Sans TC','Microsoft JhengHei',sans-serif",
+  "fascias": [
+   "#5f6e73",
+   "#8f5a48"
+  ]
+ },
+ "trees": {
+  "default": {
+   "style": 3,
+   "colours": [
+    "#7fa868",
+    "#94b574"
+   ],
+   "height": 9,
+   "evergreen": true
+  },
+  "rules": [
+   {
+    "match": "Park tree",
+    "vary": 0.35,
+    "mix": [
+     {
+      "style": 5,
+      "colours": [
+       "#5f8a5a",
+       "#6d9663"
+      ],
+      "height": 8,
+      "evergreen": true,
+      "share": 4
+     },
+     {
+      "style": 3,
+      "colours": [
+       "#7ea567",
+       "#8fb06d"
+      ],
+      "height": 10,
+      "evergreen": true,
+      "share": 4
+     },
+     {
+      "style": 3,
+      "colours": [
+       "#9cbd78"
+      ],
+      "height": 6,
+      "blossom": "#f3c3cf",
+      "spring": "#b9d98a",
+      "autumn": "#d78a5a",
+      "share": 1
+     }
+    ]
+   },
+   {
+    "match": "Woodland",
+    "vary": 0.4,
+    "mix": [
+     {
+      "style": 3,
+      "colours": [
+       "#6f9a5c",
+       "#7ea565"
+      ],
+      "height": 12,
+      "evergreen": true,
+      "share": 5
+     },
+     {
+      "style": 5,
+      "colours": [
+       "#5c8656"
+      ],
+      "height": 10,
+      "evergreen": true,
+      "share": 2
+     },
+     {
+      "style": 2,
+      "colours": [
+       "#80a868"
+      ],
+      "height": 13,
+      "evergreen": true,
+      "share": 2
+     }
+    ]
+   }
+  ]
+ },
+ "people": {
+  "clothes": [
+   "#f2efe6",
+   "#3d4a5e",
+   "#8aa0b5",
+   "#c9b48a",
+   "#2f3136",
+   "#b9524a",
+   "#6f8a6a",
+   "#e2c35c"
+  ],
+  "pants": [
+   "#2f3540",
+   "#4a5568",
+   "#c8bfae",
+   "#1f2024"
+  ],
+  "umbrellas": [
+   "#2f3540",
+   "#efe9dc",
+   "#3c6e9a",
+   "#c94a3a",
+   "#e2c35c"
+  ],
+  "bikes": [
+   "#3a3d44",
+   "#c8cbcd",
+   "#5a7d9a"
+  ]
+ },
+ "vehicles": {
+  "kinds": [
+   "hatch",
+   "sedan",
+   "mpv",
+   "small",
+   "sedan"
+  ],
+  "colours": [
+   "#f2f2ee",
+   "#c9ccd0",
+   "#2c2e33",
+   "#8e969e",
+   "#e8e4da"
+  ],
+  "plate": "#f4f4ef",
+  "taxi": {
+   "share": 0.15,
+   "colours": [
+    "#f0c33a"
+   ],
+   "kind": "sedan",
+   "sign": "#f6f1e0"
+  }
+ },
+ "seasonLabel": "季節",
+ "seasons": [
+  {
+   "id": "spring",
+   "label": "春 · 杜鵑",
+   "leaves": "blossom",
+   "petals": true,
+   "wx": "fluff",
+   "crowd": 1.3,
+   "note": {
+    "text": "初春的五虎崗上，宮燈道旁杜鵑正盛，櫻花也開了。",
+    "source": "淡江時報 第528期社論",
+    "url": "https://tkutimes.az.tku.edu.tw/fdoc/2156.doc"
+   }
+  },
+  {
+   "id": "summer",
+   "label": "夏",
+   "leaves": "summer",
+   "crowd": 0.7,
+   "note": {
+    "text": "1981至2010年的淡水氣候站資料中，7月月均溫28.8°C，是全年最熱的月份。",
+    "source": "維基百科〈淡水區〉氣候",
+    "url": "https://zh.wikipedia.org/wiki/%E6%B7%A1%E6%B0%B4%E5%8D%80"
+   }
+  },
+  {
+   "id": "storm",
+   "label": "午後雷陣雨",
+   "sub": "summer",
+   "icon": "summer",
+   "leaves": "summer",
+   "wet": true,
+   "umbrellas": true,
+   "wx": "rain",
+   "crowd": 0.6,
+   "note": {
+    "text": "淡水夏季受東南季風影響，多有午後雷陣雨。",
+    "source": "維基百科〈淡水區〉氣候",
+    "url": "https://zh.wikipedia.org/wiki/%E6%B7%A1%E6%B0%B4%E5%8D%80"
+   }
+  },
+  {
+   "id": "monsoon",
+   "label": "東北季風",
+   "icon": "winter",
+   "leaves": "bare",
+   "wet": true,
+   "umbrellas": true,
+   "wx": "drizzle",
+   "coats": true,
+   "grass": "#a2c086",
+   "crowd": 0.9,
+   "note": {
+    "text": "淡水到了11、12月東北季風強勁，1至3月多陰天，少見晴天。",
+    "source": "維基百科〈淡水區〉氣候",
+    "url": "https://zh.wikipedia.org/wiki/%E6%B7%A1%E6%B0%B4%E5%8D%80"
+   }
+  }
+ ],
+ "occasionLabel": "特別場景",
+ "occasions": [
+  {
+   "id": "lanterns60",
+   "label": "60週年宮燈點燈",
+   "icon": "autumn",
+   "leaves": "summer",
+   "night": 0.85,
+   "litShare": 0.6,
+   "crowd": 1.7,
+   "dress": {
+    "colours": [
+     "#c94a3a",
+     "#f2efe6",
+     "#2f3540"
+    ],
+    "share": 0.3
+   },
+   "note": {
+    "text": "2010年10月18日晚上6時，宮燈大道點亮紅綢圓桌，入夜後化為一盞盞巨型紅燈籠。",
+    "source": "淡江時報 第799期",
+    "url": "https://tkutimes.az.tku.edu.tw/fdoc/22819.doc"
+   }
+  }
+ ],
+ "months": [
+  "monsoon",
+  "monsoon",
+  "spring",
+  "spring",
+  "spring",
+  "summer",
+  "summer",
+  "summer",
+  "summer",
+  "summer",
+  "monsoon",
+  "monsoon"
+ ],
+ "isoLabel": "宮燈教室",
+ "views": [
+  {
+   "id": "avenue",
+   "label": "宮燈大道",
+   "camera": {
+    "yaw": -25.5,
+    "pitch": 22,
+    "zoom": 3.6,
+    "x": -53.0,
+    "y": 75.7,
+    "z": 2
+   }
+  },
+  {
+   "id": "wing",
+   "label": "宮燈教室",
+   "camera": {
+    "yaw": -72.5,
+    "pitch": 30,
+    "zoom": 6,
+    "x": -67.1,
+    "y": 68.9,
+    "z": 4
+   }
+  },
+  {
+   "id": "admin",
+   "label": "行政大樓",
+   "camera": {
+    "yaw": -67.5,
+    "pitch": 30,
+    "zoom": 3.0,
+    "x": -7.4,
+    "y": 76.0,
+    "z": 3
+   }
+  },
+  {
+   "id": "garden",
+   "label": "覺軒花園",
+   "camera": {
+    "yaw": -77.5,
+    "pitch": 34,
+    "zoom": 3.2,
+    "x": -143.6,
+    "y": 80.9,
+    "z": 3
+   }
+  },
+  {
+   "id": "library",
+   "label": "覺生紀念圖書館",
+   "camera": {
+    "yaw": 90,
+    "pitch": 28,
+    "zoom": 2.3,
+    "x": 88,
+    "y": -78,
+    "z": 8
+   }
+  },
+  {
+   "id": "lawn",
+   "label": "牧羊草坪",
+   "camera": {
+    "yaw": 200,
+    "pitch": 30,
+    "zoom": 2.6,
+    "x": 10,
+    "y": -90,
+    "z": 4
+   }
+  },
+  {
+   "id": "gym",
+   "label": "紹謨體育館",
+   "camera": {
+    "yaw": 200,
+    "pitch": 26,
+    "zoom": 2.0,
+    "x": 96,
+    "y": 200,
+    "z": 14
+   }
+  },
+  {
+   "id": "shouchien",
+   "label": "守謙國際會議中心",
+   "camera": {
+    "yaw": 300,
+    "pitch": 30,
+    "zoom": 2.6,
+    "x": -63,
+    "y": 190,
+    "z": 6
+   }
+  },
+  {
+   "id": "gate",
+   "label": "大門",
+   "camera": {
+    "yaw": -30,
+    "pitch": 28,
+    "zoom": 6,
+    "x": -196,
+    "y": 204,
+    "z": 2
+   }
+  },
+  {
+   "id": "museum",
+   "label": "海事博物館",
+   "camera": {
+    "yaw": 240,
+    "pitch": 28,
+    "zoom": 4.5,
+    "x": 193,
+    "y": 42,
+    "z": 8
+   }
+  },
+  {
+   "id": "scroll",
+   "label": "書卷廣場",
+   "camera": {
+    "yaw": 0,
+    "pitch": 32,
+    "zoom": 5,
+    "x": 142,
+    "y": -13,
+    "z": 4
+   }
+  },
+  {
+   "id": "literature",
+   "label": "文學館一帶",
+   "camera": {
+    "yaw": 200,
+    "pitch": 32,
+    "zoom": 1.8,
+    "x": 130,
+    "y": 95,
+    "z": 8
+   }
+  },
+  {
+   "id": "chingsheng",
+   "label": "驚聲紀念大樓",
+   "camera": {
+    "yaw": 60,
+    "pitch": 26,
+    "zoom": 3.0,
+    "x": 168,
+    "y": -62,
+    "z": 14
+   }
+  },
+  {
+   "id": "engineering",
+   "label": "工學大樓一帶",
+   "camera": {
+    "yaw": 240,
+    "pitch": 30,
+    "zoom": 2.0,
+    "x": 232,
+    "y": -50,
+    "z": 12
+   }
+  },
+  {
+   "id": "songtao",
+   "label": "松濤館",
+   "camera": {
+    "yaw": 200,
+    "pitch": 30,
+    "zoom": 2.2,
+    "x": 165,
+    "y": -200,
+    "z": 10
+   }
+  },
+  {
+   "id": "wenzi",
+   "label": "文錙藝術中心",
+   "camera": {
+    "yaw": 40,
+    "pitch": 24,
+    "zoom": 3.4,
+    "x": 172,
+    "y": -182,
+    "z": 8
+   }
+  },
+  {
+   "id": "education",
+   "label": "教育館",
+   "camera": {
+    "yaw": 250,
+    "pitch": 30,
+    "zoom": 2.8,
+    "x": 262,
+    "y": -190,
+    "z": 9
+   }
+  },
+  {
+   "id": "puxue",
+   "label": "普學禪寺",
+   "camera": {
+    "yaw": 30,
+    "pitch": 30,
+    "zoom": 3.2,
+    "x": -347,
+    "y": -189,
+    "z": 5
+   }
+  },
+  {
+   "id": "shuntian",
+   "label": "無極順天宮",
+   "camera": {
+    "yaw": 210,
+    "pitch": 30,
+    "zoom": 3.6,
+    "x": -353,
+    "y": -318,
+    "z": 4
+   }
+  }
+ ],
+ "legend": [
+  {
+   "name": "宮燈教室",
+   "source": "OpenStreetMap · Commons 照片",
+   "count": "6",
+   "icon": "landmark",
+   "camera": {
+    "yaw": -72.5,
+    "pitch": 30,
+    "zoom": 4.5,
+    "x": -69.5,
+    "y": 65.7,
+    "z": 4
+   }
+  },
+  {
+   "name": "宮燈大道",
+   "source": "OpenStreetMap · 淡江時報",
+   "count": "14",
+   "icon": "landmark",
+   "camera": {
+    "yaw": -25.5,
+    "pitch": 22,
+    "zoom": 3.6,
+    "x": -53.0,
+    "y": 75.7,
+    "z": 2
+   }
+  },
+  {
+   "name": "行政大樓",
+   "source": "OpenStreetMap · Commons 照片",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": -67.5,
+    "pitch": 30,
+    "zoom": 3.0,
+    "x": -7.4,
+    "y": 76.0,
+    "z": 3
+   }
+  },
+  {
+   "name": "覺軒",
+   "source": "OpenStreetMap · 淡江時報",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": -77.5,
+    "pitch": 34,
+    "zoom": 3.2,
+    "x": -143.6,
+    "y": 80.9,
+    "z": 3
+   }
+  },
+  {
+   "name": "覺生紀念圖書館",
+   "source": "OpenStreetMap · 淡江時報 · Commons 照片",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 90,
+    "pitch": 28,
+    "zoom": 2.3,
+    "x": 88,
+    "y": -78,
+    "z": 8
+   }
+  },
+  {
+   "name": "牧羊草坪",
+   "source": "OpenStreetMap · 淡江時報",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 200,
+    "pitch": 30,
+    "zoom": 2.6,
+    "x": 10,
+    "y": -90,
+    "z": 4
+   }
+  },
+  {
+   "name": "紹謨紀念體育館",
+   "source": "OpenStreetMap · 淡江時報",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 200,
+    "pitch": 26,
+    "zoom": 2.0,
+    "x": 96,
+    "y": 200,
+    "z": 14
+   }
+  },
+  {
+   "name": "守謙國際會議中心",
+   "source": "OpenStreetMap · 淡江時報 · Commons 照片",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 300,
+    "pitch": 30,
+    "zoom": 2.6,
+    "x": -63,
+    "y": 190,
+    "z": 6
+   }
+  },
+  {
+   "name": "大門管制站",
+   "source": "OpenStreetMap · Commons 照片",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": -30,
+    "pitch": 28,
+    "zoom": 6,
+    "x": -196,
+    "y": 204,
+    "z": 2
+   }
+  },
+  {
+   "name": "海事博物館",
+   "source": "OpenStreetMap · 維基百科 · Commons 照片",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 240,
+    "pitch": 28,
+    "zoom": 4.5,
+    "x": 193,
+    "y": 42,
+    "z": 8
+   }
+  },
+  {
+   "name": "書卷廣場",
+   "source": "OpenStreetMap · 淡江時報 · Commons 照片",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 0,
+    "pitch": 32,
+    "zoom": 5,
+    "x": 142,
+    "y": -13,
+    "z": 4
+   }
+  },
+  {
+   "name": "驚聲紀念大樓",
+   "source": "OpenStreetMap · 淡江時報 · Commons 照片",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 60,
+    "pitch": 26,
+    "zoom": 3.0,
+    "x": 168,
+    "y": -62,
+    "z": 14
+   }
+  },
+  {
+   "name": "工學大樓",
+   "source": "OpenStreetMap · 淡江時報",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 240,
+    "pitch": 30,
+    "zoom": 2.0,
+    "x": 232,
+    "y": -50,
+    "z": 12
+   }
+  },
+  {
+   "name": "松濤館",
+   "source": "OpenStreetMap · 淡江時報",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 200,
+    "pitch": 30,
+    "zoom": 2.2,
+    "x": 165,
+    "y": -200,
+    "z": 10
+   }
+  },
+  {
+   "name": "文錙藝術中心",
+   "source": "淡江時報 · Commons",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 40,
+    "pitch": 24,
+    "zoom": 3.4,
+    "x": 172,
+    "y": -182,
+    "z": 8
+   }
+  },
+  {
+   "name": "教育館",
+   "source": "OpenStreetMap · 淡江時報",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 250,
+    "pitch": 30,
+    "zoom": 2.8,
+    "x": 262,
+    "y": -190,
+    "z": 9
+   }
+  },
+  {
+   "name": "普學禪寺",
+   "source": "OpenStreetMap · 淡水區公所",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 30,
+    "pitch": 30,
+    "zoom": 3.2,
+    "x": -347,
+    "y": -189,
+    "z": 5
+   }
+  },
+  {
+   "name": "無極順天宮",
+   "source": "OpenStreetMap",
+   "count": "",
+   "icon": "landmark",
+   "camera": {
+    "yaw": 210,
+    "pitch": 30,
+    "zoom": 3.6,
+    "x": -353,
+    "y": -318,
+    "z": 4
+   }
+  },
+  {
+   "name": "校園樹木",
+   "source": "示意位置",
+   "count": "",
+   "icon": "trees",
+   "camera": {
+    "yaw": -72.5,
+    "pitch": 40,
+    "zoom": 1.6,
+    "x": -109.1,
+    "y": 35.5,
+    "z": 3
+   }
+  }
+ ],
+ "notes": [
+  {
+   "title": "施工進度",
+   "text": "整個淡水校園以800公尺見方呈現，分區手工打造，七個分區都已完成：宮燈教室區（宮燈教室、宮燈大道、行政大樓、覺軒、白樓、亭）、圖書館區（覺生紀念圖書館、覺生綜合大樓、外國語文大樓、勤務監控管制站、李雙澤紀念碑）、守謙·紹謨區（守謙國際會議中心、紹謨紀念體育館、紹謨紀念游泳館、麗澤國際學舍、大門與大忠管制站）、文學館·海事區（海事博物館、書卷廣場、文學館、鍾靈化學館、會文館、藍白小鎮）、工學·驚聲區（驚聲紀念大樓、工學大樓、工學館、建築館）、松濤宿舍區（松濤1至5館、文錙藝術中心、教育館），以及校外的普學禪寺與無極順天宮。其餘沒有列名的建築，是依 OpenStreetMap 輪廓自動畫出的一般量體，高度多為示意。",
+   "links": [
+    {
+     "label": "OpenStreetMap",
+     "url": "https://www.openstreetmap.org/#map=16/25.1745/121.4498"
+    }
+   ]
+  },
+  {
+   "title": "宮燈教室",
+   "text": "淡水校園最早的校舍。淡江時報形容為「宮殿紅牆綠瓦」。這裡依2025年的照片畫出：單層紅牆、兩側長邊有朱紅柱迴廊與彩繪樑、灰綠瓦歇山頂、石砌台基。輪廓取自 OpenStreetMap，牆高、柱距與屋頂斜度是對照照片目測的。",
+   "links": [
+    {
+     "label": "淡江時報 第528期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/2156.doc"
+    },
+    {
+     "label": "Commons：宮燈教室照片（阿道，CC BY-SA 4.0）",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Chinese_Palace-style_Classrooms_04_20250804.jpg"
+    }
+   ]
+  },
+  {
+   "title": "宮燈大道",
+   "text": "沿 OpenStreetMap 上名為「宮燈大道」的步道，兩側是杜鵑圍邊的花圃，中間立著掛兩盞宮燈的白色燈柱。社論寫到「杜鵑夾道的宮燈道」。花圃位置取自地圖；燈柱數量、間距與石砌花台是示意。真實的大道沿山坡逐階而下，這裡畫成平地。",
+   "links": [
+    {
+     "label": "淡江時報 第528期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/2156.doc"
+    },
+    {
+     "label": "Commons：宮燈大道照片",
+     "url": "https://commons.wikimedia.org/w/index.php?search=%E6%B7%A1%E6%B1%9F%E5%A4%A7%E5%AD%B8+%E5%AE%AE%E7%87%88&title=Special:MediaSearch&type=image"
+    }
+   ]
+  },
+  {
+   "title": "行政大樓",
+   "text": "與宮燈教室同一種朱紅柱、紅牆、彩繪樑與歇山頂（照片可見白色山牆）。地圖標為3層，但照片中的正面是單層，所以畫成以短廊相連的南北兩棟單層殿堂。",
+   "links": [
+    {
+     "label": "Commons：Administration Building 01",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Administration_Building_01_20250804.jpg"
+    },
+    {
+     "label": "Commons：Administration Building 02",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Administration_Building_02_20250804.jpg"
+    }
+   ]
+  },
+  {
+   "title": "覺軒與亭",
+   "text": "覺軒花園是仿上海豫園風格的中式庭園。這裡把覺軒的廳堂畫成紅牆歇山頂，量體經過簡化；園中的白色波浪牆與迴廊沒有畫出。六角亭依照片畫成朱紅柱、瓦頂與寶頂。",
+   "links": [
+    {
+     "label": "淡江時報 第528期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/2156.doc"
+    },
+    {
+     "label": "Commons：Chueh-hsuan Chinese Garden",
+     "url": "https://commons.wikimedia.org/wiki/File:Chueh-hsuan_Chinese_Garden_05_20250804.jpg"
+    },
+    {
+     "label": "Commons：Chinese Pavilion",
+     "url": "https://commons.wikimedia.org/wiki/File:Chinese_Pavilion_and_classroom_in_Tamkang_University_Tamsui_Campus_20250804.jpg"
+    }
+   ]
+  },
+  {
+   "title": "覺生紀念圖書館",
+   "text": "淡江時報形容它是一棟白色建築，樓高九層，新總館於民國85年（1996年）落成，就在牧羊草坪旁。這裡依照片畫成逐層退縮的白色量體，頂上是一排塔狀方塊；正面是兩層樓高的粉米色花崗石門廊，有四根圓柱與寬大的石階。門廊朝向哪一側、退縮的深度與頂部方塊的數量，是對照照片目測的。旁邊的覺生綜合大樓（圖書館後棟，淡江時報記為11層，地圖標10層，這裡畫11層）畫成白框深色玻璃的細高塔樓。",
+   "links": [
+    {
+     "label": "淡江時報 第340期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/10536.doc"
+    },
+    {
+     "label": "淡江時報 第659期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/15127.doc"
+    },
+    {
+     "label": "淡江時報 第865期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/26552.doc"
+    },
+    {
+     "label": "Commons：Tamkang University Library",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Library.jpg"
+    },
+    {
+     "label": "Commons：Chueh-sheng Memorial Library",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Chueh-sheng_Memorial_Library_2019-01-23.jpg"
+    },
+    {
+     "label": "淡江時報 第1070期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/49036.doc"
+    }
+   ]
+  },
+  {
+   "title": "牧羊草坪與外語大樓",
+   "text": "牧羊草坪原本是個大水池，民國69年填平改為草坪。李雙澤逝世30週年的10月1日，草坪上立起紀念碑，碑上刻著「唱自己的歌，在這裡發聲」；碑的外形來源沒有描述，這裡畫成一塊素面石碑。外國語文大樓位在圖書館與文錙藝術中心之間，依照片畫成7層、石材一樓、上方淺色格子立面與灰綠玻璃。",
+   "links": [
+    {
+     "label": "淡江時報 第799期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/22837.doc"
+    },
+    {
+     "label": "淡江時報 第689期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/16892.doc"
+    },
+    {
+     "label": "淡江時報 第618期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/12856.doc"
+    },
+    {
+     "label": "Commons：外國語文大樓",
+     "url": "https://commons.wikimedia.org/wiki/File:%E6%B7%A1%E6%B1%9F%E5%A4%A7%E5%AD%B8%E5%A4%96%E5%9C%8B%E8%AA%9E%E6%96%87%E5%A4%A7%E6%A8%93_01_20250804.jpg"
+    }
+   ]
+  },
+  {
+   "title": "紹謨紀念體育館與游泳館",
+   "text": "紹謨紀念體育館於2004年動工、兩年後落成，樓高八層、地下一層，外觀是玻璃帷幕，造型色調與紹謨紀念游泳館一致。沒有找到體育館本身的照片，所以依游泳館照片的配色畫：淺銀灰面板、白色端牆與灰綠玻璃。量體取自 OpenStreetMap 的建築分件（八層主體，加上一段從三樓到六樓懸挑出的外圈）。",
+   "links": [
+    {
+     "label": "淡江時報 第659期（體育館興建記）",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/24744.doc"
+    },
+    {
+     "label": "Commons：紹謨紀念游泳館",
+     "url": "https://commons.wikimedia.org/wiki/File:Shao-mo_Memorial_Natatorium_Complex_20250804.jpg"
+    }
+   ]
+  },
+  {
+   "title": "守謙國際會議中心與北側",
+   "text": "守謙國際會議中心樓高四層、地下一層，有380席的國際會議廳、15間會議室、開放廣場與屋頂花園，2017年的67週年校慶啟用，由建築系校友徐維志的事務所設計。這裡畫成淺灰水泥橫帶與深色玻璃、屋頂花園與玻璃欄杆；照片中圓弧的樓板邊緣簡化成直角。麗澤國際學舍由日本麗澤大學出資興建，找不到照片，畫成樸素的宿舍。大門管制站依照片畫成白色平頂雨庇與小崗亭，大忠管制站比照畫出（示意）。",
+   "links": [
+    {
+     "label": "淡江時報 第1049期（守謙興建記）",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/47709.doc"
+    },
+    {
+     "label": "淡江時報 第1050期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/47720.doc"
+    },
+    {
+     "label": "淡江時報 第1089期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/50716.doc"
+    },
+    {
+     "label": "淡江時報 第1185期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/57988.doc"
+    },
+    {
+     "label": "Commons：守謙國際會議中心",
+     "url": "https://commons.wikimedia.org/wiki/File:Hsu_Shou-Chlien_International_Conference_Center_20250804.jpg"
+    },
+    {
+     "label": "Commons：大門管制站",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Tamsui_Campus_Main_Entrance_Guardhouse_2026-11-06_T_08-24-33_Z.jpg"
+    }
+   ]
+  },
+  {
+   "title": "海事博物館",
+   "text": "外觀是船形的建築，前身是由長榮集團張榮發捐建的「商船學館」，1990年6月6日以海事博物館開館，一到三樓展出船艦模型與航海器具。這裡依照片畫成白色清水船體：外斜的船殼與舷窗、上層甲板、玻璃駕駛台與雷達桅杆。地圖上的輪廓是方形，船殼、甲板與桅杆在這個範圍內目測配置，船頭方向是推定的。",
+   "links": [
+    {
+     "label": "維基百科〈淡江大學海事博物館〉",
+     "url": "https://zh.wikipedia.org/wiki/%E6%B7%A1%E6%B1%9F%E5%A4%A7%E5%AD%B8%E6%B5%B7%E4%BA%8B%E5%8D%9A%E7%89%A9%E9%A4%A8"
+    },
+    {
+     "label": "Commons：Maritime Museum 2019-01",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Maritime_Museum_2019-01.jpg"
+    },
+    {
+     "label": "Commons：Maritime Museum Entrance",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Maritime_Museum_Entrance_2019-01.jpg"
+    }
+   ]
+  },
+  {
+   "title": "書卷廣場與周邊",
+   "text": "書卷廣場是建築系校友林貴榮於1986年設計的地標，四片不對稱的白色竹卷佇立在草地上，象徵古代的簡冊，同學暱稱「蛋捲廣場」；從上方看像轉動的馬達，外圍有花崗石。這裡畫成圓形階台上四片捲曲的白色片牆，高度與曲率是對照照片目測的。鍾靈化學館地上6層、地下1層；會文館於民國59年11月落成；文學館（地圖標6層）與藍白小鎮找不到照片或描述，畫法樸素，藍白小鎮依名稱畫成白牆藍框（示意）。",
+   "links": [
+    {
+     "label": "淡江時報 第698期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/17384.doc"
+    },
+    {
+     "label": "淡江時報 第757期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/20487.doc"
+    },
+    {
+     "label": "淡江時報 第1229期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/59687.doc"
+    },
+    {
+     "label": "淡江時報 第1229期（林貴榮）",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/59698.doc"
+    },
+    {
+     "label": "淡江時報 第1070期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/49036.doc"
+    },
+    {
+     "label": "淡江時報 第825期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/24363.doc"
+    },
+    {
+     "label": "Commons：校園照片 2019",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Campus,_New_Taipei_City_2019-01-23.jpg"
+    }
+   ]
+  },
+  {
+   "title": "驚聲紀念大樓與工學院",
+   "text": "驚聲紀念大樓於民國71年（1982年）10月啟用，前方是4層的圓形建築、後方是12層的矩形大樓，矩形代表科學、圓形代表藝術；落成時是全國學府最高的大樓。地圖把高樓標為10層，這裡依淡江時報畫12層。依照片畫成淺灰白的混凝土高樓：兩端是開小方窗的實心量體，中段低一層、是深色橫向窗帶與種了植栽的陽台，靠圓筒那一端的最外側是一根高出樓頂的實心立柱，與一條深色玻璃直縫。前方是棕褐色量體與圓筒，圓筒頂有一圈簷口，外面是上下兩段白色鏤空花格；圓筒腳下是一圈低矮台座與白色欄杆，入口上方是有欄杆的白色雨庇。各段的分界、樓高差、雨庇位置與大小是對照照片目測的。新工學大樓1993年啟用（地圖標8層）；工學館（5層）與建築館找不到照片或描述，畫法樸素（示意）。",
+   "links": [
+    {
+     "label": "淡江時報 第865期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/26551.doc"
+    },
+    {
+     "label": "淡江時報 第1070期",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/49035.doc"
+    },
+    {
+     "label": "Commons：Ching-sheng Memorial Hall",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Tamsui_Campus_Ching-sheng_Memorial_Hall_2026-08-03_T_03-50-26_Z.jpg"
+    }
+   ]
+  },
+  {
+   "title": "松濤館與教育館",
+   "text": "松濤館是女生宿舍，民國52年（1963年）11月8日落成，是校內的老建築之一，2014年整建完成。文錙藝術中心位於松濤館一樓，由舊羽球館改建，樓高兩層，於50週年校慶時開幕。這裡依照片畫出：松濤2館是白牆與深窗的六層宿舍，屋頂有太陽能板，牆腳是一座嵌著藍、紅、黃綠色玻璃的兩層玻璃盒（文錙藝術中心的門面）；松濤3館是白框、褐黃色窗板與深灰樓板帶，一樓是玻璃；松濤4館是淺藍牆面配白色直向鰭板。松濤1館與5館找不到照片：1館的鋸齒形平面與3館相同，比照3館畫，5館畫法樸素；4館與5館的樓層數地圖沒標，畫成5層。教育館由最老的女生宿舍自強館改建，建築系校友林洲民設計，保留原本四方的外型，外牆披覆半透明輕質玻璃格柵，6樓是有木平台的綠色屋頂花園；沒有找到照片，格柵、花園配置與顏色是依文字推定的。玻璃盒的位置與深度也是推定的。",
+   "links": [
+    {
+     "label": "淡江時報 第1050期（松濤館落成日）",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/47145.doc"
+    },
+    {
+     "label": "淡江時報 第941期（松濤館整建竣工）",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/30404.doc"
+    },
+    {
+     "label": "淡江時報 第441期（文錙藝術中心成立）",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/6510.doc"
+    },
+    {
+     "label": "淡江時報 第445期（藝術中心完工）",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/6339.doc"
+    },
+    {
+     "label": "淡江時報 第848期（教育館，原自強館）",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/25716.doc"
+    },
+    {
+     "label": "淡江時報 第854期（教育館啟用）",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/25971.doc"
+    },
+    {
+     "label": "Commons：Sung-tao Hall 20250804（阿道，CC BY-SA 4.0）",
+     "url": "https://commons.wikimedia.org/wiki/File:Sung-tao_Hall_20250804.jpg"
+    },
+    {
+     "label": "Commons：Third Sung-tao Hall 20250804",
+     "url": "https://commons.wikimedia.org/wiki/File:Third_Sung-tao_Hall_20250804.jpg"
+    },
+    {
+     "label": "Commons：Fourth Sung-tao Hall 20250804",
+     "url": "https://commons.wikimedia.org/wiki/File:Fourth_Sung-tao_Hall_20250804.jpg"
+    },
+    {
+     "label": "Commons：淡江大學文錙藝術中心（丘崈，CC0）",
+     "url": "https://commons.wikimedia.org/wiki/File:%E6%B7%A1%E6%B1%9F%E5%A4%A7%E5%AD%B8%E6%96%87%E9%8C%99%E8%97%9D%E8%A1%93%E4%B8%AD%E5%BF%83.jpg"
+    }
+   ]
+  },
+  {
+   "title": "校外的兩座寺廟",
+   "text": "普學禪寺屬於中台山。2002年起，中台山法師先借淡江大學佛學社的佛堂帶領共修，之後在中山北路成立普學精舍，信眾增加後才遷到學府路上、鄧公國小附近腹地寬廣的現址，以禪修為主。無極順天宮是鄧公路旁的道教廟宇，除了地圖資料之外沒有找到其他來源。兩座廟都找不到照片，畫法樸素：普學禪寺畫成淺米色兩層殿堂、灰瓦四坡頂，無極順天宮畫成紅牆單層廟、橙色瓦的兩坡頂，量體、顏色與屋頂形式都是示意。",
+   "links": [
+    {
+     "label": "淡水區公所《宗教禮俗志》（普學禪寺，第29頁）",
+     "url": "https://www.tamsui.ntpc.gov.tw/userfiles/3120400/files/%E5%AE%97%E6%95%99%E7%A6%AE%E4%BF%97%E5%BF%97.pdf"
+    },
+    {
+     "label": "OpenStreetMap：普學禪寺",
+     "url": "https://www.openstreetmap.org/way/291863345"
+    },
+    {
+     "label": "OpenStreetMap：無極順天宮",
+     "url": "https://www.openstreetmap.org/way/294321324"
+    }
+   ]
+  },
+  {
+   "title": "示意的部分",
+   "text": "量測自 OpenStreetMap 的有建築輪廓、步道、道路與水池。目測或示意的有：所有建築高度（地圖都沒標）、白樓的樓層與陽台、樹的位置與樹種組合、燈柱、行人與車流，以及地形（真實校園在山坡上，這裡是平地）。",
+   "links": [
+    {
+     "label": "OpenStreetMap",
+     "url": "https://www.openstreetmap.org/#map=18/25.1740/121.4489"
+    }
+   ]
+  }
+ ],
+ "credits": [
+  {
+   "label": "Wikimedia Commons 照片：阿道（CC BY-SA 4.0）",
+   "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Chinese_Palace-style_Classrooms_04_20250804.jpg"
+  },
+  {
+   "label": "淡江時報",
+   "url": "https://tkutimes.tku.edu.tw/"
+  },
+  {
+   "label": "Wikimedia Commons 照片：Tamkang University Library、Chueh-sheng Memorial Library 2019",
+   "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Library.jpg"
+  }
+ ]
+}

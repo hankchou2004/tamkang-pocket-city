@@ -1,0 +1,10 @@
+# generated
+build/
+shots/
+pocket-city-tamkang-campus.html
+
+# per-district scratch maps (regenerate with tools/district_viz.py)
+work/*-district.png
+work/*-district.svg
+
+__pycache__/
