@@ -290,105 +290,7 @@
    "sign": "#f6f1e0"
   }
  },
- "seasonLabel": "季節",
- "seasons": [
-  {
-   "id": "spring",
-   "label": "春 · 杜鵑",
-   "leaves": "blossom",
-   "petals": true,
-   "wx": "fluff",
-   "crowd": 1.3,
-   "note": {
-    "text": "初春的五虎崗上，宮燈道旁杜鵑正盛，櫻花也開了。",
-    "source": "淡江時報 第528期社論",
-    "url": "https://tkutimes.az.tku.edu.tw/fdoc/2156.doc"
-   }
-  },
-  {
-   "id": "summer",
-   "label": "夏",
-   "leaves": "summer",
-   "crowd": 0.7,
-   "note": {
-    "text": "1981至2010年的淡水氣候站資料中，7月月均溫28.8°C，是全年最熱的月份。",
-    "source": "維基百科〈淡水區〉氣候",
-    "url": "https://zh.wikipedia.org/wiki/%E6%B7%A1%E6%B0%B4%E5%8D%80"
-   }
-  },
-  {
-   "id": "storm",
-   "label": "午後雷陣雨",
-   "sub": "summer",
-   "icon": "summer",
-   "leaves": "summer",
-   "wet": true,
-   "umbrellas": true,
-   "wx": "rain",
-   "crowd": 0.6,
-   "note": {
-    "text": "淡水夏季受東南季風影響，多有午後雷陣雨。",
-    "source": "維基百科〈淡水區〉氣候",
-    "url": "https://zh.wikipedia.org/wiki/%E6%B7%A1%E6%B0%B4%E5%8D%80"
-   }
-  },
-  {
-   "id": "monsoon",
-   "label": "東北季風",
-   "icon": "winter",
-   "leaves": "bare",
-   "wet": true,
-   "umbrellas": true,
-   "wx": "drizzle",
-   "coats": true,
-   "grass": "#a2c086",
-   "crowd": 0.9,
-   "note": {
-    "text": "淡水到了11、12月東北季風強勁，1至3月多陰天，少見晴天。",
-    "source": "維基百科〈淡水區〉氣候",
-    "url": "https://zh.wikipedia.org/wiki/%E6%B7%A1%E6%B0%B4%E5%8D%80"
-   }
-  }
- ],
- "occasionLabel": "特別場景",
- "occasions": [
-  {
-   "id": "lanterns60",
-   "label": "60週年宮燈點燈",
-   "icon": "autumn",
-   "leaves": "summer",
-   "night": 0.85,
-   "litShare": 0.6,
-   "crowd": 1.7,
-   "dress": {
-    "colours": [
-     "#c94a3a",
-     "#f2efe6",
-     "#2f3540"
-    ],
-    "share": 0.3
-   },
-   "note": {
-    "text": "2010年10月18日晚上6時，宮燈大道點亮紅綢圓桌，入夜後化為一盞盞巨型紅燈籠。",
-    "source": "淡江時報 第799期",
-    "url": "https://tkutimes.az.tku.edu.tw/fdoc/22819.doc"
-   }
-  }
- ],
- "months": [
-  "monsoon",
-  "monsoon",
-  "spring",
-  "spring",
-  "spring",
-  "summer",
-  "summer",
-  "summer",
-  "summer",
-  "summer",
-  "monsoon",
-  "monsoon"
- ],
+ "seasonLabel": "淡水 · 現在",
  "isoLabel": "宮燈教室",
  "views": [
   {
@@ -1190,6 +1092,24 @@
    ]
   },
   {
+   "title": "天氣與時間",
+   "text": "頁面呈現淡水「現在」的樣子：天氣來自 Open-Meteo 的即時資料，分成晴或多雲、毛毛雨、下雨、起霧四種；明暗依當下太陽在淡水的高度，分成白天、黃昏、暮色、夜晚，每10分鐘更新一次。季節外觀依月份：3至5月是春天，初春的五虎崗上，宮燈道旁杜鵑正盛，櫻花也開了。6至10月是夏天，1981至2010年的淡水氣候站資料中，7月月均溫28.8°C，是全年最熱的月份。11月到隔年2月是東北季風季，淡水到了11、12月東北季風強勁，1至3月多陰天，少見晴天。雨的樣子、行人數量、亮燈的窗戶比例與四級明暗是示意；太陽方向固定，陰影不會隨時間移動。取不到即時天氣時，季風季顯示毛毛雨，其他月份顯示晴天。",
+   "links": [
+    {
+     "label": "Open-Meteo 即時天氣（CC BY 4.0）",
+     "url": "https://open-meteo.com/"
+    },
+    {
+     "label": "淡江時報 第528期社論",
+     "url": "https://tkutimes.az.tku.edu.tw/fdoc/2156.doc"
+    },
+    {
+     "label": "維基百科〈淡水區〉氣候",
+     "url": "https://zh.wikipedia.org/wiki/%E6%B7%A1%E6%B0%B4%E5%8D%80"
+    }
+   ]
+  },
+  {
    "title": "示意的部分",
    "text": "量測自 OpenStreetMap 的有建築輪廓、步道、道路與水池。目測或示意的有：所有建築高度（地圖都沒標）、白樓的樓層與陽台、樹的位置與樹種組合、燈柱、行人與車流，以及地形（真實校園在山坡上，這裡是平地）。",
    "links": [
@@ -1212,6 +1132,10 @@
   {
    "label": "Wikimedia Commons 照片：Tamkang University Library、Chueh-sheng Memorial Library 2019",
    "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Library.jpg"
+  },
+  {
+   "label": "天氣資料：Open-Meteo.com（CC BY 4.0）",
+   "url": "https://open-meteo.com/"
   }
  ]
 }

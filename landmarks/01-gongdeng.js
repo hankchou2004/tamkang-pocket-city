@@ -152,21 +152,3 @@ LANDMARKS.push(
   { name: '宮燈大道 beds', ids: [], build: () => findBeds().map((r, i) => bed(r, i)) },
   { name: '宮燈大道 lanterns', ids: [], build: () => LANTERN_AT().map(palaceLantern) },
 );
-
-/* 60th-anniversary lighting (淡江時報 799期, 2010): round tables wrapped in red silk around each lamp post, lit from
-   below so that after dark each becomes a giant red lantern, with stools for people to sit. Shown on that occasion only. */
-function CITY_EXTRA(t) {
-  if (SEASON.id !== 'lanterns60') return [];
-  const out = [];
-  for (const [x, y] of LANTERN_AT()) {
-    out.push({ fp: rect(x, y, 2.6, 2.6), h: 1, draw: () => {
-      let s = lightPool(x, y, 2.6, '#ffb85c', .5);
-      for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3 + .3, sx = x + Math.cos(a) * 1.45, sy = y + Math.sin(a) * 1.45;
-        s += loft(atZ(polygon(sx, sy, .18, 8), 0), atZ(polygon(sx, sy, .18, 8), .42), () => '#c94a3a') + shape(atZ(polygon(sx, sy, .18, 8), .42), '#ff8a3d', .2); }
-      s += loft(atZ(polygon(x, y, 1.0, 16), .02), atZ(polygon(x, y, 1.0, 16), .78), () => '#f26a2e');
-      s += shape(atZ(polygon(x, y, 1.0, 16), .78), '#ff8a3d', .35);
-      return s;
-    } });
-  }
-  return out;
-}

@@ -1,0 +1,30 @@
+{
+ "_about": "Live weather and time of day. tools/build.py combines every base look x weather x light level into the page's season list (id: base-weather-level); web/live.js picks one from the weather now (Open-Meteo) and the sun's height over 淡水, and checks again every 10 minutes.",
+ "place": { "lat": 25.1745, "lon": 121.4498, "timezone": "Asia/Taipei" },
+ "bases": {
+  "spring": { "leaves": "blossom", "petals": true, "wx": "fluff", "crowd": 1.3 },
+  "summer": { "leaves": "summer", "crowd": 0.8 },
+  "monsoon": { "leaves": "bare", "coats": true, "grass": "#a2c086", "crowd": 0.9 }
+ },
+ "months": ["monsoon", "monsoon", "spring", "spring", "spring", "summer", "summer", "summer", "summer", "summer", "monsoon", "monsoon"],
+ "weathers": {
+  "clear": { "label": "晴或多雲", "set": {} },
+  "drizzle": { "label": "毛毛雨", "set": { "wet": true, "umbrellas": true, "wx": "drizzle" }, "crowd": 0.85 },
+  "rain": { "label": "下雨", "set": { "wet": true, "umbrellas": true, "wx": "rain" }, "crowd": 0.6 },
+  "fog": { "label": "起霧", "set": { "haze": true }, "crowd": 0.9 }
+ },
+ "levels": [
+  { "label": "白天", "minSun": 4, "set": {}, "crowd": 1 },
+  { "label": "黃昏", "morning": "清晨", "minSun": -1, "set": { "night": 0.3, "litShare": 0.25 }, "crowd": 0.9 },
+  { "label": "暮色", "morning": "破曉", "minSun": -6, "set": { "night": 0.6, "litShare": 0.5 }, "crowd": 0.7 },
+  { "label": "夜晚", "minSun": -90, "set": { "night": 0.88, "litShare": 0.6 }, "crowd": 0.45 }
+ ],
+ "wmo": {
+  "_about": "WMO weather codes from Open-Meteo, mapped to a weather above; codes not listed count as clear",
+  "fog": [45, 48],
+  "drizzle": [51, 53, 55, 56, 57, 71, 73, 75, 77, 85, 86],
+  "rain": [61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99]
+ },
+ "fallback": { "monsoon": "drizzle", "spring": "clear", "summer": "clear" },
+ "note": { "source": "Open-Meteo 即時天氣", "url": "https://open-meteo.com/" }
+}
