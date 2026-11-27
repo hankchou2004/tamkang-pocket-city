@@ -16,7 +16,7 @@ const APP = typeof APP_MODE !== 'undefined' && !!APP_MODE;
 
 /* ====================== page text (place, notes, credits) ====================== */
 const fmt = (v, p, n) => Math.abs(v).toFixed(5) + '° ' + (v >= 0 ? p : n);
-document.title = 'Pocket City · ' + (CITY.title || CITY.name);
+document.title = CITY.title || CITY.name;
 $('cityName').textContent = CITY.name; $('placeTab').textContent = CITY.name;
 document.querySelector('.stamp-line span').textContent = CITY.region || '';
 const flag = document.querySelector('.flag'); if (flag) flag.hidden = true;
@@ -25,7 +25,7 @@ document.querySelector('.coords').lastChild.textContent = ' ' + fmt(META.lat, 'N
 const notesHtml = (CITY.notes || []).map(n => '<dt>' + esc(n.title) + '</dt><dd>' + esc(n.text) + (n.links && n.links.length ? ' ' + n.links.map(l => link(l.label, l.url)).join(' · ') : '') + '</dd>').join('');
 document.querySelector('.dialog-body').innerHTML = '<dl class="source-list">' + notesHtml +
   '<dt>地圖資料</dt><dd>建築輪廓、道路、步道、水域與樹林來自 ' + esc(META.osm_base ? META.osm_base.slice(0, 10) : '') + ' 的 OpenStreetMap 資料。這塊 ' + SIZE + ' 公尺見方的地塊轉了 ' + Math.round(META.rotation) + '° 以對齊道路。' + link('© OpenStreetMap contributors', 'https://www.openstreetmap.org/copyright') + '</dd>' +
-  '<dt>繪製</dt><dd>以 three.js 繪製（MIT）。畫風、配色與手工地標的零件沿用 April Zhu 的 Pocket City（非商業授權）；繪圖工具組以 Tolga Cohce 的 iso-figure 為基礎。</dd></dl>';
+  '<dt>繪製</dt><dd>以 three.js 繪製（MIT）。本專案最早以 April Zhu 的 Pocket City 建立，繪圖零件與明暗配色參照它的做法改寫。</dd></dl>';
 $('notesBtn').onclick = () => $('notes').showModal(); $('closeNotes').onclick = () => $('notes').close();
 $('notes').onclick = e => { if (e.target === $('notes')) { const r = e.target.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) e.target.close(); } };
 
@@ -83,7 +83,7 @@ if (APP) {
 .top,.rail,.control-area,.foot,.tools,.mark,#viewName,.scale{display:none!important}
 html,body{background:var(--paper,#f6f3e9)}
 .workspace{position:fixed!important;inset:0!important;height:auto!important}
-.stage{position:fixed!important;inset:0!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.stage{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important}
 .compass{top:calc(env(safe-area-inset-top) + 12px)!important;right:12px!important;bottom:auto!important;width:40px!important;height:44px!important}
 .osm-credit{bottom:calc(env(safe-area-inset-bottom) + 6px)!important;left:10px;right:auto!important}
 .app-bar{position:absolute;z-index:4;left:12px;right:64px;top:calc(env(safe-area-inset-top) + 12px);pointer-events:none}

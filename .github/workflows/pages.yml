@@ -1,4 +1,4 @@
-# Build the page from landmarks/ and work/ with the vendored Pocket City engine, and publish it on GitHub Pages.
+# Build the pages from landmarks/ and work/ and publish them on GitHub Pages.
 name: Build and publish
 
 on:
@@ -22,10 +22,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Build the page
-        run: python tools/build.py --out _site/index.html
-      - name: Build the MapLibre page
-        run: python tools/build.py --proto --site _site
+      - name: Build the pages (MapLibre home page, 3D page at 3d.html)
+        run: python tools/build.py --site-pages --site _site
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'
         with:

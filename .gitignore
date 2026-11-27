@@ -1,6 +1,7 @@
 # generated
 build/
 shots/
+tamkang-campus.html
 pocket-city-tamkang-campus.html
 
 # per-district scratch maps (regenerate with tools/district_viz.py)

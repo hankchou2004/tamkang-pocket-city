@@ -2,7 +2,7 @@
 
 歡迎一起擴充這個校園模型。最有用的貢獻通常不是程式，而是**照片和資料**。不會寫程式也能參與。
 
-送出的程式碼以 MIT 授權，文字內容以 CC BY-SA 4.0 授權，與本專案相同（見 [LICENSE](LICENSE) 和 [LICENSE-CONTENT.md](LICENSE-CONTENT.md)）。`vendor/pocket-city/` 是 April Zhu 的引擎，只限非商業使用，請勿修改其中的檔案。
+送出的程式碼以 MIT 授權，文字內容以 CC BY-SA 4.0 授權，與本專案相同（見 [LICENSE](LICENSE) 和 [LICENSE-CONTENT.md](LICENSE-CONTENT.md)）。
 
 ## 一、提供照片或資料（不需要寫程式）
 

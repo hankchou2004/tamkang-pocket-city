@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>淡江大學 · 淡水校園</title>
+<style>
+:root{--paper:#f4f1e6;--card:#fffcf2;--ink:#263c35;--muted:#5e6a5c;--rule:#d9d6c7;--line:#c6cbbd;--accent:#2f4f43;
+  --sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;--serif:"Noto Serif TC","PMingLiU",Georgia,serif;--mono:ui-monospace,"Cascadia Mono",Consolas,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none}
+body{background:var(--paper);color:var(--ink);font:14px/1.45 var(--sans)}
+button{font:inherit;color:inherit}
+a{color:inherit}
+.top{height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 28px;border-bottom:1px solid var(--rule);background:#fbf9f0}
+.identity{display:flex;align-items:center;gap:14px}
+.wordmark{font:700 20px/1 var(--serif);letter-spacing:.02em}
+.city-nav a{font:600 14px var(--sans);text-decoration:none;padding:21px 2px;border-bottom:3px solid var(--accent)}
+.topnav{display:flex;align-items:center;gap:14px}
+.status{display:flex;align-items:center;gap:7px;font:10px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.status i{width:8px;height:8px;border-radius:50%;background:#5f9a68}
+.button{display:flex;align-items:center;gap:7px;padding:8px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;font-weight:600}
+.button svg{width:16px;height:16px}
+.workspace{position:relative;height:calc(100% - 64px);background-image:radial-gradient(#cdd1c0 .6px,transparent .9px);background-size:18px 18px}
+.rail{position:absolute;left:24px;top:22px;bottom:18px;width:262px;overflow:auto;z-index:3;display:flex;flex-direction:column;gap:14px;scrollbar-width:thin;padding:2px}
+.paper{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 3px 0 #7b80661a}
+.info{padding:18px 18px 14px}
+.stamp-line{font:600 11px var(--sans);letter-spacing:.08em;color:#a0442f}
+.info h1{margin:6px 0 2px;font:500 44px/1.05 var(--serif);letter-spacing:-.01em}
+.location{margin:0;font:italic 15px var(--serif);color:var(--muted)}
+.coords{margin-top:10px;font:10px var(--mono);color:var(--muted);display:flex;align-items:center;gap:6px}
+.coords svg{width:12px;height:12px}
+.season-box{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
+.subhead{margin:0 0 6px;font:600 10px var(--mono);letter-spacing:.08em;color:var(--muted)}
+.note{font:italic 14px/1.5 var(--serif);color:var(--muted)}
+.note a{font:10px var(--mono)}
+.field-key{padding:12px 12px 10px}
+.key-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:2px 2px 8px;border:0;background:none;cursor:pointer;font:600 12px var(--sans);border-bottom:1px solid var(--rule)}
+.key-toggle svg{width:14px;height:14px;transition:transform .2s}
+.key-toggle[aria-expanded="false"] svg{transform:rotate(180deg)}
+.key-body{padding-top:6px}
+.stage{position:absolute;left:300px;right:12px;top:10px;bottom:10px;border-radius:14px;overflow:hidden}
+#fig{display:block;width:100%;height:100%;outline:none}
+.tools{position:absolute;top:14px;right:14px;z-index:3;display:flex;align-items:center;gap:4px;padding:6px;border:1px solid var(--line);border-radius:12px;background:var(--card);box-shadow:0 3px 0 #7b80661a}
+.tool{width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:8px;background:none;cursor:pointer}
+.tool:hover{background:#eef0e6}.tool:disabled{opacity:.35;cursor:default}
+.tool svg{width:18px;height:18px}
+.divider{width:1px;height:22px;background:var(--rule);margin:0 4px}
+.zoom-value{min-width:52px;text-align:center;font:10px var(--mono);color:var(--muted)}
+.map-code{position:absolute;left:14px;top:12px;z-index:2;font:600 9px var(--mono);letter-spacing:.08em;color:var(--muted)}
+.compass{position:absolute;right:20px;top:72px;z-index:2;width:52px;height:60px}
+.scale{position:absolute;left:16px;bottom:12px;z-index:2;font:600 9px var(--mono);color:var(--muted)}
+.scale i{display:block;height:4px;margin-top:3px;border:1px solid var(--muted);border-top:0}
+.loading{position:absolute;inset:0;display:grid;place-items:center;font:12px var(--mono);color:var(--muted);z-index:1}
+.loading[hidden]{display:none}
+.control-area{display:none}
+dialog#notes{width:min(760px,92vw);max-height:84vh;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink)}
+dialog#notes::backdrop{background:#2a302a55}
+.dialog-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--rule);position:sticky;top:0;background:var(--card)}
+.dialog-head h2{margin:0;font:600 18px var(--serif)}
+.dialog-body{padding:8px 20px 20px;font-size:13px;line-height:1.6}
+.source-list dt{margin-top:14px;font-weight:700}
+.source-list dd{margin:4px 0 0}
+@media(max-width:760px){
+  .top{height:48px;padding:0 12px}.wordmark{font-size:16px}.status{display:none}.button span{display:none}
+  .workspace{height:calc(100% - 48px)}
+  .rail{position:relative;left:auto;top:auto;bottom:auto;width:auto;overflow:visible;padding:8px}
+  .info h1{font-size:30px}.coords,.season-box .subhead{display:none}
+  .stage{left:0;right:0;top:auto;bottom:0;height:62%}
+  .field-key{position:absolute;left:8px;top:calc(100% + 8px);width:auto;z-index:4}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="identity"><span class="wordmark">淡江校園地圖</span><nav class="city-nav" aria-label="地點"><a aria-current="page" id="placeTab" href="#"></a></nav></div>
+  <div class="topnav"><div class="status" id="status"><i></i><span>3D</span></div>
+    <button id="notesBtn" class="button" aria-haspopup="dialog" aria-label="Field notes"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6z"/></svg><span>Field notes</span></button></div>
+</header>
+<main class="workspace">
+  <aside class="rail" aria-label="地圖資訊">
+    <section class="paper info">
+      <div class="stamp-line"><span></span><i class="flag" hidden></i></div>
+      <h1 id="cityName"></h1>
+      <p class="location"></p>
+      <div class="coords"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/></svg> </div>
+      <div class="season-box"><h2 class="subhead">淡水 · 現在</h2><div id="chips" hidden></div><div class="note" id="note" aria-live="polite"></div></div>
+    </section>
+    <section class="paper field-key">
+      <button class="key-toggle" id="keyToggle" aria-controls="keyBody" aria-expanded="true">地圖導覽 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 15 6-6 6 6"/></svg></button>
+      <div class="key-body" id="keyBody"></div>
+    </section>
+  </aside>
+  <div class="stage" id="stage">
+    <nav class="tools" aria-label="鏡頭">
+      <button class="tool" id="play" hidden aria-hidden="true"></button>
+      <i class="divider"></i>
+      <button class="tool" id="zOut" aria-label="縮小" title="縮小"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+      <output class="zoom-value" id="zoom">100%</output>
+      <button class="tool" id="zIn" aria-label="放大" title="放大"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg></button>
+    </nav>
+    <canvas id="fig" tabindex="0" aria-label="淡江大學淡水校園互動地圖。拖曳旋轉，方向鍵移動，加減鍵縮放。"></canvas>
+    <span class="map-code" id="viewName"></span>
+    <div class="compass" aria-label="指北針"><svg viewBox="0 0 68 78"><text x="34" y="10" text-anchor="middle" font-size="10" font-weight="700" fill="#263c35" font-family="Georgia,serif">N</text><circle cx="34" cy="39" r="24" fill="#fffcf2" stroke="#9aa392"/><g id="needle"><path d="M34 19l5 20h-10z" fill="#b5523d"/><path d="M34 59l5-20h-10z" fill="#5d7a6a"/></g><circle cx="34" cy="39" r="2.2" fill="#263c35"/></svg></div>
+    <div class="scale">20 m<i id="scaleLine"></i></div>
+    <div class="loading" id="loading" role="status">正在搭建 3D 校園…</div>
+  </div>
+  <div class="control-area"><p class="gesture"><span id="hint"></span></p><div class="views" id="views" role="group" aria-label="視角"></div></div>
+</main>
+<footer class="foot" hidden><div class="metric"></div><div></div></footer>
+<dialog id="notes"><div class="dialog-head"><h2>Field notes</h2><button id="closeNotes" class="tool" aria-label="關閉"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="dialog-body"></div></dialog>
+<!--BLOCKS-->
+</body>
+</html>
