@@ -114,7 +114,18 @@ let W = 1, H = 1;
 const K = Math.sqrt(1.5);
 const autoZoom = +(302 / (SIZE * 1.62)).toFixed(3);
 const iso = { yaw: -35, pitch: 33, zoom: autoZoom, x: 0, y: 0, z: 4, ...((CITY.cameras || {}).iso || {}) };
-if (APP) { iso.zoom *= 2.1; iso.pitch += 7; }   // a portrait screen: the zoom is set by its width, so the square would sit small in the middle; look down a little more to fill the height
+if (APP) {
+  // north up: the camera looks along the plot's north; look down a little more to fill a portrait screen
+  iso.pitch += 7; iso.yaw = Math.atan2(-META.north[1], -META.north[0]) * 180 / Math.PI;
+  // centre on the campus and zoom so its width (west to east) fills about 90% of the screen's width
+  // (portrait: pixels per metre are W / 302 × zoom × K, so the zoom does not depend on the screen size)
+  if (typeof CAMPUS !== 'undefined' && CAMPUS.length > 2) {
+    const N = META.north, E = [N[1], -N[0]], es = CAMPUS.map(p => p[0] * E[0] + p[1] * E[1]), ns = CAMPUS.map(p => p[0] * N[0] + p[1] * N[1]);
+    const e = (Math.min(...es) + Math.max(...es)) / 2, n = (Math.min(...ns) + Math.max(...ns)) / 2;
+    iso.x = e * E[0] + n * N[0]; iso.y = e * E[1] + n * N[1];
+    iso.zoom = .9 * 302 / ((Math.max(...es) - Math.min(...es)) * Math.sqrt(1.5));
+  } else iso.zoom *= 2.1;
+}   // a portrait screen: the zoom is set by its width, so the square would sit small in the middle; look down a little more to fill the height
 const maxZoom = iso.zoom * 16, minZoom = iso.zoom * .55;
 const cameras = { iso, bird: { yaw: iso.yaw - 5, pitch: 72, zoom: iso.zoom * .95, x: 0, y: 0, z: 4 } };
 const viewList = [['cine', '自動環繞']];
@@ -467,7 +478,8 @@ function buildGlows() {
 }
 
 /* ====================== sun, weather and time: 淡水 now ====================== */
-const CFG = LIVE_CFG, fixedAt = params.get('at'), fixedWx = params.get('wx');
+const CFG = LIVE_CFG;
+let fixedAt = params.get('at'), fixedWx = params.get('wx');
 const STATE = { wx: 'clear', crowd: 1, wet: false, level: 0, base: 'summer' };
 let weather = null, temp = null, failed = false;
 function sunPosition(date, lat, lon) {   // NOAA's approximate solar position: altitude and azimuth (from north, clockwise), degrees
@@ -534,6 +546,14 @@ function rebuildTrees(base) {
   const m = meshFromGEO('flat'); treeMeshes = m ? [m] : []; if (m) scene.add(m);
   renderer.shadowMap.needsUpdate = true;
 }
+
+// the development page (dev/, a parent frame) sets the time and the weather live, without reloading:
+// { type: 'tku-dev-env', manual: true, at: '2026-11-27T18:30', wx: 'rain' }; manual: false goes back to now and the live weather
+addEventListener('message', e => {
+  const d = e.data; if (window.parent === window || e.source !== window.parent || !d || d.type !== 'tku-dev-env') return;
+  if (d.manual) { fixedAt = typeof d.at === 'string' && !isNaN(new Date(d.at + '+08:00')) ? d.at : null; fixedWx = CFG.weathers[d.wx] ? d.wx : null; applyState(); }
+  else { fixedAt = null; fixedWx = null; fetchWeather(); }
+});
 
 /* ====================== build everything ====================== */
 function build() {

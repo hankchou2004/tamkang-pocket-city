@@ -431,7 +431,8 @@ function pump() {
 }
 
 /* ---------------- sun, weather and time: 淡水 now (as main3d.js) ---------------- */
-const CFG = LIVE_CFG, fixedAt = params.get('at'), fixedWx = params.get('wx');
+const CFG = LIVE_CFG;
+let fixedAt = params.get('at'), fixedWx = params.get('wx');
 const STATE = { wx: 'clear', crowd: 1, wet: false, level: 0, base: 'summer' };
 let weather = null, temp = null, failed = false, paintedAt = null;
 function sunPosition(date, lat, lon) {   // NOAA's approximate solar position: altitude and azimuth (from north, clockwise), degrees
@@ -467,7 +468,8 @@ function applyState() {
   if (rain) rain.visible = wx === 'rain' || wx === 'drizzle';
   $('haze').style.opacity = wx === 'fog' ? 1 : 0;
   SEASON.night = U.uNight.value;
-  const key = U.uNight.value.toFixed(2) + STATE.wet; if (key !== paintedAt) { paintMap(U.uNight.value, STATE.wet); paintedAt = key; }
+  // the map's colours change in 20 steps from day to night
+  const key = (Math.round(U.uNight.value * 20) / 20) + '|' + STATE.wet; if (key !== paintedAt) { paintMap(Math.round(U.uNight.value * 20) / 20, STATE.wet); paintedAt = key; }
   if (builtSeason !== base) rebuildTrees(base);
   const parts = [`${clock(t)} · ${(hourOf(t) < 12 && lv.morning) || lv.label} · ${CFG.weathers[wx].label}`];
   if (temp != null && !fixedWx) parts.push(`${Math.round(temp)}°C`);
@@ -484,12 +486,20 @@ async function fetchWeather() {
   applyState();
 }
 
+// the development page (dev/, a parent frame) sets the time and the weather live, without reloading:
+// { type: 'tku-dev-env', manual: true, at: '2026-11-27T18:30', wx: 'rain' }; manual: false goes back to now and the live weather
+addEventListener('message', e => {
+  const d = e.data; if (window.parent === window || e.source !== window.parent || !d || d.type !== 'tku-dev-env') return;
+  if (d.manual) { fixedAt = typeof d.at === 'string' && !isNaN(new Date(d.at + '+08:00')) ? d.at : null; fixedWx = CFG.weathers[d.wx] ? d.wx : null; applyState(); }
+  else { fixedAt = null; fixedWx = null; fetchWeather(); }
+});
+
 /* ---------------- the map ---------------- */
 // the same view as the 3D page's whole-campus camera: centre of the plot, looking along its yaw (plot -> compass bearing)
 const ISO = { yaw: -35, pitch: 40, ...((CITY.cameras || {}).iso || {}) };
 const look = (() => { const t = ISO.yaw * Math.PI / 180, dx = -Math.cos(t), dy = -Math.sin(t);
   return Math.atan2(dx * Math.cos(ROT) - dy * Math.sin(ROT), dx * Math.sin(ROT) + dy * Math.cos(ROT)) * 180 / Math.PI; })();
-const HOME = { center: toLngLat([ISO.x || 0, ISO.y || 0]), zoom: 15.9, pitch: 90 - 40, bearing: look };
+const HOME = { center: toLngLat([ISO.x || 0, ISO.y || 0]), zoom: 15.9, pitch: 90 - 40, bearing: 0 };   // north up (the 3D page's own turn would be `look`)
 const map = new maplibregl.Map({ container: 'map', style: 'https://tiles.openfreemap.org/styles/liberty', ...HOME, maxPitch: 70, antialias: true, attributionControl: { compact: true } });
 window.__map = map;
 window.__world = { WORLD, STATE, U, get triangles() { return triangles; }, get queue() { return queue.length; }, get tileBuildings() { return tileBuildings; }, get landmarks() { return LM_COUNT; }, pickAt: (x, y) => pickAt(x, y), ray: () => ray, get camera() { return camera; }, SOLIDS, PICKS };
