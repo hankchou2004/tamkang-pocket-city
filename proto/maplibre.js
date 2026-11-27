@@ -61,7 +61,10 @@ function addZones(map) {
     PAINTS.push(['zone-' + z.id, 'fill-color', z.colour, true], ['zone-' + z.id + '-edge', 'line-color', z.edge, false]);
   }
 }
+let lastNight = 0, lastWet = false;
 function paintMap(night, wet) {
+  lastNight = night; lastWet = wet;
+  if (!styleReady) return;   // the style is still loading: applyLook() paints with these once it is in
   for (const [id, prop, c, ground] of PAINTS) try { map.setPaintProperty(id, prop, nightHex(c, night, ground && wet)); } catch (_) {}
   for (const l of map.getStyle().layers) if (l.type === 'symbol') try {
     map.setPaintProperty(l.id, 'text-color', night > .45 ? '#f4efe2' : INK); map.setPaintProperty(l.id, 'text-halo-color', night > .45 ? '#24332e' : '#fffcf2'); } catch (_) {}
@@ -489,10 +492,88 @@ async function fetchWeather() {
 // the development page (dev/, a parent frame) sets the time and the weather live, without reloading:
 // { type: 'tku-dev-env', manual: true, at: '2026-11-27T18:30', wx: 'rain' }; manual: false goes back to now and the live weather
 addEventListener('message', e => {
-  const d = e.data; if (window.parent === window || e.source !== window.parent || !d || d.type !== 'tku-dev-env') return;
+  const d = e.data; if (window.parent === window || e.source !== window.parent || !d) return;
+  if (d.type === 'tku-dev-map') { setLook(d.look); return; }   // the map's look: see LOOK_DEFAULT
+  if (d.type !== 'tku-dev-env') return;
   if (d.manual) { fixedAt = typeof d.at === 'string' && !isNaN(new Date(d.at + '+08:00')) ? d.at : null; fixedWx = CFG.weathers[d.wx] ? d.wx : null; applyState(); }
   else { fixedAt = null; fixedWx = null; fetchWeather(); }
 });
+
+/* ---------------- the map's look: labels and roads ----------------
+   LOOK_DEFAULT is what the page shows. The development page (dev/) sends { type: 'tku-dev-map', look } to try others live;
+   a look chosen there is made the default by copying it here. */
+const LOOK_DEFAULT = {
+  labels: { place: true, road: true, poi: true, transit: true, water: true },   // place names, road names, shops and places, transit, water names
+  lang: 'zh',              // 'both' (English and Chinese), 'zh', 'en'
+  textScale: 1,            // text size, × the style's
+  roadWidth: 1,            // road and path width, × the style's
+  roadStyle: 'asphalt',    // 'paper' (white roads, tan edges), 'asphalt' (grey, white centre lines), 'plain' (no edges)
+  paths: 'solid',          // footpaths: 'dashed', 'solid', 'hidden'
+};
+const ROAD_STYLES = {
+  paper: { road: ROAD, edge: ROAD_EDGE, path: ROAD, edges: true, centre: false },
+  asphalt: { road: '#b9b2b5', edge: '#958d92', path: '#e4dccd', edges: true, centre: true },
+  plain: { road: '#e7e0d3', edge: ROAD_EDGE, path: '#dcd2c0', edges: false, centre: false },
+};
+let LOOK = JSON.parse(JSON.stringify(LOOK_DEFAULT)), styleReady = false;
+const LABEL_KIND = id => /^label_/.test(id) ? 'place' : /^highway-name|^road_one_way/.test(id) ? 'road' : /^poi_r/.test(id) ? 'poi'
+  : /^poi_transit|^airport/.test(id) ? 'transit' : /water_name|waterway_line_label/.test(id) ? 'water' : null;
+const TEXT = {
+  // Chinese where there is any; a place with only a Latin name (7-Eleven, La new) keeps it, so nothing loses its label
+  zh: ['coalesce', ['get', 'name:nonlatin'], ['get', 'name'], ['get', 'name:latin'], ['get', 'name_en']],
+  en: ['coalesce', ['get', 'name:latin'], ['get', 'name_en'], ['get', 'name']],
+};
+const BASE = new Map();   // the style's own text and width settings, before any change: layer id -> { tf, ts, lw, dash }
+// a number, or a zoom curve ['interpolate', type, ['zoom'], z1, v1, z2, v2 …], times k
+const times = (v, k) => typeof v === 'number' ? v * k
+  : Array.isArray(v) && v[0] === 'interpolate' ? v.map((x, i) => i >= 4 && i % 2 === 0 ? (typeof x === 'number' ? x * k : ['*', x, k]) : x) : v;
+function setBase(id, prop, c) { const p = PAINTS.find(q => q[0] === id && q[1] === prop); if (p) p[2] = c; }
+const isRoad = l => l['source-layer'] === 'transportation' && l.type === 'line' && !/rail/.test(l.id);
+const isPath = l => /path_pedestrian/.test(l.id);
+// white dashes down the middle of the bigger roads (the 'asphalt' style), as on the 3D page
+function addCentreLines(map) {
+  const layers = map.getStyle().layers, src = (layers.find(l => l['source-layer'] === 'transportation') || {}).source;
+  if (!src) return;
+  const before = layers.find(l => /^bridge_/.test(l.id) || l.type === 'symbol');
+  map.addLayer({ id: 'road-centre-line', type: 'line', source: src, 'source-layer': 'transportation',
+    filter: ['all', ['==', ['geometry-type'], 'LineString'], ['in', ['get', 'class'], ['literal', ['trunk', 'primary', 'secondary', 'tertiary']]], ['!=', ['get', 'brunnel'], 'tunnel']],
+    layout: { 'line-cap': 'butt', visibility: 'none' },
+    paint: { 'line-color': '#f4efe2', 'line-dasharray': [2, 2.5], 'line-width': ['interpolate', ['exponential', 1.2], ['zoom'], 15, .5, 20, 2] } }, before && before.id);
+  PAINTS.push(['road-centre-line', 'line-color', '#f4efe2', false]);
+}
+function applyLook() {
+  if (!styleReady) return;
+  const L = LOOK, rs = ROAD_STYLES[L.roadStyle] || ROAD_STYLES.paper;
+  for (const l of map.getStyle().layers) {
+    const id = l.id;
+    if (!BASE.has(id)) BASE.set(id, l.type === 'symbol' ? { tf: map.getLayoutProperty(id, 'text-field'), ts: map.getLayoutProperty(id, 'text-size') }
+      : l.type === 'line' ? { lw: map.getPaintProperty(id, 'line-width'), dash: map.getPaintProperty(id, 'line-dasharray') } : {});
+    const B = BASE.get(id), kind = l.type === 'symbol' ? LABEL_KIND(id) : null;
+    try {
+      if (kind) {
+        map.setLayoutProperty(id, 'visibility', L.labels[kind] === false ? 'none' : 'visible');
+        if (B.tf) map.setLayoutProperty(id, 'text-field', L.lang === 'zh' ? TEXT.zh : L.lang === 'en' ? TEXT.en : B.tf);
+        if (B.ts != null) map.setLayoutProperty(id, 'text-size', times(B.ts, L.textScale));
+      }
+      if (isRoad(l)) {
+        if (B.lw != null) map.setPaintProperty(id, 'line-width', times(B.lw, L.roadWidth));
+        const casing = /casing/.test(id);
+        if (isPath(l)) {
+          if (!casing) { setBase(id, 'line-color', rs.path); map.setPaintProperty(id, 'line-dasharray', L.paths === 'solid' ? null : B.dash); }
+          map.setLayoutProperty(id, 'visibility', L.paths === 'hidden' ? 'none' : 'visible');
+        } else if (casing) { setBase(id, 'line-color', rs.edge); map.setLayoutProperty(id, 'visibility', rs.edges ? 'visible' : 'none'); }
+        else setBase(id, 'line-color', rs.road);
+      }
+      if (id === 'road-centre-line') { map.setLayoutProperty(id, 'visibility', rs.centre ? 'visible' : 'none'); map.setPaintProperty(id, 'line-width', times(B.lw, L.roadWidth)); }
+    } catch (err) { console.warn('look', id, err); }
+  }
+  paintMap(lastNight, lastWet);   // the colours, for the time of day
+}
+function setLook(look) {
+  const D = LOOK_DEFAULT, x = look || {};
+  LOOK = { ...D, ...x, labels: { ...D.labels, ...(x.labels || {}) } };
+  applyLook();
+}
 
 /* ---------------- the map ---------------- */
 // the same view as the 3D page's whole-campus camera: centre of the plot, looking along its yaw (plot -> compass bearing)
@@ -508,7 +589,7 @@ map.on('styleimagemissing', e => { if (!map.hasImage(e.id)) map.addImage(e.id, {
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true, showZoom: false }), 'top-right');
 const camera = new THREE.Camera(), inv = new THREE.Matrix4();
 map.on('style.load', () => {
-  restyle(map); addZones(map);
+  restyle(map); addZones(map); addCentreLines(map); styleReady = true; applyLook();
   // the map's own 3D blocks give way to ours; its flat footprints stay as a hint until a tile's buildings are drawn
   const bl = map.getStyle().layers.filter(l => l['source-layer'] === 'building'), src = bl[0] && bl[0].source;
   for (const l of bl) if (l.type === 'fill-extrusion') map.setLayoutProperty(l.id, 'visibility', 'none');
