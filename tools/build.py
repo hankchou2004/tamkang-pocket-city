@@ -65,7 +65,7 @@ def build3d(out, city='work/city.json', app=False):
                  'const ZONES=' + json.dumps(zones, ensure_ascii=False) + ';') +
               js(read('web3d', 'kit3d.js')) + js(open(lm, encoding='utf-8').read()) + js(read('web3d', 'main3d.js')))
     html = read('web3d', 'template.html').replace('<!--BLOCKS-->', blocks)
-    if app:
+    if app and os.path.isfile(os.path.join(ROOT, 'app', 'head.html')):   # the PWA links (app/ is local only)
         i = html.index('</head>'); html = html[:i] + read('app', 'head.html') + html[i:]
     path = os.path.join(ROOT, out); os.makedirs(os.path.dirname(path) or ROOT, exist_ok=True)
     open(path, 'w', encoding='utf-8').write(html)
@@ -74,12 +74,18 @@ def build3d(out, city='work/city.json', app=False):
 def build_app(site='_site'):
     """The phone app (site/app/: the map page in APP_MODE, manifest, service worker, icons) and the development page
     (site/dev/: the app in a phone frame, panels on both sides)."""
+    # app/ and dev/ are kept out of the repository: without them, build the app page alone and skip the rest
+    has_shell = os.path.isfile(os.path.join(ROOT, 'app', 'head.html'))
     build3d(os.path.join(site, 'app', 'index.html'), app=True)
-    for f in ('manifest.webmanifest', 'sw.js', 'icon.svg', 'icon-180.png', 'icon-192.png', 'icon-512.png'):
-        shutil.copyfile(os.path.join(ROOT, 'app', f), os.path.join(ROOT, site, 'app', f))
-    os.makedirs(os.path.join(ROOT, site, 'dev'), exist_ok=True)
-    shutil.copyfile(os.path.join(ROOT, 'dev', 'index.html'), os.path.join(ROOT, site, 'dev', 'index.html'))
-    print(f'App in {site}/app/, development page in {site}/dev/ (serve with: python -m http.server 8000 -d {site})')
+    if has_shell:
+        for f in ('manifest.webmanifest', 'sw.js', 'icon.svg', 'icon-180.png', 'icon-192.png', 'icon-512.png'):
+            shutil.copyfile(os.path.join(ROOT, 'app', f), os.path.join(ROOT, site, 'app', f))
+    if os.path.isfile(os.path.join(ROOT, 'dev', 'index.html')):
+        os.makedirs(os.path.join(ROOT, site, 'dev'), exist_ok=True)
+        shutil.copyfile(os.path.join(ROOT, 'dev', 'index.html'), os.path.join(ROOT, site, 'dev', 'index.html'))
+        print(f'App in {site}/app/, development page in {site}/dev/ (serve with: python -m http.server 8000 -d {site})')
+    else:
+        print(f'No dev/ folder: built {site}/app/ only (serve with: python -m http.server 8000 -d {site}, open /app/)')
 
 def build_proto(site='_site'):
     """Prototype: the campus on a MapLibre map (proto/maplibre.html, proto/maplibre.js). The base map is OpenFreeMap's

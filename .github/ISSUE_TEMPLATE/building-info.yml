@@ -43,11 +43,6 @@ body:
     attributes:
       label: 觀察到的特徵或錯誤
       description: 例如顏色、樓層數、屋頂形式、窗戶樣式，或畫面上哪裡跟實際不同。
-  - type: textarea
-    id: sources
-    attributes:
-      label: 文字來源
-      description: 淡江時報期數、校史、志書或網頁連結。
   - type: checkboxes
     id: licence
     attributes:
