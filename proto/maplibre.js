@@ -287,10 +287,28 @@ sunLight.shadow.mapSize.set(phone ? 2048 : 4096, phone ? 2048 : 4096);
 Object.assign(sunLight.shadow.camera, { left: -HALF * 1.15, right: HALF * 1.15, top: HALF * 1.15, bottom: -HALF * 1.15, near: 1, far: 3000 });
 sunLight.shadow.bias = -0.0004; sunLight.shadow.normalBias = .3;
 WORLD.add(sunLight, sunLight.target);
-// the map's ground is not three.js: a see-through plane over the plot takes the shadows
-const shadowGround = new THREE.Mesh(new THREE.PlaneGeometry(HALF * 2.3, HALF * 2.3), new THREE.ShadowMaterial({ color: 0x3e3458, opacity: .3, depthWrite: false }));
+// the map's ground is not three.js: a see-through plane takes the shadows. The plane and the sun's shadow camera follow the
+// view (placeShadows), so the buildings drawn from the tiles outside the plot cast shadows too, wherever the map is moved.
+const shadowGround = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShadowMaterial({ color: 0x3e3458, opacity: .3, depthWrite: false }));
 shadowGround.position.z = .05; shadowGround.receiveShadow = true; shadowGround.frustumCulled = false; WORLD.add(shadowGround);
-let shadowsDirty = true;
+let shadowsDirty = true, sunDir = [0, 0, 1];
+function placeShadows() {
+  // called once the map exists (style.load, then each moveend)
+  // the area the shadow map covers: about the ground in view (more when tilted, as the far ground shows), 150-1400 m across
+  const c = toPlot(map.getCenter().toArray()), r = map.getCanvas().getBoundingClientRect();
+  const mpp = 40075016.686 * Math.cos(META.lat * Math.PI / 180) / (512 * 2 ** map.getZoom());
+  const half = Math.max(150, Math.min(1400, Math.max(r.width, r.height) * mpp * (.75 + map.getPitch() / 60)));
+  // snap to a grid of a tenth of the area, so small moves keep the same shadow map
+  const g = half / 5, cx = Math.round(c[0] / g) * g, cy = Math.round(c[1] / g) * g;
+  const cam = sunLight.shadow.camera;
+  if (cam.right !== half || sunLight.target.position.x !== cx || sunLight.target.position.y !== cy) {
+    Object.assign(cam, { left: -half, right: half, top: half, bottom: -half }); cam.updateProjectionMatrix();
+    sunLight.target.position.set(cx, cy, 0); sunLight.target.updateMatrixWorld();
+    sunLight.position.set(cx + sunDir[0] * 1000, cy + sunDir[1] * 1000, sunDir[2] * 1000);
+    shadowGround.position.set(cx, cy, .05); shadowGround.scale.set(half * 3, half * 3, 1);
+    shadowsDirty = true;
+  }
+}
 
 /* ---------------- glows, people and cars, rain ---------------- */
 let glowMesh = null;
@@ -481,7 +499,8 @@ function applyState() {
   U.uLitShare.value = .6 * Math.max(0, Math.min(1, (6 - alt) / 10));
   U.uShadowOn.value = day && wx !== 'rain' && wx !== 'fog' ? 1 : 0;
   shadowGround.visible = U.uShadowOn.value > .5;
-  sunLight.position.set(sx * 1000, sy * 1000, Math.max(.05, Math.sin(ra)) * 1000); sunLight.target.position.set(0, 0, 0); sunLight.target.updateMatrixWorld();
+  sunDir = [sx, sy, Math.max(.05, Math.sin(ra))];
+  const tg = sunLight.target.position; sunLight.position.set(tg.x + sx * 1000, tg.y + sy * 1000, sunDir[2] * 1000);
   shadowsDirty = true;
   if (rain) rain.visible = wx === 'rain' || wx === 'drizzle';
   $('haze').style.opacity = wx === 'fog' ? 1 : 0;
@@ -666,6 +685,7 @@ map.on('style.load', () => {
   const loop = () => { requestAnimationFrame(loop); if (!document.hidden) map.triggerRepaint(); }; loop();
   // new tiles: draw their buildings, a slice per frame so the map keeps moving
   map.on('idle', () => { if (src) collectTiles(src); if (!pumping && queue.length) pump(); });
+  map.on('moveend', placeShadows); placeShadows();   // the shadows follow the view
   applyState(); fetchWeather(); setInterval(fetchWeather, 10 * 60 * 1000); setInterval(applyState, 60 * 1000);
   map.once('idle', () => { $('loading').hidden = true; });
 });
