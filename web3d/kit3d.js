@@ -190,18 +190,21 @@ function facadeTile(st, wallCol) {
 }
 // the walls of a ring from z0 to z1, painted with the style's façade
 function walls3d(ring, z0, z1, st, body) {
-  const r = ccw(ring), tile = facadeTile(st, body), bay = st.bay || 3.2, floor = st.floor || LEVEL, G = GEO.wall, c = hex2rgb(body);
+  const r = ccw(ring);
+  for (let i = 0; i < r.length; i++) wallEdge(r[i], r[(i + 1) % r.length], z0, z1, st, body);
+}
+// one wall from a to b, z0 to z1, painted with the style's façade; it faces outward to the right of a→b seen from above
+// (as each side of a ccw ring does), so a building can give each side its own façade
+function wallEdge(a, b, z0, z1, st, body) {
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]); if (len < .05) return '';
+  const tile = facadeTile(st, body), bay = st.bay || 3.2, floor = st.floor || LEVEL, G = GEO.wall, c = hex2rgb(body);
   const textured = st.facade !== 'plain' || (z1 - z0) > 2.6;
-  let along = 0;
-  for (let i = 0; i < r.length; i++) {
-    const a = r[i], b = r[(i + 1) % r.length], len = Math.hypot(b[0] - a[0], b[1] - a[1]); if (len < .05) continue;
-    const n = [(b[1] - a[1]) / len, -(b[0] - a[0]) / len, 0];      // outward for a ccw ring
-    const bays = Math.max(1, Math.round(len / bay)), u1 = bays, v0 = 0, v1 = (z1 - z0) / floor;
-    const P = [[a[0], a[1], z0], [b[0], b[1], z0], [b[0], b[1], z1], [a[0], a[1], z1]], UV = [[0, v0], [u1, v0], [u1, v1], [0, v1]];
-    for (const k of [0, 1, 2, 0, 2, 3]) { G.p.push(...P[k]); G.n.push(...n); G.uv.push(...UV[k]); G.tile.push(textured ? tile : -1); G.c.push(c[0], c[1], c[2]); }
-    inkLoop(P, lineOf(body));
-    along += len;
-  }
+  const n = [(b[1] - a[1]) / len, -(b[0] - a[0]) / len, 0];
+  const bays = Math.max(1, Math.round(len / bay)), u1 = bays, v0 = 0, v1 = (z1 - z0) / floor;
+  const P = [[a[0], a[1], z0], [b[0], b[1], z0], [b[0], b[1], z1], [a[0], a[1], z1]], UV = [[0, v0], [u1, v0], [u1, v1], [0, v1]];
+  for (const k of [0, 1, 2, 0, 2, 3]) { G.p.push(...P[k]); G.n.push(...n); G.uv.push(...UV[k]); G.tile.push(textured ? tile : -1); G.c.push(c[0], c[1], c[2]); }
+  inkLoop(P, lineOf(body));
+  return '';
 }
 function block(ring, z0, z1, o = {}) {
   const st = makeStyle(o), body = pickOf(st.wall, ring.join());

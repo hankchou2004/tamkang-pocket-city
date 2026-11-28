@@ -347,6 +347,7 @@ function drawAtlas() {
       case 'civic': win(18, 10, T - 36, 42); if (t.trim) { g.fillStyle = t.trim; g.fillRect(x0, y0 + T - 4, T, 4); } break;
       case 'stucco': win(22, 16, T - 44, 32); if (t.shutters) { g.fillStyle = t.shutters; g.fillRect(x0 + 14, y0 + 16, 7, 32); g.fillRect(x0 + T - 21, y0 + 16, 7, 32); } if (t.trim) { g.fillStyle = t.trim; g.fillRect(x0, y0 + T - 4, T, 4); } break;
       case 'temple': g.fillStyle = t.glass; g.fillRect(x0 + 10, y0 + 16, T - 20, 34); g.fillStyle = mix(t.wall, '#51465a', .35); for (let k = 0; k < 6; k++) g.fillRect(x0 + 8 + k * 8, y0 + 14, 2, 40); g.fillRect(x0 + 6, y0 + 14, T - 12, 2); g.fillRect(x0 + 6, y0 + 52, T - 12, 2); g.fillRect(x0 + 6, y0 + 32, T - 12, 2); break;
+      case 'band': g.fillStyle = t.trim || mix(t.wall, '#51465a', .4); g.fillRect(x0, y0 + T - 18, T, 18); break;   // a blank wall with a dark band at each floor
       default: win(22, 20, T - 44, 26);
     }
     // alpha marks glass so lit windows can be drawn at night

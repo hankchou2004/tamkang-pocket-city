@@ -79,8 +79,11 @@
   photo 15 — 松濤1館 is the westernmost hall, in front of 外國語文大樓: beige walls with deep balcony recesses, six storeys like
   3館, water tanks and plant on the flat roof (no solar canopies in 2021). photo 19 — 工學大樓's roof painted green with long
   tan barrel-vault skylights, a small solar array, plant and tanks at one end.
-- Interpreted: 1館's walls follow 3館's present look (whether 1館 was redone is not known); the tanks', vaults' and plant's
-  number and places are read by eye.
+- Street photo supplied by the user (水源街二段 looking south-east; viewed only, not stored) — 松濤1館: white walls; the
+  saw-tooth's short faces turned north-west are blank with a dark grey band at every floor; a white end block with a grid of
+  small windows; six storeys.
+- Interpreted: 1館's faces turned south-east (out of the photo) carry windows, its ground floor (behind the retaining wall) is
+  drawn like the floors above; the tanks', vaults' and plant's number and places are read by eye.
 
 ## Revision: 驚聲紀念大樓 (after a user-supplied photo)
 - Photo supplied by the user (white tower, solid end blocks with punched windows, lower middle bar with planted balconies,
