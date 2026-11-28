@@ -8,6 +8,10 @@
    and two bands of white lattice; a white balustrade round a low podium and a balustraded canopy over the entrance. OSM parts: tower w235418157, round part w295324709, terrace w461340670.
    工學大樓: 1070期 — the new 工學大樓 opened in 1993 (OSM: eight levels). 工學館 (OSM: five levels): 淡江大學校園素材庫 photos — tan panels between white pilasters
    under a deep white cornice; 工學大樓 white tiles and recessed window bands (its mosaic stair tower is not drawn).
+   工學大樓's roof: an aerial photo (萌芽悠遊網, 2021-04-22, viewed only, not stored) shows it painted green, with long tan
+   barrel-vault skylights running along the building, a small solar array, and air-conditioning plant and tanks at one end.
+   The roof keeps this real colour (keepRoof) instead of the campus map's; the number, length and place of the vaults,
+   the array and the plant are read by eye from the one photo (推定).
    建築館: a street-level photo the user supplied (2025) — white walls, grey window bays, four storeys. */
 const JS_TOWER = 'w235418157', JS_ROUND = 'w295324709', JS_TERRACE = 'w461340670', ENG = 'w235418104', ENG_MAIN = 'w235418107', ARCH = 'w294126064';
 
@@ -74,9 +78,33 @@ function engHall() {
     solid(toward(b.obb.c, ring, 1.05), h, h + .9, '#f3f2ee', '#e4e3de'));
 }
 
+// a barrel-vault skylight along the building's axis: a half cylinder of radius r from station s0 to s1, offset t across,
+// on the roof at z (P: the building's frame, stations s along its axis and t across)
+function vaultStrip(P, s0, s1, t, r, z, col) {
+  const N = 6, pt = (s, a) => { const q = P(s, t + Math.cos(a) * r); return [q[0], q[1], z + Math.sin(a) * r]; };
+  let out = '';
+  for (let i = 0; i < N; i++) { const a0 = Math.PI * i / N, a1 = Math.PI * (i + 1) / N; out += shape([pt(s0, a0), pt(s1, a0), pt(s1, a1), pt(s0, a1)], col, .3); }
+  for (const s of [s0, s1]) out += shape(Array.from({ length: N + 1 }, (_, i) => pt(s, Math.PI * i / N)), mix(col, '#51465a', .12), .3);
+  return out;
+}
+// 工學大樓: eight storeys of white tile and window bands; a green roof with two long vaults, solar panels, plant at the east end
+const ENG_ROOF = '#94bd9a', ENG_VAULT = '#d6c08a';
+function engMain() {
+  const b = findBuilding(ENG_MAIN); if (!b) return null;
+  const ring = ccw(b.ring), F = 3.6, h = 8 * F, { c, ax } = b.obb, P = frame(c, ax, 1, 1).P;
+  return obj(ring, h + 3, () => {
+    let s = block(ring, 0, h, { shop: 'none', floor: F, facade: 'office', wall: '#f1f0ec', top: ENG_ROOF, bay: 2.4, glass: ['#55616a', '#5f6b73'], frame: '#f6f5f2' }).draw();
+    s += vaultStrip(P, -46, 14, 4, 2, h, ENG_VAULT) + vaultStrip(P, -22, 46, -6, 2, h, ENG_VAULT);
+    s += solarArray(P(-8, 13), ax, 8, 5, h);
+    s += roofBox(P(30, -14), ax, 6, 3, h) + roofBox(P(39, -14), ax, 6, 3, h) + roofTanks(P(36, 5), ax, 3, h, .9, 1.8);
+    s += solid(frame(P(-44, 12), ax, 6, 5).ring, h, h + 3, '#f1f0ec', '#e2e0da');   // stair and lift head house
+    return s;
+  });
+}
+
 LANDMARKS.push(
   { name: '驚聲紀念大樓', ids: [JS_TOWER, JS_ROUND, JS_TERRACE], build: chingSheng },
-  { name: '工學大樓', ids: [ENG_MAIN], build: plainHall(ENG_MAIN, 8, 3.6, { facade: 'office', wall: '#f1f0ec', top: '#d6d4ce', bay: 2.4, glass: ['#55616a', '#5f6b73'], frame: '#f6f5f2' }) },
+  { name: '工學大樓', ids: [ENG_MAIN], build: engMain, keepRoof: true },
   { name: '工學館', ids: [ENG], build: engHall },
   { name: '建築館', ids: [ARCH], build: plainHall(ARCH, 4, 3.8, { facade: 'office', wall: '#f2f1ec', top: '#d6d4ce', bay: 3, glass: ['#6a7378', '#737c80'], frame: '#f6f5f2', trim: '#e6e5e0' }) },
 );

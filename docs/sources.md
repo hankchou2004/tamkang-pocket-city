@@ -75,6 +75,12 @@
 - 淡江時報 854期 — 教育館 opening ceremony: https://tkutimes.az.tku.edu.tw/fdoc/25971.doc
 - Commons (阿道, CC BY-SA 4.0): Sung-tao Hall / Third Sung-tao Hall / Fourth Sung-tao Hall 20250804; Wikidata Q141328234 links the first to 2nd Sung-tao Hall.
 - Commons (丘崈, CC0): 淡江大學文錙藝術中心 (2026) — coloured glass panels at the entrance.
+- 萌芽悠遊網 aerial photos, 2021-04-22 (© 萌芽網頁, all rights reserved; viewed only, not stored): https://mnya.tw/yo/word/2431.html
+  photo 15 — 松濤1館 is the westernmost hall, in front of 外國語文大樓: beige walls with deep balcony recesses, six storeys like
+  3館, water tanks and plant on the flat roof (no solar canopies in 2021). photo 19 — 工學大樓's roof painted green with long
+  tan barrel-vault skylights, a small solar array, plant and tanks at one end.
+- Interpreted: 1館's walls follow 3館's present look (whether 1館 was redone is not known); the tanks', vaults' and plant's
+  number and places are read by eye.
 
 ## Revision: 驚聲紀念大樓 (after a user-supplied photo)
 - Photo supplied by the user (white tower, solid end blocks with punched windows, lower middle bar with planted balconies,

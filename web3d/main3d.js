@@ -566,7 +566,7 @@ function build() {
     // its colour on the campus map: grey roofs, windows and glass
     const col = campusColourOf(lm.name, (lm.ids || [])[0]), from = GEO.flat.p.length, fromGlass = GEO.glass.p.length; FACADE_TINT = col;
     try { const r = lm.build(), parts = [].concat(r || []).filter(o => o && typeof o.draw === 'function'); for (const o of parts) o.draw(); collectLabel(lm.name, parts); collectPick(lm.name, parts);
-      if (col) { recolourRoofs(null, col, from); tintGlass(col, fromGlass); } }
+      if (col) { if (!lm.keepRoof) recolourRoofs(null, col, from); tintGlass(col, fromGlass); } }
     catch (e) { console.warn('landmark', lm.name, e); }
     FACADE_TINT = null;
   }

@@ -59,6 +59,19 @@ function solarArray(c, ax, L, W, z) {
   return s;
 }
 
+// rooftop water tanks: n short upright cylinders with lids in a row along ax, centred on c, standing on the roof at z.
+// Stainless blue-grey (not a plain grey, so the campus roof colouring leaves them alone).
+function roofTanks(c, ax, n, z, r = .8, hgt = 1.6, col = '#b4c4cf') {
+  let s = '';
+  for (let k = 0; k < n; k++) {
+    const off = (k - (n - 1) / 2) * r * 2.6, x = c[0] + ax[0] * off, y = c[1] + ax[1] * off;
+    s += stick([x, y, z], [x, y, z + hgt], r, col) + shape(atZ(polygon(x, y, r, 6), z + hgt), mix(col, '#ffffff', .2), .35);
+  }
+  return s;
+}
+// a rooftop plant box (air-conditioning units, pumps): a low warm-grey solid, L along ax by W
+const roofBox = (c, ax, L, W, z, hgt = 1.4, col = '#cbc2ad') => solid(frame(c, ax, L, W).ring, z, z + hgt, col, mix(col, '#ffffff', .15));
+
 // a point on a bent building's spine: the mean of ring vertices lying near station s along its axis
 function spine(b, s, half = 6) {
   const { c, ax } = b.obb, pts = ccw(b.ring).filter(p => Math.abs((p[0] - c[0]) * ax[0] + (p[1] - c[1]) * ax[1] - s) < half);

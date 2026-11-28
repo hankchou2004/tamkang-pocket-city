@@ -8,7 +8,11 @@
    grey bands at the floor lines, a glazed ground floor, solar canopies on the roof. "Fourth Sung-tao Hall 20250804":
    light blue walls with white vertical fins. Photos the user supplied (松濤四五館): 4館 and 5館 are both four storeys,
    bright turquoise with white window surrounds and white fins, and the 文錙 glass front is dark green-grey glass hung
-   with posters. 松濤1館: no photo; drawn like 3館 (both have the same saw-tooth plan in OSM).
+   with posters. 松濤1館: no photo from the ground; an aerial photo (萌芽悠遊網, 2021-04-22, viewed only, not stored) shows it as
+   the westernmost of the group, in front of 外國語文大樓: beige walls with a grid of deep balcony recesses, six storeys like
+   3館 beside it (which looked the same in 2021, before the work seen in its 2025 photo), and water tanks and plant on the
+   flat roof rather than solar canopies. Drawn like 3館; the walls follow 3館's present look (whether 1館 was redone too is
+   推定), the tanks and plant boxes are placed by eye.
    教育館 (OSM 教育大樓, ref ED): 848期 — the old 自強館 women's hall rebuilt for the College of Education by alumnus
    林洲民, keeping its boxy form; a translucent glass louvre skin over the walls and a green roof garden with a timber deck
    on the sixth floor; 854期 — opened with a ceremony. Photos in 淡江大學校園素材庫 (教育館): the skin is vertical glass
@@ -18,7 +22,8 @@ const ST1 = 'w235418156', ST2 = 'w454159667', ST3 = 'w454159657', ST4 = 'w235418
 const ST_WHITE = '#f0eee8', ST_TAN = '#d6c29c';
 
 // 3館 (and 1館, drawn alike): glazed white ground floor, tan-panelled floors with dark bands, solar canopies along the spine
-function sawtoothHall(id, levels, solar) {
+// (roof 'tanks': water tanks and plant boxes at those stations instead, as on 1館 in the 2021 aerial photo)
+function sawtoothHall(id, levels, solar, roof = 'solar') {
   return () => {
     const b = findBuilding(id); if (!b) return null;
     const ring = ccw(b.ring), F = 3.2, h = levels * F;
@@ -26,8 +31,9 @@ function sawtoothHall(id, levels, solar) {
       let s = block(ring, 0, F, { facade: 'glass', wall: ST_WHITE, top: ST_WHITE, shop: 'none', floor: F, glass: ['#8fa3a8', '#9cb0b4'], frame: '#f4f3ef' }).draw();
       s += block(ring, F, h, { facade: 'office', wall: ST_TAN, top: '#d7d4cc', shop: 'none', floor: F, bay: 2.6, glass: ['#6c7a80', '#76858a'], frame: '#f4f2ec', trim: '#6f6e69' }).draw();
       for (const st of solar) {
-        const p = spine(b, st), q = spine(b, st + 4), d = [q[0] - p[0], q[1] - p[1]], n = Math.hypot(d[0], d[1]) || 1;
-        s += solarArray(p, [d[0] / n, d[1] / n], 8, 5, h);
+        const p = spine(b, st), q = spine(b, st + 4), d = [q[0] - p[0], q[1] - p[1]], n = Math.hypot(d[0], d[1]) || 1, u = [d[0] / n, d[1] / n];
+        if (roof === 'tanks') { const v = [-u[1], u[0]]; s += roofTanks([p[0] + v[0] * 1.6, p[1] + v[1] * 1.6], u, 3, h) + roofBox([p[0] - v[0] * 2.2, p[1] - v[1] * 2.2], u, 5, 2.4, h); }
+        else s += solarArray(p, u, 8, 5, h);
       }
       return s;
     });
@@ -97,7 +103,7 @@ function education() {
 }
 
 LANDMARKS.push(
-  { name: '松濤1館', ids: [ST1], build: sawtoothHall(ST1, 6, [-12, 6]) },
+  { name: '松濤1館', ids: [ST1], build: sawtoothHall(ST1, 6, [-12, 6], 'tanks') },
   { name: '松濤2館 · 文錙藝術中心', ids: [ST2], build: songtao2 },
   { name: '松濤3館', ids: [ST3], build: sawtoothHall(ST3, 6, [-24, -9, 7, 21]) },
   { name: '松濤4館', ids: [ST4], build: songtao4 },

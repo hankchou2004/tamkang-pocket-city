@@ -380,7 +380,7 @@ function buildPlot() {
       // its colour on the campus map: grey roofs, windows and glass
       const col = campusColourOf(lm.name, (lm.ids || [])[0]), from = GEO.flat.p.length, fromGlass = GEO.glass.p.length; FACADE_TINT = col;
       const r = lm.build(), parts = [].concat(r || []).filter(o => o && typeof o.draw === 'function'); for (const o of parts) o.draw(); FACADE_TINT = null;
-      if (col) { recolourRoofs(null, col, from); tintGlass(col, fromGlass); }
+      if (col) { if (!lm.keepRoof) recolourRoofs(null, col, from); tintGlass(col, fromGlass); }   // keepRoof: a real roof colour stays
       for (const id of lm.ids || []) replaced.add(id); LM_COUNT++;
       const key = lm.name.replace(/ w\d+$/, '').replace(/ (beds|lanterns)$/, '').replace(/^操場燈柱與圍網|^籃球架/, '操場與球場');
       const g = groups.get(key) || { fps: [], h: 0 }; groups.set(key, g);
