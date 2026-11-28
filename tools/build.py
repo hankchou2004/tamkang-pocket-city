@@ -4,7 +4,7 @@
   python tools/build.py --check 168,-62       # also render six yaws, a top view and night around plot point x,y
   python tools/build.py --views avenue,library --at 2026-11-27T18:30 --wx rain   # render named views
   python tools/build.py --app                 # the phone app (_site/app/, a PWA), the development page (_site/dev/), the MapLibre page
-  python tools/build.py --site-pages          # what GitHub Pages publishes: the MapLibre page as the home page, the 3D page at 3d.html
+  python tools/build.py --site-pages          # what GitHub Pages publishes: the phone page as the home page, MapLibre and 3D pages beside it
 
 The pages: vendor/three (three.js r159, MIT), web3d/kit3d.js (the drawing parts as 3D geometry), the landmark files,
 web3d/main3d.js (3D page and phone app) or proto/maplibre.js (MapLibre page), web3d/template.html (3D page layout).
@@ -71,6 +71,18 @@ def build3d(out, city='work/city.json', app=False):
     open(path, 'w', encoding='utf-8').write(html)
     print(f'Built {out} (three.js, {len(html) // 1024} KB), {n} landmark files')
 
+def building_status():
+    """docs/buildings.md as {name: {status, note}} for the development page's list: 照片 (drawn after photos, close to the
+    real building), 文字 / 部分示意 / 示意 (drawn, partly or wholly assumed). A row naming several things (a、b) gives each."""
+    out = {}
+    for line in open(os.path.join(ROOT, 'docs', 'buildings.md'), encoding='utf-8'):
+        cells = [c.strip() for c in line.strip().strip('|').split('|')]
+        if len(cells) < 4 or not cells[0][:2].isdigit(): continue
+        for name in cells[1].split('、'):
+            name = name.split('（')[0].strip()
+            if name: out[name] = {'status': cells[2], 'note': cells[3].replace('**', '')}
+    return out
+
 def build_app(site='_site'):
     """The phone app (site/app/: the map page in APP_MODE, manifest, service worker, icons) and the development page
     (site/dev/: the app in a phone frame, panels on both sides)."""
@@ -83,6 +95,7 @@ def build_app(site='_site'):
     if os.path.isfile(os.path.join(ROOT, 'dev', 'index.html')):
         os.makedirs(os.path.join(ROOT, site, 'dev'), exist_ok=True)
         shutil.copyfile(os.path.join(ROOT, 'dev', 'index.html'), os.path.join(ROOT, site, 'dev', 'index.html'))
+        json.dump(building_status(), open(os.path.join(ROOT, site, 'dev', 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False)
         print(f'App in {site}/app/, development page in {site}/dev/ (serve with: python -m http.server 8000 -d {site})')
     else:
         print(f'No dev/ folder: built {site}/app/ only (serve with: python -m http.server 8000 -d {site}, open /app/)')
@@ -118,11 +131,13 @@ def shots3d(page, views, at=None, wx=None, out='shots/3d', size='1200x800'):
     run(cmd)
 
 def site_pages(site='_site'):
-    """GitHub Pages: the MapLibre page as the home page (also kept at proto/maplibre.html for old links), the 3D page at 3d.html."""
+    """GitHub Pages: the phone page (the map in APP_MODE, the same as _site/app/index.html) as the home page; the MapLibre
+    page at proto/maplibre.html and the desktop 3D page at 3d.html. The PWA links (app/) are local only, so the
+    published home page has none."""
+    build3d(os.path.join(site, 'index.html'), app=True)
     build_proto(site)
-    shutil.copyfile(os.path.join(ROOT, site, 'proto', 'maplibre.html'), os.path.join(ROOT, site, 'index.html'))
     build3d(os.path.join(site, '3d.html'))
-    print(f'Pages site in {site}/: index.html (MapLibre), 3d.html, proto/maplibre.html')
+    print(f'Pages site in {site}/: index.html (phone page), proto/maplibre.html, 3d.html')
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)

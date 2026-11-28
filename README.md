@@ -6,13 +6,13 @@
 - 重要建築：依照片與文獻手工建模，來源列在 [docs/sources.md](docs/sources.md) 和頁面的 Field notes 裡。
 - 繪製：three.js（MIT）；MapLibre 版的底圖用 MapLibre GL JS（BSD-3）與 OpenFreeMap 向量圖磚。
 
-**線上瀏覽：** https://hankchou2004.github.io/tamkang-pocket-city/ （首頁是 MapLibre 版；3D 版在 [3d.html](https://hankchou2004.github.io/tamkang-pocket-city/3d.html)；每次 `main` 更新後由 GitHub Actions 自動重建）
+**線上瀏覽：** https://hankchou2004.github.io/tamkang-pocket-city/ （首頁是手機版，用手機打開最合適；MapLibre 版在 [proto/maplibre.html](https://hankchou2004.github.io/tamkang-pocket-city/proto/maplibre.html)，電腦用的 3D 版在 [3d.html](https://hankchou2004.github.io/tamkang-pocket-city/3d.html)；每次 `main` 更新後由 GitHub Actions 自動重建）
 
 ## 三個版本
 
-- **MapLibre 版**（首頁，原始碼在 `proto/`）：地面用 MapLibre GL JS 加 OpenFreeMap 向量圖磚（需標示 © OpenMapTiles © OpenStreetMap），範圍沒有邊界。所有建築都用我們的畫法：方形範圍內是手工地標與 `scene.json`，範圍外從圖磚取輪廓與高度，邊載入邊畫。舊網址 `proto/maplibre.html` 仍可用。
+- **手機版**（首頁，原始碼在 `web3d/main3d.js` 的 `APP_MODE`）：直式、全螢幕的校園地圖。單指移動、雙指縮放與旋轉，點建築會拉近，右下角按鈕回到全校。本機建置的 `_site/app/` 是同一頁，另外加上「加入主畫面」用的 PWA 外殼（`app/`，只在本機）。
+- **MapLibre 版**（`proto/maplibre.html`）：地面用 MapLibre GL JS 加 OpenFreeMap 向量圖磚（需標示 © OpenMapTiles © OpenStreetMap），範圍沒有邊界。所有建築都用我們的畫法：方形範圍內是手工地標與 `scene.json`，範圍外從圖磚取輪廓與高度，邊載入邊畫。
 - **3D 版**（`3d.html`，原始碼在 `web3d/`）：800 公尺見方的校園，等角視角，平塗色塊分亮、中、暗三階加墨線。
-- **手機 app**（`_site/app/`，只在本機建置）：直式、全螢幕，可以「加入主畫面」當 app 用（PWA）。單指移動、雙指縮放與旋轉，點建築會拉近。
 
 三個版本畫建築用的是同一套程式：`landmarks/` 的地標檔加上 `web3d/kit3d.js` 的零件，所以新增或修改地標，三個版本都會一起更新。
 
@@ -29,7 +29,7 @@ python -m http.server 8000 -d _site            # 開 http://localhost:8000/dev/
 
 ```
 python tools/build.py                          # 3D 版，tamkang-campus.html
-python tools/build.py --site-pages             # GitHub Pages 發布的內容（首頁 MapLibre 版、3d.html）
+python tools/build.py --site-pages             # GitHub Pages 發布的內容（首頁手機版、proto/maplibre.html、3d.html）
 python tools/build.py --views avenue --at 2026-11-27T18:30 --wx rain   # 3D 截圖（shots/3d/）
 python tools/build.py --check 168,-62          # 在該點算六個角度、正上方與夜景的檢查圖
 ```

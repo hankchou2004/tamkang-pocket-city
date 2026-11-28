@@ -18,6 +18,8 @@ html,body{margin:0;height:100%;background:#f6f3e9;overflow:hidden;font:14px/1.4 
 .haze{position:fixed;inset:0;z-index:1;pointer-events:none;background:rgba(224,207,176,.38);mix-blend-mode:multiply;opacity:0;transition:opacity 2s}
 .loading{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;font:12px ui-monospace,Menlo,Consolas,monospace;color:#626c60;background:#fffcf2cc;padding:4px 10px;border-radius:6px;pointer-events:none}
 .maplibregl-ctrl-top-right{top:calc(env(safe-area-inset-top) + 4px)}
+.entry-pin{position:relative;margin-bottom:10px;padding:5px 10px;border-radius:999px;background:#2f4f43;color:#fff;font:600 12px/1 "Noto Sans TC","Microsoft JhengHei",sans-serif;white-space:nowrap;box-shadow:0 3px 10px #1f2a2640;pointer-events:none}
+.entry-pin::after{content:'';position:absolute;left:50%;top:100%;margin-left:-6px;border:6px solid transparent;border-top-color:#2f4f43}
 </style>
 </head>
 <body>

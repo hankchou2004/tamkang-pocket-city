@@ -369,6 +369,7 @@ const want = params.get('lm') || 'all';   // ?lm=圖書館 shows only the landma
 const replaced = new Set(), plotIds = new Set();   // OSM ids the plot draws itself: the tiles' copies are skipped
 const osmNum = id => /^[wr]\d+$/.test(id || '') ? +id.slice(1) : null;
 const PICKS = [];          // what a tap can fly to: { fps: outlines in plot metres, h }
+const CATALOG = [];        // what is on the campus, for the development page's list: { id, cat, name, kind, fps | at, h }
 let LM_COUNT = 0, treeMeshes = [], builtSeason = null;
 function buildPlot() {
   geoReset();
@@ -387,15 +388,20 @@ function buildPlot() {
     } catch (e) { console.warn('landmark', lm.name, e); FACADE_TINT = null; }
   }
   PICKS.push(...groups.values());
+  for (const [name, g] of groups) if (g.fps.length) CATALOG.push({ id: 'lm:' + name, cat: '地標', name, kind: '手工地標', fps: g.fps, h: g.h });
   for (const b of SCENE.buildings) {
     const isLm = replaced.has(b.id) || replaced.has(b.of);
     if (b.cut && !isLm) continue;      // cut at the plot's edge: the tiles' whole copy is drawn instead
     for (const id of [b.id, b.of]) { const n = osmNum(id); if (n) plotIds.add(n); }
     if (!isLm) try { const from = GEO.flat.p.length, col = onCampus(b) && campusColourOf(b.n, b.id); FACADE_TINT = col || null;
-      const h = genericBuilding(b); FACADE_TINT = null; PICKS.push({ fps: [b.ring], h }); if (col) recolourRoofs(null, col, from); }
+      const h = genericBuilding(b); FACADE_TINT = null; PICKS.push({ fps: [b.ring], h }); if (col) recolourRoofs(null, col, from);
+      if (b.n && onCampus(b)) { const same = CATALOG.find(c => c.cat === '建築' && c.name === b.n);   // one entry per name: its parts together
+        if (same) { same.fps.push(b.ring); same.h = Math.max(same.h || 0, h || 0); } else CATALOG.push({ id: 'b:' + b.id, cat: '建築', name: b.n, kind: b.type === 'yes' ? '建築' : b.type, fps: [b.ring], h }); } }
     catch (e) { FACADE_TINT = null; console.warn('building', b.id, e); }
   }
   buildFurniture();
+  for (const p of SCENE.pois || []) if (p.name && inPoly([p.x, p.y], CAMPUS)) CATALOG.push({ id: 'p:' + p.name + '@' + Math.round(p.x) + ',' + Math.round(p.y), cat: '地點', name: p.name, kind: p.kind, at: [p.x, p.y] });
+  sendCatalog();
   if (campusRoofFallback()) recolourRoofs((x, y) => inPoly([x, y], CAMPUS), campusRoofFallback());
   flush();
   buildGlows(); buildMovers(); buildRain();
@@ -520,8 +526,15 @@ async function fetchWeather() {
 
 // the development page (dev/, a parent frame) sets the time and the weather live, without reloading:
 // { type: 'tku-dev-env', manual: true, at: '2026-11-27T18:30', wx: 'rain' }; manual: false goes back to now and the live weather
+// the list of what is on the campus goes to the development page; it sends back { type: 'tku-dev-fly', id } to go there
+function sendCatalog() {
+  if (window.parent === window || !CATALOG.length) return;
+  window.parent.postMessage({ type: 'tku-dev-catalog', items: CATALOG.map(({ id, cat, name, kind }) => ({ id, cat, name, kind })) }, '*');
+}
 addEventListener('message', e => {
   const d = e.data; if (window.parent === window || e.source !== window.parent || !d) return;
+  if (d.type === 'tku-dev-catalog?') { sendCatalog(); return; }
+  if (d.type === 'tku-dev-fly') { const it = CATALOG.find(c => c.id === d.id); if (it) flyToEntry(it); return; }
   if (d.type === 'tku-dev-map') { setLook(d.look); return; }   // the map's look: see LOOK_DEFAULT
   if (d.type !== 'tku-dev-env') return;
   if (d.manual) { fixedAt = typeof d.at === 'string' && !isNaN(new Date(d.at + '+08:00')) ? d.at : null; fixedWx = CFG.weathers[d.wx] ? d.wx : null; applyState(); }
@@ -680,5 +693,17 @@ function flyTo(g) {
   map.flyTo({ center: toLngLat([x, y]), zoom: Math.max(16.5, Math.min(20, z)), duration: 900 });
 }
 map.on('click', e => { const g = pickAt(e.point.x, e.point.y); if (g) flyTo(g); });
+// an entry from the development page's list: a building or landmark is framed like a tap; a place gets a close view,
+// and a marker shows where it is for a few seconds
+let entryMarker = null;
+function flyToEntry(it) {
+  let at;
+  if (it.fps) { flyTo(it); const pts = it.fps.flat(), xs = pts.map(p => p[0]), ys = pts.map(p => p[1]); at = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2]; }
+  else { at = it.at; map.flyTo({ center: toLngLat(at), zoom: 18.6, duration: 900 }); }
+  if (entryMarker) entryMarker.remove();
+  const el = document.createElement('div'); el.className = 'entry-pin'; el.textContent = it.name;
+  entryMarker = new maplibregl.Marker({ element: el, anchor: 'bottom' }).setLngLat(toLngLat(at)).addTo(map);
+  const mine = entryMarker; setTimeout(() => { if (entryMarker === mine) { mine.remove(); entryMarker = null; } }, 5000);
+}
 $('home').onclick = () => map.flyTo({ ...HOME, duration: 900 });
 })();
