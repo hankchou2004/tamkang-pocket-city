@@ -389,7 +389,7 @@ const LAMP = CITY.lamp || {};
 function buildFurniture() {
   for (const f of SCENE.furniture || []) {
     if (f.k === 'bench') { shape(atZ(rect(f.x, f.y, 1.6, .5), .45), '#9b795d', .4); stick([f.x - .7, f.y, 0], [f.x - .7, f.y, .45], .05, '#6c716e'); stick([f.x + .7, f.y, 0], [f.x + .7, f.y, .45], .05, '#6c716e'); }
-    else if (f.k === 'bus_stop') { solidBox(rect(f.x, f.y, 3, 1.4), 2.5, 2.7, '#c9ccc7'); stick([f.x - 1.3, f.y, 0], [f.x - 1.3, f.y, 2.5], .05, '#6c716e'); stick([f.x + 1.3, f.y, 0], [f.x + 1.3, f.y, 2.5], .05, '#6c716e'); }
+    else if (f.k === 'bus_stop' && !(typeof HANDMADE_STOPS !== 'undefined' && HANDMADE_STOPS.some(q => Math.hypot(q[0] - f.x, q[1] - f.y) < 8))) { solidBox(rect(f.x, f.y, 3, 1.4), 2.5, 2.7, '#c9ccc7'); stick([f.x - 1.3, f.y, 0], [f.x - 1.3, f.y, 2.5], .05, '#6c716e'); stick([f.x + 1.3, f.y, 0], [f.x + 1.3, f.y, 2.5], .05, '#6c716e'); }
   }
   if (LAMP.auto !== false) for (const c of SCENE.centerlines || []) { const p = c.p; let carry = 0, side = 1;
     for (let i = 0; i < p.length - 1; i++) { const a = p[i], b = p[i + 1], L = Math.hypot(b[0] - a[0], b[1] - a[1]), ux = (b[0] - a[0]) / L, uy = (b[1] - a[1]) / L;

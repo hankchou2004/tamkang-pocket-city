@@ -71,12 +71,30 @@ function chuehHsuan() {
     roofOver({ c, ax, L: Lg - 1, W: Wg }, zg - .3, { roof: 'gabled', pitch: 30, roofColour: ROOF, roofTex: 'kawara', eaves: .2, wall: GABLE, ridgeCap: .3 })());
 }
 
-/* 白樓 (OSM w294123966): a white residence block on the slope below the classrooms; three storeys and balconies are
-   read from the Commons "Faculty Residences of Tamkang University" photos (illustrative). */
+/* 白樓 (OSM w294123966): a street photo the user supplied (Google Street View, viewed only, not stored), taken from the
+   cobbled path with the red pavilion to the left: a one-storey white hut under a grey corrugated gable roof, a louvred
+   door in the gable end, reached over a timber deck and ramp with railings. The camera stood on its north-east side, so
+   the door's gable end is drawn facing north-east (推定); the ridge runs along the main part's long side, and the small
+   part to the south-east (from the OSM outline) is a low flat-roofed lean-to (推定). */
 function whiteHall() {
   const b = findBuilding('w294123966'); if (!b) return null;
-  const ring = ccw(b.ring);
-  return obj(ring, 9.8, () => block(ring, 0, 9.6, { facade: 'apartment', wall: '#f3f1ea', top: '#d9d6cd', balcony: 'some', floor: 3.2, shop: 'none', frame: '#8c8a84' }).draw());
+  const ring = ccw(b.ring), { c, ax } = b.obb, P = frame(c, ax, 1, 1).P, nx = [-ax[1], ax[0]], H = 3.4, WALL = '#f2f0ea', TIMBER = '#b0855a';
+  const main = ccw([P(-7.9, -7.8), P(3.1, -7.8), P(3.1, 7.8), P(-7.9, 7.8)]), annex = ccw([P(3.1, -5.1), P(7.9, -5.1), P(7.9, -.5), P(3.1, -.5)]);
+  const at = (s, t, z) => { const q = P(s, t); return [q[0], q[1], z]; };
+  return obj(ring, 6.5, () => {
+    let s = block(main, 0, H, { facade: 'stucco', wall: WALL, top: WALL, shop: 'none', floor: H, bay: 4.5, glass: ['#6d7a7d', '#76858a'], frame: '#e6e3dc' }).draw();
+    s += roofOver({ c: P(-2.4, 0), ax: nx, L: 15.6, W: 11 }, H, { roof: 'gabled', pitch: 20, roofColour: '#a7acae', roofTex: 'corrugated', eaves: .45, wall: WALL })();
+    s += block(annex, 0, 2.7, { facade: 'plain', wall: WALL, top: '#cfcdc6', shop: 'none' }).draw();
+    // the louvred door in the north-east gable end
+    s += shape([at(-3.3, 7.83, 0), at(-2.1, 7.83, 0), at(-2.1, 7.83, 2.2), at(-3.3, 7.83, 2.2)], '#b9b29e', .5);
+    for (let z = .3; z < 2.1; z += .25) inkLoop([at(-3.25, 7.85, z), at(-2.15, 7.85, z)], '#8d8673', false);
+    // the timber deck in front of it, a ramp down to the path, railings
+    s += solid(ccw([P(-4.4, 7.9), P(-.6, 7.9), P(-.6, 10.6), P(-4.4, 10.6)]), 0, .4, TIMBER, '#c39a6b');
+    s += shape([at(-.6, 9.2, .4), at(3.6, 9.2, 0), at(3.6, 10.6, 0), at(-.6, 10.6, .4)], '#c39a6b', .4);
+    s += rail(P(-4.4, 10.6), P(-.6, 10.6), .4, 1.3, '#7a5b3e') + rail(P(-4.4, 7.9), P(-4.4, 10.6), .4, 1.3, '#7a5b3e');
+    s += stick(at(-.6, 10.6, 1.3), at(3.6, 10.6, .9), .05, '#7a5b3e') + stick(at(3.6, 10.6, 0), at(3.6, 10.6, .9), .06, '#7a5b3e');
+    return s;
+  });
 }
 
 /* hexagonal pavilions (亭): red columns, a stone floor and a tiled pyramid roof with a finial

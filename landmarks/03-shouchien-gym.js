@@ -9,7 +9,9 @@
    greenery with glass curtain walls. Commons photo (2025): light grey concrete bands with rounded edges, dark glazing,
    glass balustrades. 1185期: 麗澤大學 paid for the 麗澤 international house (no photo found: plain and illustrative).
    Main gate guardhouse: Commons "Tamkang University Tamsui Campus Main Entrance Guardhouse" (2026): a white flat canopy
-   on slim white columns over a small booth, under banyans. 大忠管制站: no photo, drawn like the main gate. */
+   on slim white columns over a small booth, under banyans. 大忠管制站: a street photo the user supplied (Google Street View,
+   2024-01; viewed only, not stored): a one-storey white booth, round at one end, a deep white fascia round its flat roof, a
+   door and small windows, a barrier arm beside it (which side the arm stands is 推定). */
 const GYM = 'w1281242966', GYM_BAND = 'w520435334', GYM_ROOF = 'w1281236188', NATA = ['w235413781', 'w964268106'],
       SQ = 'w964267202', LIZE = 'w235418071', DAZHONG = 'w642840343', MAINGATE = 'w971523384';
 const SILVER = '#cdd0cf', SILVER_TOP = '#bfc3c2', TEAL = ['#7fb7b1', '#8fc2bc', '#74aaa6'];
@@ -72,11 +74,24 @@ function guardhouse(id, grow) {
   });
 }
 
+function dazhongPost() {
+  const b = findBuilding(DAZHONG); if (!b) return null;
+  const ring = ccw(b.ring), { c, ax } = b.obb, P = frame(c, ax, 1, 1).P;
+  const at = (s, t, z) => { const q = P(s, t); return [q[0], q[1], z]; };
+  return obj(ring, 3.6, () => {
+    let s = block(ring, 0, 2.7, { facade: 'stucco', wall: '#f3f2ee', top: '#e6e4de', shop: 'none', floor: 2.7, bay: 2.4, glass: ['#55636a', '#5f6d73'], frame: '#f4f3ef' }).draw();
+    s += solid(ccw(toward(c, ring, 1.07)), 2.7, 3.25, '#f4f3ef', '#e9e8e3');   // the fascia round the flat roof
+    s += solid(frame(P(-5.4, -3.1), ax, .5, .4).ring, 0, 1.0, '#e4e2dc', '#d7d5ce');   // the barrier: its cabinet and striped arm
+    for (let k = 0; k < 5; k++) s += stick(at(-5.4, -3.3 - k * .9, .95), at(-5.4, -4.2 - k * .9, .95), .05, k % 2 ? '#f4f3ef' : '#c7453a');
+    return s;
+  });
+}
+
 LANDMARKS.push(
   { name: '紹謨紀念體育館', ids: [GYM, GYM_BAND, GYM_ROOF, 'w964229634'], build: gymnasium },
   { name: '紹謨紀念游泳館', ids: NATA, build: natatorium },
   { name: '守謙國際會議中心', ids: [SQ], build: shouChien },
   { name: '麗澤國際學舍', ids: [LIZE], build: lizeHouse },
   { name: '大門管制站', ids: [MAINGATE], build: () => guardhouse(MAINGATE, [3, 3.5]) },
-  { name: '大忠管制站', ids: [DAZHONG], build: () => guardhouse(DAZHONG, [2, 3]) },
+  { name: '大忠管制站', ids: [DAZHONG], build: dazhongPost },
 );

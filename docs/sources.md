@@ -99,3 +99,14 @@
 ## District 9: 其他校舍（2026-11-28）
 - 淡江大學校園素材庫（僅作繪製參考）：騮先紀念科學館 014002、傳播館 014005、商管大樓 014010、學生活動中心 014021、視聽教育館 014022、瀛苑 013015。
 - Commons（阿道，CC BY-SA 4.0）：Liu-hsien Memorial Science Hall、Tamkang University Student Activity Center、Audio-visual Education Building、Faculty Residences of Tamkang University Tamsui Campus 01-03（2025-08-04）。
+
+## Revision: photos the user supplied (Google Street View screenshots and one photo; viewed only, not stored)
+- 白樓 — one storey, white walls, grey corrugated gable roof, a louvred door in the gable end, a timber deck and ramp with
+  railings; the red pavilion beside it. Interpreted: the door's side (north-east) and the low south-east lean-to.
+- 李雙澤紀念碑 (a close photo and Street View from the lawn, 2025-02) — a mossy boulder and a smaller stone with an inscribed
+  plaque, a black steel guitar in outline, a bamboo screen about 3 m high with a wavy top and two bamboo poles, under a banyan.
+- 勤務監控管制站 — a one-storey booth with round ends, white small-tile walls, a band of dark tinted windows, a deep tiled
+  fascia, a door at one end. Interpreted: which side faces the road, the door's place.
+- 大忠管制站 and 淡江大學站 on 大忠街 (紅27, 756), Street View 2024-01 — a white booth round at one end with a deep fascia and
+  a barrier arm; a shelter with a blue fascia and a bench, steps with handrails beside it. Interpreted: the arm's side, the
+  shelter's length, the steps' size and place.

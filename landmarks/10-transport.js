@@ -1,4 +1,4 @@
-/* ====================== District 10: 淡江大學站（紅28） ======================
+/* ====================== District 10: 淡江大學站（紅28）and 淡江大學站 on 大忠街（紅27、756） ======================
    OSM w294617265: amenity=bus_station, "紅28公車站(淡江大學站)", a 34 × 7 m strip beside the 宮燈教室 garden.
    A street-level photo the user supplied (Google Street View, 2012-11): blue-and-white 指南客運 buses parked nose-in at an
    angle against a low stone retaining wall, the garden's flowers above it; no roof over the bays. The map draws the
@@ -20,4 +20,27 @@ function busStation() {
     return s;
   });
 }
-LANDMARKS.push({ name: '淡江大學站（紅28）', ids: [BUS_STOP], build: busStation });
+
+/* 淡江大學站 on 大忠街 (OSM bus-stop nodes near 121, 258; served by 紅27 and 756), after a street photo the user supplied
+   (Google Street View, 2024-01; viewed only, not stored): a waiting shelter with a blue fascia, a glass back and a bench,
+   on the sidewalk south of 大忠街; beside it a flight of steps with handrails up toward campus and 大忠管制站. The shelter
+   follows the street (the OSM car route); its length, and the steps' size and place, are read by eye (推定). */
+const DZ_STOP = [120.3, 257.4], DZ_U = [.853, .522];   // along 大忠街; the road lies to the north-west, campus behind
+function dazhongStop() {
+  HANDMADE_STOPS.push([121.69, 259.0], [118.37, 257.2]);
+  const P = frame(DZ_STOP, DZ_U, 1, 1).P, at = (s, t, z) => { const q = P(s, t); return [q[0], q[1], z]; };   // t > 0: toward the road
+  const roof = ccw(frame(P(0, 0), DZ_U, 6.4, 2.0).ring);
+  return obj(roof, 3, () => {
+    let s = solid(roof, 2.6, 2.72, '#e6e9ea', '#eef0f0');
+    s += solid(ccw(frame(P(0, 1.0), DZ_U, 6.4, .12).ring), 2.3, 2.75, '#2f5fa6', '#2f5fa6');   // the blue fascia over the kerb side
+    for (const [ps, pt] of [[-3, -.85], [3, -.85], [-3, .85], [3, .85]]) s += stick(at(ps, pt, 0), at(ps, pt, 2.6), .05, '#9ea4a7');
+    s += shape([at(-3, -.85, .25), at(3, -.85, .25), at(3, -.85, 2.3), at(-3, -.85, 2.3)], 'rgba(176,204,212,0.45)', .4);   // glass back
+    s += solid(ccw(frame(P(0, -.5), DZ_U, 4.2, .4).ring), .42, .5, '#9b795d', '#a8866a');   // bench
+    for (const ps of [-1.8, 1.8]) s += stick(at(ps, -.5, 0), at(ps, -.5, .42), .04, '#6c716e');
+    // steps up toward campus at the shelter's south-west end, with handrails
+    for (let k = 0; k < 8; k++) s += solid(ccw([P(-6.4, -.4 - k * .38), P(-4.0, -.4 - k * .38), P(-4.0, -.78 - k * .38), P(-6.4, -.78 - k * .38)]), 0, (k + 1) * .19, '#c9c4b8', '#d6d1c5');
+    for (const ps of [-6.3, -4.1]) s += stick(at(ps, -.4, 1.0), at(ps, -3.44, 2.5), .04, '#c4c7c8') + stick(at(ps, -.4, 0), at(ps, -.4, 1.0), .04, '#c4c7c8') + stick(at(ps, -3.44, 1.5), at(ps, -3.44, 2.5), .04, '#c4c7c8');
+    return s;
+  });
+}
+LANDMARKS.push({ name: '淡江大學站（紅28）', ids: [BUS_STOP], build: busStation }, { name: '淡江大學站（紅27、756）', ids: [], build: dazhongStop });

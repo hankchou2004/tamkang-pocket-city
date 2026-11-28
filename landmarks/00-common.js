@@ -72,6 +72,27 @@ function roofTanks(c, ax, n, z, r = .8, hgt = 1.6, col = '#b4c4cf') {
 // a rooftop plant box (air-conditioning units, pumps): a low warm-grey solid, L along ax by W
 const roofBox = (c, ax, L, W, z, hgt = 1.4, col = '#cbc2ad') => solid(frame(c, ax, L, W).ring, z, z + hgt, col, mix(col, '#ffffff', .15));
 
+// a rectangle with round ends along ax (a guard booth's plan): centre c, length L along ax (ends included), width W
+function stadium(c, ax, L, W, n = 8) {
+  const P = frame(c, ax, 1, 1).P, r = W / 2, h = Math.max(0, L / 2 - r), pts = [];
+  for (let i = 0; i <= n; i++) { const a = -Math.PI / 2 + Math.PI * i / n; pts.push(P(h + r * Math.cos(a), r * Math.sin(a))); }
+  for (let i = 0; i <= n; i++) { const a = Math.PI / 2 + Math.PI * i / n; pts.push(P(-h + r * Math.cos(a), r * Math.sin(a))); }
+  return ccw(pts);
+}
+// a rough boulder: an irregular base (L along ax by W) lofted to a smaller, lifted top
+function boulder(c, ax, L, W, H, col, seed = 1) {
+  const P = frame(c, ax, 1, 1).P, n = 9, base = [], top = [];
+  for (let i = 0; i < n; i++) {
+    const a = i / n * Math.PI * 2, k = .82 + (hashStr(seed + ':' + i) % 100) / 100 * .3;
+    base.push(P(Math.cos(a) * L / 2 * k, Math.sin(a) * W / 2 * k));
+    const q = P(Math.cos(a) * L / 2 * k * .72, Math.sin(a) * W / 2 * k * .62);
+    top.push([q[0], q[1], H * (.85 + (hashStr(seed + 't' + i) % 100) / 100 * .15)]);
+  }
+  return loft(atZ(base, 0), top, n2 => tone(n2, soft(col))) + shape(top, mix(col, '#ffffff', .08), .4);
+}
+// bus stops drawn by hand: the scene's generic stop poles near these points are left out
+const HANDMADE_STOPS = [];
+
 // a point on a bent building's spine: the mean of ring vertices lying near station s along its axis
 function spine(b, s, half = 6) {
   const { c, ax } = b.obb, pts = ccw(b.ring).filter(p => Math.abs((p[0] - c[0]) * ax[0] + (p[1] - c[1]) * ax[1] - s) < half);
