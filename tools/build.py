@@ -3,7 +3,7 @@
   python tools/build.py                       # the 3D page, tamkang-campus.html (three.js)
   python tools/build.py --check 168,-62       # also render six yaws, a top view and night around plot point x,y
   python tools/build.py --views avenue,library --at 2026-11-27T18:30 --wx rain   # render named views
-  python tools/build.py --app                 # the phone app (_site/app/, a PWA), the development page (_site/dev/), the MapLibre page
+  python tools/build.py --app                 # the phone app (_site/app/: the MapLibre map as a PWA), the development page (_site/dev/)
   python tools/build.py --site-pages          # what GitHub Pages publishes: the MapLibre map as the home page, the 3D page at 3d.html
 
 The pages: vendor/three (three.js r159, MIT), web3d/kit3d.js (the drawing parts as 3D geometry), the landmark files,
@@ -84,11 +84,16 @@ def building_status():
     return out
 
 def build_app(site='_site'):
-    """The phone app (site/app/: the map page in APP_MODE, manifest, service worker, icons) and the development page
-    (site/dev/: the app in a phone frame, panels on both sides)."""
-    # app/ and dev/ are kept out of the repository: without them, build the app page alone and skip the rest
+    """The phone app (site/app/: the MapLibre map, as on the home page, with the PWA links, manifest, service worker and
+    icons from app/) and the development page (site/dev/: the map in a phone frame, the environment panel and the campus
+    list). app/ and dev/ are kept out of the repository: without them, the app page is built alone."""
+    build_proto(site)
+    html = open(os.path.join(ROOT, site, 'proto', 'maplibre.html'), encoding='utf-8').read()
     has_shell = os.path.isfile(os.path.join(ROOT, 'app', 'head.html'))
-    build3d(os.path.join(site, 'app', 'index.html'), app=True)
+    if has_shell:
+        i = html.index('</head>'); html = html[:i] + open(os.path.join(ROOT, 'app', 'head.html'), encoding='utf-8').read() + html[i:]
+    os.makedirs(os.path.join(ROOT, site, 'app'), exist_ok=True)
+    open(os.path.join(ROOT, site, 'app', 'index.html'), 'w', encoding='utf-8').write(html)
     if has_shell:
         for f in ('manifest.webmanifest', 'sw.js', 'icon.svg', 'icon-180.png', 'icon-192.png', 'icon-512.png'):
             shutil.copyfile(os.path.join(ROOT, 'app', f), os.path.join(ROOT, site, 'app', f))
@@ -96,7 +101,7 @@ def build_app(site='_site'):
         os.makedirs(os.path.join(ROOT, site, 'dev'), exist_ok=True)
         shutil.copyfile(os.path.join(ROOT, 'dev', 'index.html'), os.path.join(ROOT, site, 'dev', 'index.html'))
         json.dump(building_status(), open(os.path.join(ROOT, site, 'dev', 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False)
-        print(f'App in {site}/app/, development page in {site}/dev/ (serve with: python -m http.server 8000 -d {site})')
+        print(f'App (MapLibre) in {site}/app/, development page in {site}/dev/ (serve with: python -m http.server 8000 -d {site})')
     else:
         print(f'No dev/ folder: built {site}/app/ only (serve with: python -m http.server 8000 -d {site}, open /app/)')
 
@@ -152,7 +157,7 @@ def main():
     ap.add_argument('--wx', help='renders: the weather, clear / drizzle / rain / fog')
     a = ap.parse_args()
     if a.app:
-        build_app(a.site); build_proto(a.site); return
+        build_app(a.site); return
     if a.proto:
         build_proto(a.site); return
     if a.site_pages:

@@ -8,22 +8,22 @@
 
 **線上瀏覽：** https://hankchou2004.github.io/tamkang-pocket-city/ （首頁是 MapLibre 版，手機和電腦都能用；電腦用的 3D 版在 [3d.html](https://hankchou2004.github.io/tamkang-pocket-city/3d.html)；每次 `main` 更新後由 GitHub Actions 自動重建）
 
-## 三個版本
+## 版本
 
-- **手機版**（本機建置的 `_site/app/`，原始碼在 `web3d/main3d.js` 的 `APP_MODE`）：直式、全螢幕的校園地圖。單指移動、雙指縮放與旋轉，點建築會拉近，右下角按鈕回到全校。另外加上「加入主畫面」用的 PWA 外殼（`app/`，只在本機）。
+- **手機版**（本機建置的 `_site/app/`）：就是 MapLibre 版，另外加上「加入主畫面」用的 PWA 外殼（`app/`，只在本機）。地圖底圖與 MapLibre 需要連網，離線時只保留上次的頁面。
 - **MapLibre 版**（首頁，也在 `proto/maplibre.html`，原始碼在 `proto/`）：地面用 MapLibre GL JS 加 OpenFreeMap 向量圖磚（需標示 © OpenMapTiles © OpenStreetMap），範圍沒有邊界。所有建築都用我們的畫法：方形範圍內是手工地標與 `scene.json`，範圍外從圖磚取輪廓與高度，邊載入邊畫。
 - **3D 版**（`3d.html`，原始碼在 `web3d/`）：800 公尺見方的校園，等角視角，平塗色塊分亮、中、暗三階加墨線。
 
-三個版本畫建築用的是同一套程式：`landmarks/` 的地標檔加上 `web3d/kit3d.js` 的零件，所以新增或修改地標，三個版本都會一起更新。
+MapLibre 版（含手機版）和 3D 版畫建築用的是同一套程式：`landmarks/` 的地標檔加上 `web3d/kit3d.js` 的零件，所以新增或修改地標，兩個版本都會一起更新。
 
 ## 開發
 
 ```
-python tools/build.py --app                    # 產生 _site/app/、_site/dev/ 與 _site/proto/
+python tools/build.py --app                    # 產生 _site/app/（MapLibre 手機版）、_site/dev/ 與 _site/proto/
 python -m http.server 8000 -d _site            # 開 http://localhost:8000/dev/
 ```
 
-開發頁（`_site/dev/`）中間是手機 app 的實際畫面，可以切換 three.js 版與 MapLibre 版、手機尺寸；左右兩側可以即時調時間、天氣、建築配色與地圖樣式。`app/` 和 `dev/` 只在本機，不進 repo。
+開發頁（`_site/dev/`）中間是 MapLibre 版在手機尺寸下的實際畫面，左邊可以即時調時間與天氣，右邊是校內地標、建築與地點的清單，點一下地圖會飛過去。`app/` 和 `dev/` 只在本機，不進 repo。
 
 其他建置指令：
 
@@ -43,7 +43,7 @@ python tools/build.py --check 168,-62          # 在該點算六個角度、正�
 | `landmarks/00-common.js` | 共用色票、座標轉換與零件，例如欄杆、太陽能板、樸素量體 |
 | `landmarks/01-…08-*.js` | 各分區的手工地標，一區一檔 |
 | `web3d/kit3d.js` | 繪圖零件（`block`、`roofOver`、`loft`、`shape`、`stick`、`ball`…），把地標程式變成立體模型 |
-| `web3d/main3d.js`、`web3d/template.html` | 3D 版與手機 app：場景、著色、太陽與天氣、操作、版面 |
+| `web3d/main3d.js`、`web3d/template.html` | 3D 版：場景、著色、太陽與天氣、操作、版面 |
 | `proto/` | MapLibre 版 |
 | `work/city.json` | 樣式規則、校園配色、鏡頭、Field notes |
 | `work/live.json` | 即時天氣與明暗的設定 |
