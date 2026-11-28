@@ -77,13 +77,6 @@
   ]
  },
  "buildings": {
-  "w235418115": {
-   "facade": "civic",
-   "levels": 2,
-   "wall": "#f2efe7",
-   "trim": "#c44a35",
-   "floor": 3.6
-  },
   "w294617265": {
    "levels": 1,
    "height": 3.6,
@@ -121,37 +114,185 @@
   "soften": 0.48,
   "windowTint": 0.3,
   "single": "#9db4c8",
-  "wall": ["#f6eee1", "#f3e9d9", "#f8f1e6"],
+  "wall": [
+   "#f6eee1",
+   "#f3e9d9",
+   "#f8f1e6"
+  ],
   "roof": "#f1ece2",
   "map": [
-   {"no": 1, "name": "驚聲銅像廣場", "match": "驚聲銅像", "colour": "#5fdcc0"},
-   {"no": 2, "name": "大門管制站", "match": "大門管制站", "colour": "#efb6ec"},
-   {"no": 3, "name": "紹謨紀念游泳館", "match": "紹謨紀念游泳館", "colour": "#2a8fba"},
-   {"no": 4, "name": "騮先紀念科學館", "match": "騮先", "colour": "#c4ecbc"},
-   {"no": 5, "name": "鍾靈化學館", "match": "鍾靈化學館", "colour": "#f1e02c"},
-   {"no": 7, "name": "傳播館（Q）", "ids": ["w235418089"], "colour": "#8c62de"},
-   {"no": 8, "name": "傳播館（O）", "ids": ["w964231580"], "colour": "#c4662a"},
-   {"no": 9, "name": "紹謨紀念體育館", "match": "紹謨紀念體育館", "colour": "#58b6ea"},
-   {"no": 10, "name": "麗澤國際學舍", "match": "麗澤", "colour": "#469a2a"},
-   {"no": 11, "name": "文學館", "match": "^文學館", "colour": "#f3c4cd"},
-   {"no": 12, "name": "會文館", "match": "會文館", "colour": "#c6ea2a"},
-   {"no": 13, "name": "商管大樓", "match": "商管大樓", "colour": "#48de2c"},
-   {"no": 14, "name": "海事博物館 · 黑天鵝展示廳", "match": "海事博物館|黑天鵝", "colour": "#2f8b90"},
-   {"no": 15, "name": "工學館", "match": "^工學館", "colour": "#f1a846"},
-   {"no": 16, "name": "工學大樓", "match": "工學大樓", "colour": "#2ed2ea"},
-   {"no": 17, "name": "教育學院", "match": "^教育(館|大樓)", "colour": "#b02ed0"},
-   {"no": 19, "name": "文錙藝術中心", "match": "松濤2館|文錙", "colour": "#7cc452"},
-   {"no": 18, "name": "松濤館", "match": "松濤", "colour": "#8fc56a"},
-   {"no": 20, "name": "外國語文大樓", "match": "外國語文大樓", "colour": "#e3c696"},
-   {"no": 21, "name": "驚聲紀念大樓", "match": "驚聲紀念大樓", "colour": "#ec6c42"},
-   {"no": 23, "name": "學人宿舍", "match": "學人宿舍", "colour": "#f4ecb2"},
-   {"no": 24, "name": "覺生紀念圖書館", "match": "覺生紀念圖書館", "colour": "#ec56b6"},
-   {"no": 25, "name": "覺生綜合大樓", "match": "覺生綜合大樓", "colour": "#e042a2"},
-   {"no": 26, "name": "學生活動中心", "match": "學生活動中心", "colour": "#c4f0f4"},
-   {"no": 28, "name": "視聽教育館", "match": "視聽教育館", "colour": "#d3cd9f"},
-   {"no": 29, "name": "行政大樓", "match": "行政大樓", "colour": "#f1a028"},
-   {"no": 30, "name": "宮燈教室", "match": "宮燈教室", "colour": "#c6c6f1"},
-   {"no": 31, "name": "覺軒花園", "match": "^覺軒", "colour": "#e23a2e"}
+   {
+    "no": 1,
+    "name": "驚聲銅像廣場",
+    "match": "驚聲銅像",
+    "colour": "#5fdcc0"
+   },
+   {
+    "no": 2,
+    "name": "大門管制站",
+    "match": "大門管制站",
+    "colour": "#efb6ec"
+   },
+   {
+    "no": 3,
+    "name": "紹謨紀念游泳館",
+    "match": "紹謨紀念游泳館",
+    "colour": "#2a8fba"
+   },
+   {
+    "no": 4,
+    "name": "騮先紀念科學館",
+    "match": "騮先",
+    "colour": "#c4ecbc"
+   },
+   {
+    "no": 5,
+    "name": "鍾靈化學館",
+    "match": "鍾靈化學館",
+    "colour": "#f1e02c"
+   },
+   {
+    "no": 7,
+    "name": "傳播館（Q）",
+    "ids": [
+     "w235418089"
+    ],
+    "colour": "#8c62de"
+   },
+   {
+    "no": 8,
+    "name": "傳播館（O）",
+    "ids": [
+     "w964231580"
+    ],
+    "colour": "#c4662a"
+   },
+   {
+    "no": 9,
+    "name": "紹謨紀念體育館",
+    "match": "紹謨紀念體育館",
+    "colour": "#58b6ea"
+   },
+   {
+    "no": 10,
+    "name": "麗澤國際學舍",
+    "match": "麗澤",
+    "colour": "#469a2a"
+   },
+   {
+    "no": 11,
+    "name": "文學館",
+    "match": "^文學館",
+    "colour": "#f3c4cd"
+   },
+   {
+    "no": 12,
+    "name": "會文館",
+    "match": "會文館",
+    "colour": "#c6ea2a"
+   },
+   {
+    "no": 13,
+    "name": "商管大樓",
+    "match": "商管大樓",
+    "colour": "#48de2c"
+   },
+   {
+    "no": 14,
+    "name": "海事博物館 · 黑天鵝展示廳",
+    "match": "海事博物館|黑天鵝",
+    "colour": "#2f8b90"
+   },
+   {
+    "no": 15,
+    "name": "工學館",
+    "match": "^工學館",
+    "colour": "#f1a846"
+   },
+   {
+    "no": 16,
+    "name": "工學大樓",
+    "match": "工學大樓",
+    "colour": "#2ed2ea"
+   },
+   {
+    "no": 17,
+    "name": "教育學院",
+    "match": "^教育(館|大樓)",
+    "colour": "#b02ed0"
+   },
+   {
+    "no": 19,
+    "name": "文錙藝術中心",
+    "match": "松濤2館|文錙",
+    "colour": "#7cc452"
+   },
+   {
+    "no": 18,
+    "name": "松濤館",
+    "match": "松濤",
+    "colour": "#8fc56a"
+   },
+   {
+    "no": 20,
+    "name": "外國語文大樓",
+    "match": "外國語文大樓",
+    "colour": "#e3c696"
+   },
+   {
+    "no": 21,
+    "name": "驚聲紀念大樓",
+    "match": "驚聲紀念大樓",
+    "colour": "#ec6c42"
+   },
+   {
+    "no": 23,
+    "name": "學人宿舍",
+    "match": "學人宿舍",
+    "colour": "#f4ecb2"
+   },
+   {
+    "no": 24,
+    "name": "覺生紀念圖書館",
+    "match": "覺生紀念圖書館",
+    "colour": "#ec56b6"
+   },
+   {
+    "no": 25,
+    "name": "覺生綜合大樓",
+    "match": "覺生綜合大樓",
+    "colour": "#e042a2"
+   },
+   {
+    "no": 26,
+    "name": "學生活動中心",
+    "match": "學生活動中心",
+    "colour": "#c4f0f4"
+   },
+   {
+    "no": 28,
+    "name": "視聽教育館",
+    "match": "視聽教育館",
+    "colour": "#d3cd9f"
+   },
+   {
+    "no": 29,
+    "name": "行政大樓",
+    "match": "行政大樓",
+    "colour": "#f1a028"
+   },
+   {
+    "no": 30,
+    "name": "宮燈教室",
+    "match": "宮燈教室",
+    "colour": "#c6c6f1"
+   },
+   {
+    "no": 31,
+    "name": "覺軒花園",
+    "match": "^覺軒",
+    "colour": "#e23a2e"
+   }
   ]
  },
  "palette": {
@@ -594,6 +735,78 @@
     "x": -176,
     "y": 172,
     "z": 2
+   }
+  },
+  {
+   "id": "liuhsien",
+   "label": "騮先紀念科學館",
+   "camera": {
+    "yaw": -30,
+    "pitch": 28,
+    "zoom": 3.2,
+    "x": 10,
+    "y": 200,
+    "z": 6
+   }
+  },
+  {
+   "id": "biz",
+   "label": "商管大樓",
+   "camera": {
+    "yaw": 200,
+    "pitch": 26,
+    "zoom": 2.4,
+    "x": 222,
+    "y": 100,
+    "z": 14
+   }
+  },
+  {
+   "id": "comm",
+   "label": "傳播館",
+   "camera": {
+    "yaw": -140,
+    "pitch": 30,
+    "zoom": 3,
+    "x": 68,
+    "y": 140,
+    "z": 7
+   }
+  },
+  {
+   "id": "sac",
+   "label": "學生活動中心",
+   "camera": {
+    "yaw": 230,
+    "pitch": 28,
+    "zoom": 3.6,
+    "x": 43,
+    "y": -30,
+    "z": 4
+   }
+  },
+  {
+   "id": "av",
+   "label": "視聽教育館",
+   "camera": {
+    "yaw": 120,
+    "pitch": 26,
+    "zoom": 5,
+    "x": 30,
+    "y": 61,
+    "z": 3
+   }
+  },
+  {
+   "id": "faculty",
+   "label": "實棟學人宿舍",
+   "camera": {
+    "yaw": -120,
+    "pitch": 30,
+    "zoom": 4,
+    "x": 190,
+    "y": -127,
+    "z": 3
    }
   },
   {
@@ -1185,6 +1398,32 @@
     {
      "label": "OpenStreetMap：里程碑",
      "url": "https://www.openstreetmap.org/way/294114136"
+    }
+   ]
+  },
+  {
+   "title": "其他校舍",
+   "text": "依校園素材庫與 Wikimedia Commons 的照片手工建模：騮先紀念科學館是白色建築，中央入口量體較高、有兩層白色欄杆陽台，深挑簷下有深色斗拱飾帶；商管大樓是規整窗格的白色板樓，一端是深色玻璃的圓弧樓梯塔；傳播館是白色框架與壁柱之間的黃褐色花崗石牆板，頂上一圈帶齒狀飾的白色挑簷；學生活動中心是白牆配大片白色回紋花磚牆，一側有柱廊；視聽教育館是紅柱迴廊與紅色欄杆的白色兩層樓；瀛苑是白色兩層洋樓，棕色屋簷與圓弧陽台；實棟學人宿舍是白色兩層住宅，二樓陽台與灰色低斜屋頂。騮先紀念科學館的入口朝向、學生活動中心柱廊在哪一側、瀛苑陽台位置是推定的。風洞實驗館、黑天鵝展示廳與機車停車場找不到照片，仍依地圖輪廓畫成一般建築。",
+   "links": [
+    {
+     "label": "淡江大學校園素材庫（照片 © 淡江大學，僅作繪製參考）",
+     "url": "https://photo.tku.edu.tw/index.cshtml?typ=014000"
+    },
+    {
+     "label": "Commons：Liu-hsien Memorial Science Hall 20250804",
+     "url": "https://commons.wikimedia.org/wiki/File:Liu-hsien_Memorial_Science_Hall_20250804.jpg"
+    },
+    {
+     "label": "Commons：Tamkang University Student Activity Center 20250804",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Student_Activity_Center_20250804.jpg"
+    },
+    {
+     "label": "Commons：Tamkang University Audio-visual Education Building 20250804",
+     "url": "https://commons.wikimedia.org/wiki/File:Tamkang_University_Audio-visual_Education_Building_20250804.jpg"
+    },
+    {
+     "label": "Commons：Faculty Residences of Tamkang University Tamsui Campus",
+     "url": "https://commons.wikimedia.org/wiki/File:Faculty_Residences_of_Tamkang_University_Tamsui_Campus_01_20250804.jpg"
     }
    ]
   },

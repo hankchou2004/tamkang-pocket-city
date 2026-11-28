@@ -86,3 +86,7 @@
 - https://photo.tku.edu.tw/ — 照片智慧財產權為淡江大學所有，限校內活動使用、不得商業使用。只作為繪製參考，照片本身沒有放進本專案。
 - 依各建築分類的照片重畫：紹謨紀念體育館（014006）、麗澤國際學舍（014007）、鍾靈化學館（014003）、會文館（014009）、
   文學館（014008）、工學館（014012）、工學大樓（014013）、教育館（014004）。
+
+## District 9: 其他校舍（2026-11-28）
+- 淡江大學校園素材庫（僅作繪製參考）：騮先紀念科學館 014002、傳播館 014005、商管大樓 014010、學生活動中心 014021、視聽教育館 014022、瀛苑 013015。
+- Commons（阿道，CC BY-SA 4.0）：Liu-hsien Memorial Science Hall、Tamkang University Student Activity Center、Audio-visual Education Building、Faculty Residences of Tamkang University Tamsui Campus 01-03（2025-08-04）。
