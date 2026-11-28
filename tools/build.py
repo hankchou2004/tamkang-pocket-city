@@ -4,7 +4,7 @@
   python tools/build.py --check 168,-62       # also render six yaws, a top view and night around plot point x,y
   python tools/build.py --views avenue,library --at 2026-11-27T18:30 --wx rain   # render named views
   python tools/build.py --app                 # the phone app (_site/app/, a PWA), the development page (_site/dev/), the MapLibre page
-  python tools/build.py --site-pages          # what GitHub Pages publishes: the phone page as the home page, MapLibre and 3D pages beside it
+  python tools/build.py --site-pages          # what GitHub Pages publishes: the MapLibre map as the home page, the 3D page at 3d.html
 
 The pages: vendor/three (three.js r159, MIT), web3d/kit3d.js (the drawing parts as 3D geometry), the landmark files,
 web3d/main3d.js (3D page and phone app) or proto/maplibre.js (MapLibre page), web3d/template.html (3D page layout).
@@ -131,13 +131,12 @@ def shots3d(page, views, at=None, wx=None, out='shots/3d', size='1200x800'):
     run(cmd)
 
 def site_pages(site='_site'):
-    """GitHub Pages: the phone page (the map in APP_MODE, the same as _site/app/index.html) as the home page; the MapLibre
-    page at proto/maplibre.html and the desktop 3D page at 3d.html. The PWA links (app/) are local only, so the
-    published home page has none."""
-    build3d(os.path.join(site, 'index.html'), app=True)
+    """GitHub Pages: the MapLibre map as the home page (the map the development page shows in its phone frame; also at
+    proto/maplibre.html), the desktop 3D page at 3d.html."""
     build_proto(site)
+    shutil.copyfile(os.path.join(ROOT, site, 'proto', 'maplibre.html'), os.path.join(ROOT, site, 'index.html'))
     build3d(os.path.join(site, '3d.html'))
-    print(f'Pages site in {site}/: index.html (phone page), proto/maplibre.html, 3d.html')
+    print(f'Pages site in {site}/: index.html (MapLibre), proto/maplibre.html, 3d.html')
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
